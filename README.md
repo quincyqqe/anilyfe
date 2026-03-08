@@ -44,13 +44,12 @@ src/
 ### Prerequisites
 
 - Node.js 20+ or Bun
-- A Supabase project with `profiles` and `user_anime_list` tables
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/quincyqqe/anilibertytest.git
+git clone https://github.com/quincyqqe/anilyfe.git
 cd anilibertytest
 
 # Install dependencies
