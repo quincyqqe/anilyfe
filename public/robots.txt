@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://anilyfe.vercel.app
+
+# Sitemaps
+Sitemap: https://anilyfe.vercel.app/sitemap.xml
