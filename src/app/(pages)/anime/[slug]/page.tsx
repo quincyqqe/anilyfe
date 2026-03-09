@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AnimePage({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const anime = await fetchAnime(slug);
 
