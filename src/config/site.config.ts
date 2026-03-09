@@ -25,6 +25,11 @@ export const siteConfig = {
         label: 'Telegram',
         icon: 'telegram',
       },
+      {
+        label: 'GitHub',
+        href: 'https://github.com/quincyqqe/anilyfe',
+        icon: 'github',
+      },
     ],
   },
 } as const;

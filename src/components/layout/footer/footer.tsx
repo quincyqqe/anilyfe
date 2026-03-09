@@ -1,9 +1,10 @@
 import { siteConfig } from '@/config/site.config';
 import Link from 'next/link';
-import { FaTelegram } from 'react-icons/fa';
+import { FaTelegram, FaGithub } from 'react-icons/fa';
 
 const socialIconMap = {
   telegram: FaTelegram,
+  github: FaGithub,
 } as const;
 
 const Footer = () => {
@@ -13,13 +14,11 @@ const Footer = () => {
     <footer className="border-t border-white/10 mt-24 relative">
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Brand */}
           <div className="flex flex-col gap-4">
             <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">{brand.name}</span>
             <p className="text-sm text-zinc-600 leading-relaxed">{brand.description}</p>
           </div>
 
-          {/* Navigation */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Навигация
@@ -39,7 +38,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Info */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Информация
@@ -60,7 +58,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Socials */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Социальные сети
