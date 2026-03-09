@@ -76,7 +76,7 @@ const Featured = ({ promotions }: FeaturedProps) => {
 
       <div className="absolute inset-0 flex items-center z-10">
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-16">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-12 lg:gap-16 max-sm:pt-16">
             {current.release?.poster && <Poster release={current.release} />}
             <Info release={current.release} description={current.description} />
           </div>

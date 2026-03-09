@@ -3,7 +3,7 @@ import { Anime } from '@/shared/types/anime';
 
 const Stats = ({ release }: { release: Anime }) => {
   return (
-    <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+    <div className="flex flex-wrap gap-4 justify-center md:justify-start max-sm:hidden">
       {release.added_in_users_favorites != null && (
         <Stat
           icon={<Heart className="w-4 h-4 text-red-400" />}

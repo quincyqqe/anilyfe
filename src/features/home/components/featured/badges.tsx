@@ -30,7 +30,7 @@ const Badges = ({ release }: { release: Anime }) => {
 
 function Badge({ icon, label, bold }: { icon?: React.ReactNode; label: string; bold?: boolean }) {
   return (
-    <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+    <div className="flex items-center gap-2 px-3.5 py-2 max-sm:px-2 max-sm:py-1 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
       {icon}
       <span className={`text-sm text-white/80 ${bold ? 'font-bold' : 'font-medium'}`}>{label}</span>
     </div>

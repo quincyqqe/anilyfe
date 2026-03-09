@@ -15,7 +15,7 @@ const Latest = ({ animeList }: LatestProps) => {
             <p className="text-primary text-sm font-semibold tracking-wide uppercase mb-2">
               Новинки
             </p>
-            <h2 className="text-3xl md:text-4xl font-black text-white">Последние обновления</h2>
+            <h2 className="text-2xl md:text-4xl font-black text-white">Последние обновления</h2>
           </div>
           <Link
             href="/catalog"
@@ -24,7 +24,7 @@ const Latest = ({ animeList }: LatestProps) => {
             Смотреть все
           </Link>
         </div>
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-5">
           {animeList.map((anime) => (
             <AnimeCard key={anime.id} anime={anime} />
           ))}
