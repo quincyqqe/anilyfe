@@ -1,22 +1,43 @@
-# AniLyfe
+<div align="center">
+  <img src="./public/preview.png" alt="Anilyfe Preview" width="100%" style="border-radius: 12px; margin-bottom: 20px;" />
+  <br/>
+  <h1>Anilyfe</h1>
+  <p><strong>A modern streaming platform to watch anime online! 🚀</strong></p>
 
-A streaming platform for watching anime online. Data is provided by the [AniLiberty API](https://aniliberty.top/api/docs/v1#/).
+  <p>
+    <a href="https://github.com/quincyqqe/anilyfe/stargazers"><img src="https://img.shields.io/github/stars/quincyqqe/anilyfe?style=for-the-badge&color=facc15&logo=github&logoColor=white" alt="GitHub stars"></a>
+    <a href="https://github.com/quincyqqe/anilyfe/network/members"><img src="https://img.shields.io/github/forks/quincyqqe/anilyfe?style=for-the-badge&color=3b82f6&logo=github&logoColor=white" alt="GitHub forks"></a>
+    <a href="https://github.com/quincyqqe/anilyfe/issues"><img src="https://img.shields.io/github/issues/quincyqqe/anilyfe?style=for-the-badge&color=ef4444&logo=github&logoColor=white" alt="GitHub issues"></a>
+  </p>
+</div>
 
-## Features
+---
 
-- **Anime catalog** — search and filter by genre, format, status, age rating, season, and year
-- **Player** — HLS streaming with quality selection, opening/ending skip, and episode list
-- **Schedule** — up-to-date episode release schedule by day of the week
-- **Title pages** — poster, description, genres, translation team, stats, franchise, and related titles
-- **Accounts** — sign up and sign in via Supabase Auth (email + OAuth)
-- **Anime list** — save titles with a watch status (watching / completed / dropped / planned / on hold)
-- **Profile** — public user page with the anime list, accessible by username
-- **Watch progress** — automatic saving of current episode and playback position
+## Tech Stack
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+</p>
+
+## ✨ Features
+
+-  **Anime Catalog** — Search and filter by genre, format, status, age rating, season, and year.
+-  **Advanced Player** — Smooth HLS streaming with quality selection, opening/ending skip, and a robust episode list.
+-  **Release Schedule** — Stay up-to-date with episodes sorted by day of the week.
+-  **Detailed Title Pages** — Everything you need: posters, descriptions, genres, translation teams, stats, and related titles.
+-  **Secure Accounts** — Effortless sign-up/sign-in using Supabase Auth (Email + OAuth).
+-  **Personalized Anime List** — Track your journey: Watching / Completed / Dropped / Planned / On Hold.
+-  **Public Profiles** — Share your anime taste with a unique public page linked to your username.
+-  **Watch Progress** — Never lose your spot! We automatically save your current episode and playback position.
 
 ## Project Structure
 
-```
+```text
 src/
 ├── app/                    # Next.js App Router — pages and routes
 │   ├── (auth)/             # Sign up and sign in
@@ -43,16 +64,16 @@ src/
 
 ### Prerequisites
 
-- Node.js 20+ or Bun
+- **Node.js 20+**
 
 ### Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/quincyqqe/anilyfe.git
-cd anilibertytest
+cd anilyfe
 
-# Install dependencies
+# Install dependencies using bun or npm
 bun install
 # or
 npm install
@@ -76,7 +97,7 @@ bun dev
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Production Build
 
@@ -85,13 +106,19 @@ bun run build
 bun start
 ```
 
-## Roadmap
+## 🗺 Roadmap
 
-- [ ] **SEO** — dynamic OpenGraph tags for title pages
-- [ ] Comments and ratings
-- [ ] New episode notifications
-- [ ] Mobile app
+- [ ] 📈 **SEO** — Dynamic OpenGraph tags for title pages
+- [ ] 💬 **Community** — Comments and ratings system
+- [ ] 🔔 **Notifications** — Alerts for new episodes
+- [ ] 📱 **Mobile App** — Bringing Anilyfe to iOS and Android
 
 ## Data Source
 
 This project uses the public [AniLiberty API](https://aniliberty.top/api/docs/v1#/) to fetch anime metadata, schedules, promo materials, and streaming URLs.
+
+---
+
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/quincyqqe">quincyqqe</a>
+</div>
