@@ -60,6 +60,8 @@ function EpisodeItem({ episode, idx, active, onSelect }: EpisodeItemProps) {
 
   return (
     <button
+      data-episode={episode.ordinal ?? idx + 1}
+      data-active={active ? 'true' : 'false'}
       onClick={onSelect}
       className={clsx(
         'group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors',
