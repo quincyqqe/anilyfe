@@ -15,37 +15,42 @@ export function AnimeMetaChips({ anime }: Props) {
         {anime.season.description} {anime.year}
       </MetaChip>
 
-      <MetaChip icon={<Film size={13} />}>{anime.type.description}</MetaChip>
+      <MetaChip icon={<Film size={13} />}>
+        {anime.type.description}
+      </MetaChip>
 
       <MetaChip icon={<Clock size={13} />}>
         {anime.episodes_total ? `${anime.episodes_total} серий` : 'Серии неизвестны'}
       </MetaChip>
 
-      <MetaChip icon={<ShieldAlert size={13} />}>{anime.age_rating.label}</MetaChip>
+      <MetaChip icon={<ShieldAlert size={13} />}>
+        {anime.age_rating.label}
+      </MetaChip>
 
       {anime.average_duration_of_episode > 0 && (
-        <MetaChip>~{anime.average_duration_of_episode} мин / эп.</MetaChip>
+        <MetaChip>
+          ~{anime.average_duration_of_episode} мин / эп.
+        </MetaChip>
       )}
     </div>
   );
 }
 
-function MetaChip({
-  icon,
-  children,
-  highlight,
-}: {
+interface MetaChipProps {
   icon?: React.ReactNode;
   children: React.ReactNode;
   highlight?: boolean;
-}) {
+}
+
+function MetaChip({ icon, children, highlight }: MetaChipProps) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
+        'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium',
+        'cursor-default select-none',
         highlight
-          ? 'bg-primary/10 text-primary border-primary/25'
-          : 'bg-white/4 text-zinc-400 border-white/8 hover:border-white/14 hover:text-zinc-300',
+          ? 'border-primary/25 bg-primary/10 text-primary'
+          : 'border-white/6 bg-white/[0.03] text-zinc-400',
       )}
     >
       {icon && <span className="opacity-70">{icon}</span>}
