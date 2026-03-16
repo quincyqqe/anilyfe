@@ -14,8 +14,6 @@ interface Props {
 }
 
 export function AnimeTeam({ members }: Props) {
-  if (!members?.length) return null;
-
   const grouped = members.reduce<Record<string, Member[]>>((acc, m) => {
     const key = m.role?.value;
     if (!key) return acc;
