@@ -1,83 +1,162 @@
 @import 'tailwindcss';
-@plugin './hero.ts';
+@plugin "./hero.ts";
 
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 @custom-variant dark (&:is(.dark *));
 
+/* ======================================================
+   LIQUID GLASS DARK THEME
+====================================================== */
+
 :root {
-  --background: 9 9 11; /* rgb значения zinc-950 */
-  --foreground: oklch(0.98 0.01 270);
-  --card: oklch(0.12 0.02 270 / 0.5);
-  --card-foreground: oklch(0.98 0.01 270);
-  --popover: oklch(0.1 0.02 270);
-  --popover-foreground: oklch(0.98 0.01 270);
-  --primary: oklch(0.75 0.18 180);
-  --primary-foreground: oklch(0.08 0.01 270);
-  --secondary: oklch(0.18 0.03 270);
-  --secondary-foreground: oklch(0.98 0.01 270);
-  --muted: oklch(0.15 0.02 270);
-  --muted-foreground: oklch(0.65 0.02 270);
-  --accent: oklch(0.7 0.2 320);
-  --accent-foreground: oklch(0.08 0.01 270);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.98 0.01 270);
-  --border: oklch(0.2 0.03 270 / 0.3);
-  --input: oklch(0.2 0.03 270 / 0.5);
-  --ring: oklch(0.75 0.18 180);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 1rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(0.09 0.02 260);
+  --foreground: oklch(0.96 0.01 260);
+
+  --card: oklch(0.16 0.02 260 / 0.35);
+  --card-foreground: oklch(0.96 0.01 260);
+
+  --popover: oklch(0.14 0.02 260 / 0.45);
+  --popover-foreground: oklch(0.96 0.01 260);
+
+  --primary: oklch(0.74 0.2 210);
+  --primary-foreground: oklch(0.08 0.02 260);
+
+  --secondary: oklch(0.18 0.03 260 / 0.6);
+  --secondary-foreground: oklch(0.96 0.01 260);
+
+  --accent: oklch(0.7 0.23 300);
+  --accent-foreground: oklch(0.08 0.02 260);
+
+  --muted: oklch(0.16 0.02 260 / 0.5);
+  --muted-foreground: oklch(0.68 0.02 260);
+
+  --destructive: oklch(0.6 0.23 27);
+  --destructive-foreground: oklch(0.96 0.01 260);
+
+  --border: oklch(0.32 0.03 260 / 0.3);
+  --input: oklch(0.24 0.03 260 / 0.4);
+  --ring: oklch(0.7 0.2 210);
+
+  --chart-1: oklch(0.65 0.25 20);
+  --chart-2: oklch(0.6 0.18 190);
+  --chart-3: oklch(0.45 0.08 240);
+  --chart-4: oklch(0.82 0.18 85);
+  --chart-5: oklch(0.76 0.18 65);
+
+  --radius: 1.2rem;
+
+  --sidebar: oklch(0.15 0.02 260 / 0.5);
+  --sidebar-foreground: oklch(0.95 0.01 260);
+
+  --sidebar-primary: oklch(0.7 0.2 210);
+  --sidebar-primary-foreground: oklch(0.08 0.02 260);
+
+  --sidebar-accent: oklch(0.18 0.03 260 / 0.7);
+  --sidebar-accent-foreground: oklch(0.95 0.01 260);
+
+  --sidebar-border: oklch(0.32 0.03 260 / 0.25);
+  --sidebar-ring: oklch(0.7 0.2 210);
 }
+
+/* ======================================================
+   THEME MAPPING
+====================================================== */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
+
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+/* ======================================================
+   GLOBAL BASE
+====================================================== */
+
+@layer base {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.05);
+    scrollbar-gutter: stable both-edges;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 20% 20%, rgba(80, 120, 255, 0.08), transparent 40%),
+      radial-gradient(circle at 80% 0%, rgba(255, 0, 200, 0.07), transparent 40%),
+      oklch(0.08 0.02 260);
+
+    color: oklch(0.96 0.01 260);
+  }
+}
+
+/* ======================================================
+   GLASS UTILITIES
+====================================================== */
+
+.glass {
+  backdrop-filter: blur(20px) saturate(160%);
+  background: oklch(0.15 0.02 260 / 0.35);
+  border: 1px solid oklch(0.35 0.03 260 / 0.3);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-hover:hover {
+  backdrop-filter: blur(24px) saturate(180%);
+  border-color: oklch(0.55 0.08 260 / 0.35);
+}
+
+/* ======================================================
+   EMBLA SLIDER
+====================================================== */
 
 .embla {
   position: relative;
@@ -101,98 +180,52 @@
   overflow: hidden;
 }
 
-@layer base {
-  :root {
-    --scrollbar-size: 10px;
-    --scrollbar-track: rgba(255, 255, 255, 0.04);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.14);
-    --scrollbar-thumb-hover: color-mix(in srgb, var(--primary) 55%, white 12%);
-    --scrollbar-thumb-active: var(--primary);
-  }
+/* ======================================================
+   HERO SECTION
+====================================================== */
 
-  html {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-  }
-
-  body {
-    scrollbar-gutter: stable;
-  }
-
-  *::-webkit-scrollbar {
-    width: var(--scrollbar-size);
-    height: var(--scrollbar-size);
-  }
-
-  *::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-    border-radius: 999px;
-  }
-
-  *::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      180deg,
-      var(--scrollbar-thumb) 0%,
-      color-mix(in srgb, var(--scrollbar-thumb) 88%, black) 100%
-    );
-    border-radius: 999px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-    min-height: 48px;
-  }
-
-  *::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(
-      180deg,
-      var(--scrollbar-thumb-hover) 0%,
-      color-mix(in srgb, var(--scrollbar-thumb-hover) 82%, black) 100%
-    );
-  }
-
-  *::-webkit-scrollbar-thumb:active {
-    background: var(--scrollbar-thumb-active);
-  }
-
-  *::-webkit-scrollbar-corner {
-    background: transparent;
-  }
-}
-
-/* ===== HERO SECTION ===== */
 .anime-hero {
   position: relative;
   width: 100%;
   min-height: 100vh;
+
   display: flex;
   align-items: flex-end;
-  clip-path: inset(0);
+
   overflow: hidden;
+  clip-path: inset(0);
 }
 
 .ad-hero__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  will-change: transform;
+
   transform: translateZ(0);
+  will-change: transform;
 }
 
 .ad-hero__bg img {
-  filter: blur(12px) brightness(0.4) saturate(1.4);
-  transform: scale(1.15) translateZ(0);
+  filter: blur(16px) brightness(0.45) saturate(1.5);
+
+  transform: scale(1.2);
   will-change: transform;
 }
 
 .ad-hero__bg-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    #0a0a0f 0%,
-    rgba(10, 10, 15, 0.95) 20%,
-    rgba(10, 10, 15, 0.6) 50%,
-    rgba(10, 10, 15, 0.3) 100%
-  );
+
+  background:
+    radial-gradient(circle at 30% 30%, rgba(120, 160, 255, 0.12), transparent 50%),
+    linear-gradient(
+      to top,
+      #05050a 0%,
+      rgba(10, 10, 18, 0.95) 30%,
+      rgba(10, 10, 18, 0.6) 60%,
+      rgba(10, 10, 18, 0.3) 100%
+    );
+
   z-index: 1;
 }
 
@@ -200,8 +233,11 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  opacity: 0.03;
+
+  opacity: 0.02;
+
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
   background-repeat: repeat;
   pointer-events: none;
 }
