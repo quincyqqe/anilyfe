@@ -11,7 +11,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => (
     <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-white/5">
       <div className="absolute inset-0 will-change-transform transition-transform duration-500 ease-out group-hover:scale-[1.06]">
         <Image
-          src={`https://aniliberty.top${anime.poster.optimized.src}`}
+          src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.optimized.src}`}
           alt={anime.name.main || 'Постер'}
           className="object-cover"
           fill

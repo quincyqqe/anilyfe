@@ -20,7 +20,7 @@ const Poster = ({ release }: { release: PosterRelease }) => {
       <Link href={`/anime/${release.alias}`} className="group block w-full">
         <div className="relative w-full aspect-[2/3] rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.9)] transition-all duration-300 group-hover:-translate-y-2">
           <Image
-            src={`https://aniliberty.top${release.poster.optimized.src}`}
+            src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${release.poster.optimized.src}`}
             alt={release.name.main}
             fill
             className="object-cover"

@@ -5,7 +5,7 @@ const FeaturedSlide = ({ promo }: { promo: Promotion }) => {
   return (
     <div className="embla__slide min-h-screen relative">
       <Image
-        src={`https://aniliberty.top${promo.image.optimized.preview}`}
+        src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${promo.image.optimized.preview}`}
         alt={promo.release?.name.main || ''}
         fill
         sizes="100vw"

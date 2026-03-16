@@ -49,7 +49,7 @@ export const SearchResultCard = ({ anime, onClick }: Props) => {
       >
         <div className="relative shrink-0 w-[5.5rem] h-[8rem] md:w-[6rem] md:h-[9rem] rounded-lg overflow-hidden mr-4 bg-zinc-900">
           <Image
-            src={`https://aniliberty.top${posterSrc}`}
+            src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
             alt={anime.name.main}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"

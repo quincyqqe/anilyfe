@@ -5,11 +5,9 @@ import Image from 'next/image';
 import clsx from 'clsx';
 import { AnimeEpisode } from '@/shared/types/anime';
 
-const MEDIA_BASE = 'https://aniliberty.top';
-
 function resolveThumb(episode: AnimeEpisode): string | undefined {
   const src = episode.preview?.optimized?.src;
-  return src ? `${MEDIA_BASE}${src}` : undefined;
+  return src ? `${process.env.NEXT_PUBLIC_MEDIA_URL}${src}` : undefined;
 }
 
 interface Props {

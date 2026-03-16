@@ -6,13 +6,11 @@ import { getBestUrl } from './lib/quality';
 import { PlayerView } from './components/player-view';
 import { EpisodeList } from './components/episode-list';
 import { updateAnimeProgress } from '@/lib/db/actions/anime-list';
-import type { UserAnimeListEntry } from '@/shared/types/user-anime-list';
 
-const MEDIA_BASE = 'https://aniliberty.top';
 
 function resolveThumb(episode: AnimeEpisode): string | undefined {
   const src = episode.preview?.optimized?.src;
-  return src ? `${MEDIA_BASE}${src}` : undefined;
+  return src ? `${process.env.NEXT_PUBLIC_MEDIA_URL}${src}` : undefined;
 }
 
 interface Props {

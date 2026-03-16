@@ -18,8 +18,6 @@ interface Props {
 }
 
 export function AnimeInfo({ anime, franchise, animeList }: Props) {
-  const posterUrl = `https://aniliberty.top${anime.poster.optimized.src}`;
-
   return (
     <main className="pt-28">
       <AnimeHero posterSrc={anime.poster.optimized.src} />
@@ -29,7 +27,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
           <aside className="flex flex-col gap-5">
             <div className="relative mx-auto shrink-0 w-[220px] lg:w-full h-[310px] lg:h-[370px]">
               <Image
-                src={posterUrl}
+                src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.optimized.src}`}
                 alt=""
                 aria-hidden
                 width={32}
@@ -39,7 +37,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-50 -z-10"
               />
               <Image
-                src={`https://aniliberty.top${anime.poster.src}`}
+                src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.src}`}
                 alt={anime.name.main}
                 width={260}
                 height={370}

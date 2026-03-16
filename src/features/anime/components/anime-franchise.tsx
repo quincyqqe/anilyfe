@@ -5,8 +5,6 @@ import Link from 'next/link';
 import Image from '@/components/ui/image';
 import { ScrollShadow } from '@heroui/scroll-shadow';
 
-const BASE_URL = 'https://aniliberty.top';
-
 interface Props {
   franchise: any;
   currentReleaseId: number;
@@ -50,7 +48,6 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
           {sorted.map((item) => {
             const { release } = item;
             const isCurrent = release.id === currentReleaseId;
-            const posterSrc = `${BASE_URL}${release.poster.optimized.src}`;
 
             return (
               <div key={item.id} className="relative pl-6" ref={isCurrent ? currentItemRef : null}>
@@ -81,7 +78,7 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
                     <div className="flex items-center gap-3 min-w-0 w-full">
                       <div className="relative shrink-0 w-[3rem] h-[4.2rem] rounded-lg overflow-hidden border border-white/10 group-hover:border-white/20 transition-colors shadow-xl">
                         <Image
-                          src={posterSrc}
+                          src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${release.poster.src}`}
                           alt={release.name.main}
                           fill
                           className="object-contain"

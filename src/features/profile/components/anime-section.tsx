@@ -33,7 +33,7 @@ export default function AnimeSection({ profile }: any) {
             >
               <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-white/5">
                 <Image
-                  src={`https://aniliberty.top${anime.anime_poster}`}
+                  src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.anime_poster}`}
                   alt={anime.anime_name || 'Постер'}
                   className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                   fill
