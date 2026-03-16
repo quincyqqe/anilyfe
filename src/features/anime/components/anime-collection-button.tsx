@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Button } from '@heroui/react';
+import { addToast } from '@heroui/react';
 import { FaPlus, FaCheck } from 'react-icons/fa';
 import { upsertAnimeStatus, removeAnimeEntry } from '@/lib/db/actions/anime-list';
 import type { Anime } from '@/shared/types/anime';
@@ -39,7 +40,11 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
       );
       if (result?.error) {
         setStatus(animeEntry?.status ?? null);
-        console.error(result.error);
+        addToast({
+          title: 'Ошибка',
+          description: 'Вы должны авторизоваться, чтобы добавить аниме в список',
+          color: 'danger',
+        });
       }
     });
   };
