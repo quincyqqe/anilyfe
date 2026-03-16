@@ -62,9 +62,11 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
               <AnimeStats anime={anime} />
             </div>
 
-            <div className="rounded-2xl border border-white/6 bg-white/3 p-4 backdrop-blur-sm">
-              <AnimeTeam members={anime.members} />
-            </div>
+            {anime.members.length > 0 && (
+              <div className="rounded-2xl border border-white/6 bg-white/3 p-4 backdrop-blur-sm">
+                <AnimeTeam members={anime.members} />
+              </div>
+            )}
           </aside>
 
           <section className="flex flex-col gap-5.5 pt-6 ">
