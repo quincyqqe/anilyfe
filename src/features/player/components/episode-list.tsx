@@ -63,6 +63,7 @@ function EpisodeItem({ episode, index, active, onClick }: EpisodeItemProps) {
     <button
       aria-current={active}
       data-active={active}
+      data-episode={ordinal}
       onClick={onClick}
       className={clsx(
         'group relative flex w-full items-center gap-3 px-3 py-2.5 text-left transition-all duration-200',
