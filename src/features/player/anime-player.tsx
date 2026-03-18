@@ -6,6 +6,7 @@ import { getBestUrl } from './lib/quality';
 import { PlayerView } from './components/player-view';
 import { EpisodeList } from './components/episode-list';
 import { updateAnimeProgress } from '@/lib/db/actions/anime-list';
+import { Clapperboard } from 'lucide-react';
 
 
 function resolveThumb(episode: AnimeEpisode): string | undefined {
@@ -55,7 +56,42 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
     [dbEntry, anime.alias, currentIdx],
   );
 
-  if (!episodes.length) return null;
+  if (!episodes.length) {
+    return (
+      <section className="container mx-auto px-4 relative z-10 py-12 flex flex-col gap-5">
+        <SectionLabel>Смотреть онлайн</SectionLabel>
+
+        <div className="glass rounded-2xl overflow-hidden">
+          <div className="flex flex-col items-center justify-center gap-5 px-8 py-14 text-center">
+            {/* Иконка */}
+            <div className="relative flex items-center justify-center">
+              <span className="absolute inline-flex h-16 w-16 rounded-full bg-primary/10 animate-ping opacity-30" />
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
+                <Clapperboard size={24} className="text-zinc-400" />
+              </div>
+            </div>
+
+            {/* Бейдж */}
+            <div className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_6px] shadow-primary/60 animate-pulse" />
+              <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-primary/80">
+                Ожидается выход
+              </span>
+            </div>
+
+            {/* Текст */}
+            <div className="flex flex-col gap-1.5">
+              <p className="text-sm font-semibold text-zinc-200">Серии ещё не вышли</p>
+              <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
+                Премьера этого аниме ожидается в ближайшее время. Следите за обновлениями — серии
+                появятся здесь сразу после выхода.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const episode = episodes[currentIdx] as AnimeEpisode | undefined;
   const poster = episode ? resolveThumb(episode) : undefined;
@@ -90,7 +126,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
               }
               onProgress={handleProgress}
             />
-          )}
+          ) }
         </div>
 
         <EpisodeList episodes={episodes} currentIdx={currentIdx} onSelect={handleEpisodeSelect} />
