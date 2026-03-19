@@ -72,7 +72,7 @@ const Featured = ({ promotions }: FeaturedProps) => {
         </div>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/70 via-black/30 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-black/70 via-black/30 to-transparent" />
 
       <div className="absolute inset-0 flex items-center z-10">
         <div className="container mx-auto">

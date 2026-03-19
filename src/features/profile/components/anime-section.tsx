@@ -31,7 +31,7 @@ export default function AnimeSection({ profile }: any) {
               href={slug ? `/anime/${slug}` : '#'}
               className="group relative flex cursor-pointer flex-col rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <div className="relative aspect-[2/3] w-full overflow-hidden rounded-xl bg-white/5">
+              <div className="relative aspect-2/3 w-full overflow-hidden rounded-xl bg-white/5">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.anime_poster}`}
                   alt={anime.anime_name || 'Постер'}

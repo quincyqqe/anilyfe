@@ -50,7 +50,7 @@ function MetaChip({ icon, children, highlight }: MetaChipProps) {
         'cursor-default select-none',
         highlight
           ? 'border-primary/25 bg-primary/10 text-primary'
-          : 'border-white/6 bg-white/[0.03] text-zinc-400',
+          : 'border-white/6 bg-white/3 text-zinc-400',
       )}
     >
       {icon && <span className="opacity-70">{icon}</span>}

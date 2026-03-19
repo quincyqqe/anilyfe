@@ -41,13 +41,13 @@ export const SearchResultCard = ({ anime, onClick }: Props) => {
           flex
           p-3 md:p-4
           rounded-xl
-          bg-white/[0.03]
-          border border-white/[0.06]
+          bg-white/3
+          border border-white/6
           transition-colors
-          hover:bg-white/[0.06]
+          hover:bg-white/6
         "
       >
-        <div className="relative shrink-0 w-[5.5rem] h-[8rem] md:w-[6rem] md:h-[9rem] rounded-lg overflow-hidden mr-4 bg-zinc-900">
+        <div className="relative shrink-0 w-22 h-32 md:w-24 md:h-36 rounded-lg overflow-hidden mr-4 bg-zinc-900">
           <Image
             src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
             alt={anime.name.main}
@@ -55,7 +55,7 @@ export const SearchResultCard = ({ anime, onClick }: Props) => {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
 
           <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold uppercase tracking-wide">
             {anime.type.value}

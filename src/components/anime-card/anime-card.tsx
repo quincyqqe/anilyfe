@@ -8,7 +8,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => (
     href={`/anime/${anime.alias}`}
     className="group relative flex flex-col cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl"
   >
-    <div className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-white/5">
+    <div className="relative aspect-2/3 w-full rounded-xl overflow-hidden bg-white/5">
       <div className="absolute inset-0 will-change-transform transition-transform duration-500 ease-out group-hover:scale-[1.06]">
         <Image
           src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.optimized.src}`}
