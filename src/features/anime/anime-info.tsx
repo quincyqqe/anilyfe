@@ -1,15 +1,15 @@
 import { Anime } from '@/shared/types/anime';
+import { AnimeCollectionButton } from './components/anime-collection-button';
+import { AnimeGenres } from './components/anime-genres';
 import { AnimeHero } from './components/anime-hero';
 import { AnimeMetaChips } from './components/anime-meta-chips';
-import { AnimeGenres } from './components/anime-genres';
-import { AnimeTeam } from './components/anime-team';
-import { AnimeCollectionButton } from './components/anime-collection-button';
 import { AnimeStats } from './components/anime-stats';
+import { AnimeTeam } from './components/anime-team';
 
 import Image from '@/components/ui/image';
 import { FranchiseItem } from '@/shared/types/franchise';
-import { AnimeFranchise } from './components/anime-franchise';
 import { UserAnimeListEntry } from '@/shared/types/user-anime-list';
+import { AnimeFranchise } from './components/anime-franchise';
 
 interface Props {
   anime: Anime;
@@ -32,7 +32,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 aria-hidden
                 width={32}
                 height={48}
-                quality={1}
+                quality={75}
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-50 -z-10"
               />
@@ -41,27 +41,20 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 alt={anime.name.main}
                 width={260}
                 height={370}
-                priority
+                preload
                 className="relative w-full h-full object-cover rounded-2xl border border-white/8 shadow-2xl z-10"
                 id="anime-poster"
               />
-
-              {anime.is_in_production && (
-                <span className="absolute top-3 left-3 z-20 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-primary/20 text-primary border border-primary/30 backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  Онгоинг
-                </span>
-              )}
             </div>
 
             <AnimeCollectionButton anime={anime} animeEntry={animeList} />
 
-            <div className="rounded-2xl border border-white/6 bg-white/3 p-4 backdrop-blur-sm">
+            <div className="rounded-2xl p-4 glass">
               <AnimeStats anime={anime} />
             </div>
 
             {anime.members.length > 0 && (
-              <div className="rounded-2xl border border-white/6 bg-white/3 p-4 backdrop-blur-sm">
+              <div className="rounded-2xl p-4 glass">
                 <AnimeTeam members={anime.members} />
               </div>
             )}
@@ -90,7 +83,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
             {anime.description && (
               <div className="flex flex-col gap-3 ">
                 <SectionLabel>Описание</SectionLabel>
-                <div className="rounded-2xl border border-white/6 bg-white/2 p-5 backdrop-blur-sm ">
+                <div className="glass rounded-2xl border border-white/6 bg-white/2 p-5 backdrop-blur-sm ">
                   <p className="text-sm text-zinc-400 leading-relaxed text-pretty ">
                     {anime.description}
                   </p>
