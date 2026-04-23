@@ -1,14 +1,14 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Fade from 'embla-carousel-fade';
-import Autoplay from 'embla-carousel-autoplay';
-import Poster from './components/featured/poster';
-import Info from './components/featured/info';
-import Controls from './components/featured/controls';
-import Slide from './components/featured/slide';
 import { Promotion } from '@/features/home/types/promotion';
+import Autoplay from 'embla-carousel-autoplay';
+import Fade from 'embla-carousel-fade';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Controls from './components/featured/controls';
+import Info from './components/featured/info';
+import Poster from './components/featured/poster';
+import Slide from './components/featured/slide';
 
 interface FeaturedProps {
   promotions: Promotion[];
