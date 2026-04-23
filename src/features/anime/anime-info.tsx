@@ -10,13 +10,13 @@ import Image from '@/components/ui/image';
 import { FranchiseItem } from '@/shared/types/franchise';
 import { UserAnimeListEntry } from '@/shared/types/user-anime-list';
 import { AnimeFranchise } from './components/anime-franchise';
+import { AnimeTabs } from './components/anime-tabs';
 
 interface Props {
   anime: Anime;
   franchise: FranchiseItem | null;
   animeList: UserAnimeListEntry;
 }
-
 export function AnimeInfo({ anime, franchise, animeList }: Props) {
   return (
     <main className="pt-28">
@@ -80,16 +80,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
               <AnimeGenres genres={anime.genres} />
             </div>
 
-            {anime.description && (
-              <div className="flex flex-col gap-3 ">
-                <SectionLabel>Описание</SectionLabel>
-                <div className="glass rounded-2xl border border-white/6 bg-white/2 p-5 backdrop-blur-sm ">
-                  <p className="text-sm text-zinc-400 leading-relaxed text-pretty ">
-                    {anime.description}
-                  </p>
-                </div>
-              </div>
-            )}
+            <AnimeTabs anime={anime} />
 
             {franchise && (
               <div className="flex flex-col gap-3">
