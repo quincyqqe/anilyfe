@@ -24,6 +24,9 @@ export const ENDPOINTS = {
   schedule: (date: string) => `${BASE_API_URL}/anime/schedule/${date}`,
 
   franchise: (code: string) => `${BASE_API_URL}/anime/franchises/release/${code}`,
+  franchiseById: (id: string) => `${BASE_API_URL}/anime/franchises/${id}`,
+
+  franchisesRandom: `${BASE_API_URL}/anime/franchises/random?limit=9`,
 
   latest: `${BASE_API_URL}/anime/catalog/releases?${createSearchParams({
     limit: '14',
