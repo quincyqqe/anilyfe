@@ -5,8 +5,9 @@ import { fetchPromotions } from '@/features/home/api/promotions';
 import {
   HomeFeatured as Featured,
   HomeLatest as Latest,
-  HomeWatching as Watching,
   RandomFranchises,
+  HomeVideos as Videos,
+  HomeWatching as Watching,
 } from '@/features/home';
 
 const Page = async () => {
@@ -16,14 +17,13 @@ const Page = async () => {
     fetchRandomFranchises(),
   ]);
 
-
-
   return (
     <main>
       <Featured promotions={promotions} />
       <Watching />
       {latestAnime.length > 0 && <Latest animeList={latestAnime} />}
       {randomFranchises.length > 0 && <RandomFranchises animeList={randomFranchises} />}
+      <Videos />
     </main>
   );
 };
