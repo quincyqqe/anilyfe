@@ -1,6 +1,6 @@
-import { fetchRandomFranchises } from '@/features/franchise/api/franchises';
 import { fetchLatest } from '@/features/home/api/latest';
 import { fetchPromotions } from '@/features/home/api/promotions';
+import { fetchRandomFranchises } from '@/shared/api/franchises';
 
 import {
   HomeFeatured as Featured,
