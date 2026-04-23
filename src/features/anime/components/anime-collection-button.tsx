@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Dropdown, DropdownMenu, DropdownTrigger, DropdownItem, Button } from '@heroui/react';
-import { addToast } from '@heroui/react';
-import { FaPlus, FaCheck } from 'react-icons/fa';
-import { upsertAnimeStatus, removeAnimeEntry } from '@/lib/db/actions/anime-list';
+import { removeAnimeEntry, upsertAnimeStatus } from '@/lib/db/actions/anime-list';
 import type { Anime } from '@/shared/types/anime';
 import type { UserAnimeListEntry, WatchStatus } from '@/shared/types/user-anime-list';
+import {
+  addToast,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@heroui/react';
+import { useState, useTransition } from 'react';
+import { FaCheck, FaPlus } from 'react-icons/fa';
 
 const STATUS_OPTIONS: { key: WatchStatus; label: string }[] = [
   { key: 'watching', label: 'Смотрю' },
@@ -29,7 +35,15 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
 
   const handleSelect = (key: string) => {
     const newStatus = key as WatchStatus;
-    setStatus(newStatus);
+
+    if (!animeEntry) {
+      addToast({
+        title: 'Ошибка',
+        description: 'Вы должны авторизоваться, чтобы добавить аниме в список',
+        color: 'danger',
+      });
+      return;
+    }
 
     startTransition(async () => {
       const result = await upsertAnimeStatus(
@@ -38,14 +52,17 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
         anime.poster.optimized.src,
         newStatus,
       );
+
       if (result?.error) {
-        setStatus(animeEntry?.status ?? null);
         addToast({
           title: 'Ошибка',
-          description: 'Вы должны авторизоваться, чтобы добавить аниме в список',
+          description: 'Не удалось обновить статус',
           color: 'danger',
         });
+        return;
       }
+
+      setStatus(newStatus);
     });
   };
 
@@ -68,13 +85,9 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
           className={`
       w-full h-11 font-semibold
       rounded-2xl
-      border border-white/6
-      bg-white/3
-      backdrop-blur-sm
-      flex items-center justify-center gap-2
-      text-zinc-50
-      hover:bg-white/5
-      transition-colors
+      glass
+
+
     `}
           isLoading={isPending}
         >
