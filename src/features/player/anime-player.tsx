@@ -6,7 +6,7 @@ import { Clapperboard } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { EpisodeList } from './components/episode-list';
 import { PlayerView } from './components/player-view';
-import { saveAnimeHistory } from './lib/anime-history';
+import { saveAnimeHistory } from '../../lib/utils/anime-history';
 import { getBestUrl } from './lib/quality';
 
 function resolveThumb(episode: AnimeEpisode): string | undefined {
