@@ -12,11 +12,11 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
   return (
     <Link
       href={`/anime/${anime.alias}`}
-      style={{contain: 'layout paint'}}
-      className="group relative flex flex-col rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      style={{ contain: 'layout paint' }}
+      className="group relative flex flex-col outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       <div className="relative aspect-2/3 w-full overflow-hidden rounded-2xl">
-        <div className="absolute inset-0 transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.05]">
+       <div className="absolute inset-0 will-change-transform transition-transform duration-500 ease-out group-hover:scale-[1.05]">
           <Image
             src={`${MEDIA_URL}${poster}`}
             alt={title}
