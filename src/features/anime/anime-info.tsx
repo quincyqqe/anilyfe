@@ -15,7 +15,7 @@ import { AnimeTabs } from './components/anime-tabs';
 interface Props {
   anime: Anime;
   franchise: FranchiseItem | null;
-  animeList: UserAnimeListEntry;
+  animeList: UserAnimeListEntry | null;
 }
 export function AnimeInfo({ anime, franchise, animeList }: Props) {
   return (

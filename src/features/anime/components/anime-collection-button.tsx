@@ -1,6 +1,7 @@
 'use client';
 
 import { removeAnimeEntry, upsertAnimeStatus } from '@/lib/db/actions/anime-list';
+import { createClient } from '@/lib/supabase/client';
 import type { Anime } from '@/shared/types/anime';
 import type { UserAnimeListEntry, WatchStatus } from '@/shared/types/user-anime-list';
 import {
@@ -33,10 +34,13 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
 
   const currentLabel = STATUS_OPTIONS.find((o) => o.key === status)?.label;
 
-  const handleSelect = (key: string) => {
+  const handleSelect = async (key: string) => {
     const newStatus = key as WatchStatus;
 
-    if (!animeEntry) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
       addToast({
         title: 'Ошибка',
         description: 'Вы должны авторизоваться, чтобы добавить аниме в список',
