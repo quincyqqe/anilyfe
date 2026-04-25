@@ -70,13 +70,13 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
                     ${
                       isCurrent
                         ? 'border border-primary/30 bg-primary/5 shadow-lg shadow-primary/5'
-                        : 'border border-transparent bg-white/[0.03] hover:bg-white/5 hover:border-white/10 hover:shadow-xl'
+                        : 'border border-transparent bg-white/3 hover:bg-white/5 hover:border-white/10 hover:shadow-xl'
                     }
                   `}
                 >
                   <div className="flex sm:flex-row flex-col gap-3 p-2.5 relative z-10 min-w-0">
                     <div className="flex items-center gap-3 min-w-0 w-full">
-                      <div className="relative shrink-0 w-[3rem] h-[4.2rem] rounded-lg overflow-hidden border border-white/10 group-hover:border-white/20 transition-colors shadow-xl">
+                      <div className="relative shrink-0 w-12 h-[4.2rem] rounded-lg overflow-hidden border border-white/10 group-hover:border-white/20 transition-colors shadow-xl">
                         <Image
                           src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${release.poster.src}`}
                           alt={release.name.main}

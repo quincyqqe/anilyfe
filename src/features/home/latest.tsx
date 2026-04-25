@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { Anime } from '@/shared/types/anime';
 import { AnimeCard } from '@/components/anime-card';
+import { Anime } from '@/shared/types/anime';
+import Link from 'next/link';
 
 interface LatestProps {
   animeList: Anime[];
@@ -8,7 +8,7 @@ interface LatestProps {
 
 const Latest = ({ animeList }: LatestProps) => {
   return (
-    <section className="py-16 md:py-24 px-4">
+    <section className="py-6 md:py-12 px-4 ">
       <div className="container mx-auto">
         <div className="flex items-end justify-between mb-10">
           <div>

@@ -185,7 +185,7 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
   return (
     <AnimatePresence>
       {isSearchModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] px-4 sm:px-6">
+        <div className="fixed inset-0 z-100 flex items-start justify-center pt-[10vh] px-4 sm:px-6">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
@@ -208,7 +208,7 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
             {/* <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary/10 via-purple-500/5 to-transparent pointer-events-none" /> */}
 
             {/* Header / Input Area */}
-            <div className="relative flex items-center gap-4 px-6 py-5 border-b border-white/[0.06]">
+            <div className="relative flex items-center gap-4 px-6 py-5 border-b border-white/6">
               <Search size={22} className="shrink-0 text-zinc-400" />
               <input
                 ref={inputRef}
@@ -252,7 +252,7 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
             </div>
 
             {/* Bottom Gradient Fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#09090b]/80 to-transparent pointer-events-none rounded-b-[24px]" />
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-linear-to-t from-[#09090b]/80 to-transparent pointer-events-none rounded-b-[24px]" />
           </motion.div>
         </div>
       )}

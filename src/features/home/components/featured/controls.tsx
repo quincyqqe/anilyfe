@@ -20,7 +20,7 @@ const Controls = ({ count, selectedIndex, onDotClick, onPrev, onNext }: Props) =
             className={clsx(
               'h-1.5 rounded-full transition-all duration-300',
               i === selectedIndex
-                ? 'w-8 bg-primary shadow-[0_0_10px_rgba(0,186,165,0.9)]'
+                ? 'w-8 bg-primary'
                 : 'w-2.5 bg-white/20 hover:bg-white/50',
             )}
           />

@@ -1,20 +1,20 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { AnimeInfo } from '@/features/anime';
 import { fetchAnime } from '@/features/anime/api/anime';
 import { fetchFranchise } from '@/features/anime/api/franchise';
-import { AnimeInfo } from '@/features/anime';
 import { AnimePlayer } from '@/features/player/anime-player';
 import { getUserAnimeEntry } from '@/lib/db/queries';
 import { generateMetadata as buildMetadata } from '@/lib/utils/metadata';
 import { Anime } from '@/shared/types/anime';
 
 type Params = {
-  slug: string
-}
+  slug: string;
+};
 
 interface Props {
-  params: Params
+  params: Params;
 }
 
 const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_URL!;

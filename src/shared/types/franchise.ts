@@ -26,5 +26,9 @@ export interface FranchiseItem {
   total_duration_in_seconds: number;
   total_episodes: number;
   total_releases: number;
+  franchise_releases?: FranchiseRelease[];
+}
+
+export interface FranchiseDetails extends FranchiseItem {
   franchise_releases: FranchiseRelease[];
 }

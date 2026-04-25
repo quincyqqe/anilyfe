@@ -1,14 +1,14 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Fade from 'embla-carousel-fade';
-import Autoplay from 'embla-carousel-autoplay';
-import Poster from './components/featured/poster';
-import Info from './components/featured/info';
-import Controls from './components/featured/controls';
-import Slide from './components/featured/slide';
 import { Promotion } from '@/features/home/types/promotion';
+import Autoplay from 'embla-carousel-autoplay';
+import Fade from 'embla-carousel-fade';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Controls from './components/featured/controls';
+import Info from './components/featured/info';
+import Poster from './components/featured/poster';
+import Slide from './components/featured/slide';
 
 interface FeaturedProps {
   promotions: Promotion[];
@@ -72,7 +72,7 @@ const Featured = ({ promotions }: FeaturedProps) => {
         </div>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/70 via-black/30 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-black/70 via-black/30 to-transparent" />
 
       <div className="absolute inset-0 flex items-center z-10">
         <div className="container mx-auto">

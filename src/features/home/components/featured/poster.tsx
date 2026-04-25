@@ -16,9 +16,9 @@ interface PosterRelease {
 
 const Poster = ({ release }: { release: PosterRelease }) => {
   return (
-    <div className="flex-shrink-0 flex flex-col items-center gap-4 w-48 sm:w-56 md:w-56 lg:w-64 xl:w-72">
+    <div className="shrink-0 flex flex-col items-center gap-4 w-48 sm:w-56 md:w-56 lg:w-64 xl:w-72">
       <Link href={`/anime/${release.alias}`} className="group block w-full">
-        <div className="relative w-full aspect-[2/3] rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.9)] transition-all duration-300 group-hover:-translate-y-2">
+        <div className="relative w-full aspect-2/3 rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.9)] transition-all duration-300 group-hover:-translate-y-2">
           <Image
             src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${release.poster.optimized.src}`}
             alt={release.name.main}

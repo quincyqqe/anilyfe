@@ -143,7 +143,7 @@ export function Navigation({ user, onSearchClick }: NavigationProps) {
               aria-label="Открыть поиск"
               className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white/20 hover:text-zinc-50 hover:shadow-[0_0_16px_rgba(255,255,255,0.05)] active:scale-95 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-linear-to-tr from-white/0 via-white/5 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
               <Search className="h-4 w-4 relative z-10 transition-transform duration-300 group-hover:scale-110" />
             </button>
@@ -153,7 +153,7 @@ export function Navigation({ user, onSearchClick }: NavigationProps) {
               aria-label={username ?? fallbackEmail ?? 'Профиль'}
               className="group relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-zinc-900/80 transition-all hover:border-white/40 hover:shadow-[0_0_16px_rgba(255,255,255,0.1)] active:scale-95"
             >
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-linear-to-tr from-primary/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
               {avatarUrl ? (
                 <Image

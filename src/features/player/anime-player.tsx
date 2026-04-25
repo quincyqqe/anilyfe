@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Anime, AnimeEpisode } from '@/shared/types/anime';
-import { getBestUrl } from './lib/quality';
-import { PlayerView } from './components/player-view';
-import { EpisodeList } from './components/episode-list';
 import { updateAnimeProgress } from '@/lib/db/actions/anime-list';
+import { Anime, AnimeEpisode } from '@/shared/types/anime';
 import { Clapperboard } from 'lucide-react';
-
+import { useCallback, useState } from 'react';
+import { EpisodeList } from './components/episode-list';
+import { PlayerView } from './components/player-view';
+import { saveAnimeHistory } from '../../lib/utils/anime-history';
+import { getBestUrl } from './lib/quality';
 
 function resolveThumb(episode: AnimeEpisode): string | undefined {
   const src = episode.preview?.optimized?.src;
@@ -42,9 +42,20 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
   const handleProgress = useCallback(
     (currentTime: number, duration: number) => {
-      if (!dbEntry || !anime.alias) {
-        return;
-      }
+      const episode = anime.episodes?.[currentIdx];
+      if (!episode) return;
+
+      saveAnimeHistory({
+        animeId: anime.id,
+        animeSlug: anime.alias,
+        animeTitle: anime.name?.main,
+        episode: currentIdx,
+        preview: resolveThumb(episode),
+        time: currentTime,
+        timeLeft: duration - currentTime,
+      });
+
+      if (!dbEntry || !anime.alias) return;
 
       updateAnimeProgress(
         anime.alias,
@@ -53,7 +64,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
         Math.round(duration),
       );
     },
-    [dbEntry, anime.alias, currentIdx],
+    [anime, currentIdx, dbEntry],
   );
 
   if (!episodes.length) {
@@ -63,7 +74,6 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
         <div className="glass rounded-2xl overflow-hidden">
           <div className="flex flex-col items-center justify-center gap-5 px-8 py-14 text-center">
-            {/* Иконка */}
             <div className="relative flex items-center justify-center">
               <span className="absolute inline-flex h-16 w-16 rounded-full bg-primary/10 animate-ping opacity-30" />
               <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
@@ -71,7 +81,6 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
               </div>
             </div>
 
-            {/* Бейдж */}
             <div className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1">
               <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_6px] shadow-primary/60 animate-pulse" />
               <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-primary/80">
@@ -79,7 +88,6 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
               </span>
             </div>
 
-            {/* Текст */}
             <div className="flex flex-col gap-1.5">
               <p className="text-sm font-semibold text-zinc-200">Серии ещё не вышли</p>
               <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
@@ -126,7 +134,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
               }
               onProgress={handleProgress}
             />
-          ) }
+          )}
         </div>
 
         <EpisodeList episodes={episodes} currentIdx={currentIdx} onSelect={handleEpisodeSelect} />
@@ -137,7 +145,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
+    <span className="text-[14px] font-bold tracking-[0.18em] uppercase text-zinc-500">
       {children}
     </span>
   );
