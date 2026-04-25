@@ -54,6 +54,8 @@ export function AnimeTabs({ anime }: Props) {
     ed: string | null | undefined;
   }>({ trailer: undefined, op: undefined, ed: undefined });
 
+  console.log(anime)
+
   useEffect(() => {
     if (selected === 'info') return;
 
@@ -103,7 +105,7 @@ export function AnimeTabs({ anime }: Props) {
               <Video key={videoId} id={videoId} />
             ) : (
               <div className="w-full aspect-video flex items-center justify-center bg-black/20 rounded-xl">
-                <Empty text={`${selected.toUpperCase()} не найден`} />
+                <Empty text={`YouTube API limit (Так же это тестовая версия, поэтому точность может быть не идеальной)`} />
               </div>
             )}
           </div>
