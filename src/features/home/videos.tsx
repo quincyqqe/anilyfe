@@ -36,7 +36,7 @@ export default async function Videos() {
   if (!videos || videos.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24 px-4">
+        <section className="py-6 md:py-12 px-4 ">
       <div className="container mx-auto">
         <div className="flex items-end justify-between mb-10">
           <div>

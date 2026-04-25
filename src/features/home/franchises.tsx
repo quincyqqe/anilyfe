@@ -15,7 +15,7 @@ interface Props {
 const RandomFranchises = ({ animeList }: Props) => {
   return (
     <>
-      <section className="px-4 py-16 md:py-24">
+          <section className="py-6 md:py-12 px-4 ">
         <div className="container mx-auto">
           <div className="mb-10 flex items-end justify-between gap-4">
             <div>

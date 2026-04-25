@@ -3,6 +3,7 @@
 import { getAnimeHistory } from '@/lib/utils/anime-history';
 import useEmblaCarousel from 'embla-carousel-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 function formatTime(time: number) {
   const m = Math.floor(time / 60);
@@ -17,21 +18,30 @@ function getProgress(item: { time: number; timeLeft: number }) {
 }
 
 const ContinueWatching = () => {
-  const items = getAnimeHistory();
+  const [items, setItems] = useState<ReturnType<typeof getAnimeHistory>>([]);
+  const [mounted, setMounted] = useState(false);
 
   const [emblaRef] = useEmblaCarousel({ align: 'start', loop: false });
 
-  if (!items.length) return null;
+  useEffect(() => {
+    setMounted(true);
+    setItems(getAnimeHistory());
+  }, []);
+
+  if (!mounted || !items.length) return null;
 
   return (
-    <section className="w-full py-10">
+       <section className="py-6 md:py-12 px-4 ">
       <div className="container mx-auto flex flex-col gap-5">
         <h2 className="text-2xl md:text-4xl font-black text-white mb-3">Продолжить просмотр</h2>
 
         <div className="embla" ref={emblaRef}>
           <div className="embla__container">
             {items.map((item) => (
-              <div className="embla__slide min-w-[270px] max-w-[270px] pr-4" key={`${item.animeId}-${item.episode}`}>
+              <div
+                className="embla__slide min-w-[270px] max-w-[270px] pr-4"
+                key={`${item.animeId}-${item.episode}`}
+              >
                 <Link href={`/anime/${item.animeSlug}`} className="group block">
                   <div className="relative rounded-2xl overflow-hidden">
                     <div className="aspect-video bg-zinc-900">
