@@ -87,7 +87,7 @@ export default async function AnimePage({ params }: Props) {
 }
 
 function getAnimeDescription(anime: Anime) {
-  const summary = anime.description.replace(/\s+/g, ' ').trim();
+  const summary = anime.description?.replace(/\s+/g, ' ').trim() ?? '';
   const extra = [anime.type.description, anime.year.toString()].filter(Boolean).join(' | ');
   const description = [summary, extra].filter(Boolean).join(' ');
 
