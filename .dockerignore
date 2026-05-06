@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.env*
+Dockerfile
+README.md
+tsconfig.tsbuildinfo
+.vscode
+.claude
