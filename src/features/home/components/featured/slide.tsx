@@ -10,6 +10,8 @@ const FeaturedSlide = ({ promo }: { promo: Promotion }) => {
         fill
         sizes="100vw"
         className="object-cover object-center"
+        loading='eager'
+        fetchPriority='high'
       />
     </div>
   );

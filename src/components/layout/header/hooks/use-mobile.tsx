@@ -1,25 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
+
+function subscribe(callback: () => void) {
+  const media = window.matchMedia('(max-width: 768px)')
+
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
+}
+
+function getSnapshot() {
+  return window.matchMedia('(max-width: 768px)').matches
+}
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const media = window.matchMedia('(max-width: 768px)')
-
-    const handleChange = () => {
-      setIsMobile(media.matches)
-    }
-
-    handleChange()
-
-    media.addEventListener('change', handleChange)
-
-    return () => {
-      media.removeEventListener('change', handleChange)
-    }
-  }, [])
-
-  return isMobile
+  return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }
