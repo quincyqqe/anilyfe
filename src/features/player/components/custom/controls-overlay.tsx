@@ -9,27 +9,22 @@ import {
   RotateCcw,
   RotateCw,
 } from 'lucide-react';
+import { memo } from 'react';
 
 import type { PlayerActions, PlayerState } from '../../lib/use-player';
-
 import { ProgressBar } from './progress-bar';
 import { QualityMenu } from './quality-menu';
 import { SettingsMenu } from './settings-menu';
 import { VolumeControl } from './volume-control';
 
 function formatTime(seconds: number): string {
-  if (!isFinite(seconds) || seconds < 0) {
-    return '0:00';
-  }
-
+  if (!isFinite(seconds) || seconds < 0) return '0:00';
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
-
   if (hours > 0) {
     return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
-
   return `${minutes}:${String(secs).padStart(2, '0')}`;
 }
 
@@ -40,23 +35,10 @@ interface ControlsOverlayProps {
   onSeekRelative: (delta: number) => void;
 }
 
-const controlButtonClass =
-  `
-  flex items-center justify-center
-  rounded-xl
+const iconButtonBase =
+  'flex items-center justify-center rounded-xl text-white/65 transition-all duration-150 hover:bg-white/10 hover:text-white active:scale-95 focus:outline-none';
 
-  text-white/72
-
-  transition-all duration-200
-
-  hover:bg-white/10
-  hover:text-white
-
-  active:scale-95
-  focus:outline-none
-  `;
-
-export function ControlsOverlay({
+export const ControlsOverlay = memo(function ControlsOverlay({
   state,
   actions,
   visible,
@@ -65,17 +47,23 @@ export function ControlsOverlay({
   return (
     <div
       data-player-control
-      className="
-        absolute inset-x-0 bottom-0 z-30
-        transition-all duration-300 ease-out
-      "
+      className="absolute inset-x-0 bottom-0 z-30 transition-all duration-300 ease-out"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(10px)',
+        transform: visible ? 'translateY(0)' : 'translateY(8px)',
         pointerEvents: visible ? 'auto' : 'none',
       }}
     >
-      <div className="flex flex-col">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-b-2xl"
+        style={{
+          background:
+            'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+        }}
+      />
+
+      <div className="relative flex flex-col">
         <ProgressBar
           currentTime={state.currentTime}
           duration={state.duration}
@@ -83,60 +71,37 @@ export function ControlsOverlay({
           onSeek={actions.seek}
         />
 
-        <div
-          className="
-            flex flex-wrap items-center gap-2
-
-            px-3 pb-3 pt-1
-
-            sm:flex-nowrap
-            sm:px-4 sm:pb-4
-          "
-        >
-          <div className="flex min-w-0 items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5 px-3 pb-3 pt-0.5 sm:flex-nowrap sm:px-4 sm:pb-4">
+          <div className="flex min-w-0 items-center gap-0.5">
             <button
               type="button"
               onClick={actions.togglePlay}
-              aria-label={state.playing ? 'Pause' : 'Play'}
-              className="
-                flex h-10 w-10 items-center justify-center
-
-                rounded-xl
-
-                bg-white/10
-
-                text-white
-
-                transition-all duration-200
-
-                hover:bg-white/15
-
-                active:scale-95
-              "
+              aria-label={state.playing ? 'Пауза' : 'Воспроизвести'}
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/12 text-white transition-all duration-150 hover:bg-white/20 active:scale-95"
             >
               {state.playing ? (
-                <Pause size={20} className="fill-white" />
+                <Pause size={18} className="fill-white" />
               ) : (
-                <Play size={20} className="ml-0.5 fill-white" />
+                <Play size={18} className="ml-0.5 fill-white" />
               )}
             </button>
 
             <button
               type="button"
               onClick={() => onSeekRelative(-10)}
-              aria-label="Back 10 seconds"
-              className={`hidden h-9 w-9 sm:flex ${controlButtonClass}`}
+              aria-label="Назад 10 секунд"
+              className={`hidden h-9 w-9 sm:flex ${iconButtonBase}`}
             >
-              <RotateCcw size={18} />
+              <RotateCcw size={17} />
             </button>
 
             <button
               type="button"
               onClick={() => onSeekRelative(10)}
-              aria-label="Forward 10 seconds"
-              className={`hidden h-9 w-9 sm:flex ${controlButtonClass}`}
+              aria-label="Вперёд 10 секунд"
+              className={`hidden h-9 w-9 sm:flex ${iconButtonBase}`}
             >
-              <RotateCw size={18} />
+              <RotateCw size={17} />
             </button>
 
             <VolumeControl
@@ -146,36 +111,17 @@ export function ControlsOverlay({
               onToggleMute={actions.toggleMute}
             />
 
-            <div
-              className="
-                ml-0.5 flex items-center gap-1.5
-
-                text-[12px]
-                font-medium
-                tabular-nums
-
-                text-white/55
-
-                select-none
-              "
-            >
-              <span className="text-white/92">
-                {formatTime(state.currentTime)}
-              </span>
-
+            <div className="ml-1 flex items-center gap-1 text-[12px] font-medium tabular-nums text-white/50 select-none">
+              <span className="text-white/90">{formatTime(state.currentTime)}</span>
               <span>/</span>
-
               <span>{formatTime(state.duration)}</span>
             </div>
           </div>
 
           <div className="flex-1" />
 
-          <div className="flex items-center gap-1">
-            <SettingsMenu
-              playbackRate={state.playbackRate}
-              onSetRate={actions.setPlaybackRate}
-            />
+          <div className="flex items-center gap-0.5">
+            <SettingsMenu playbackRate={state.playbackRate} onSetRate={actions.setPlaybackRate} />
 
             <QualityMenu
               qualities={state.qualities}
@@ -186,37 +132,27 @@ export function ControlsOverlay({
             <button
               type="button"
               onClick={actions.togglePip}
-              aria-label="Picture in Picture"
-              className={`h-9 w-9 ${controlButtonClass}`}
+              aria-label="Картинка в картинке"
+              className={`h-9 w-9 ${iconButtonBase}`}
             >
-              <PictureInPicture2 size={17} />
+              <PictureInPicture2 size={16} />
             </button>
 
             <button
               type="button"
-              aria-label={
-                state.isFullscreen
-                  ? 'Exit fullscreen'
-                  : 'Fullscreen'
-              }
-              onMouseDown={(event) => {
-                event.preventDefault();
-              }}
-              onClick={(event) => {
-                event.currentTarget.blur();
+              aria-label={state.isFullscreen ? 'Выйти из полноэкранного режима' : 'Полный экран'}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.currentTarget.blur();
                 actions.toggleFullscreen();
               }}
-              className={`h-9 w-9 ${controlButtonClass}`}
+              className={`h-9 w-9 ${iconButtonBase}`}
             >
-              {state.isFullscreen ? (
-                <Minimize size={18} />
-              ) : (
-                <Maximize size={18} />
-              )}
+              {state.isFullscreen ? <Minimize size={17} /> : <Maximize size={17} />}
             </button>
           </div>
         </div>
       </div>
     </div>
   );
-}
+});
