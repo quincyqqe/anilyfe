@@ -178,6 +178,21 @@
   background: oklch(0.03 0.01 260);
 }
 
+@keyframes anilyfeCenterPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
 .embla {
   position: relative;
   overflow: hidden;

@@ -41,7 +41,7 @@ export function QualityMenu({ qualities, activeUrl, onSelect }: QualityMenuProps
       </button>
 
       {open && (
-        <div className="absolute bottom-full right-0 mb-2 min-w-[126px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_16px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+        <div className="absolute bottom-full right-0 mb-2 min-w-[126px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_16px_40px_rgba(0,0,0,0.45)]">
           {qualities.map((quality) => {
             const isActive = quality.url === activeUrl;
 

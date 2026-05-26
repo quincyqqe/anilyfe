@@ -77,7 +77,7 @@ export function Navigation({ user, onSearchClick }: NavigationProps) {
     <>
       <header className="fixed inset-x-0 top-0 z-50 px-4 pointer-events-none">
         <motion.div
-          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.7)] border"
+          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden backdrop-blur-md shadow-[0_24px_80px_rgba(0,0,0,0.7)] border"
           initial={{ opacity: 0, borderColor: 'rgba(255,255,255,0.05)' }}
           animate={isScrolled ? 'scrolled' : 'top'}
           transition={{

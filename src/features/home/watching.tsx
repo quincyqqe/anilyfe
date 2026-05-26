@@ -56,7 +56,7 @@ const ContinueWatching = () => {
 
                     <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition" />
 
-                    <div className="absolute bottom-2 right-2 text-[10px] px-2 py-1 bg-black/60 backdrop-blur-md rounded-md text-white border border-white/10 shadow">
+                    <div className="absolute bottom-2 right-2 text-[10px] px-2 py-1 bg-black/60 rounded-md text-white border border-white/10 shadow">
                       {formatTime(item.time)}
                     </div>
 

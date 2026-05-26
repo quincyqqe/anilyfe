@@ -37,7 +37,7 @@ export function SettingsMenu({ playbackRate, onSetRate }: SettingsMenuProps) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full right-0 mb-2 min-w-[148px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_16px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+        <div className="absolute bottom-full right-0 mb-2 min-w-[148px] overflow-hidden rounded-2xl border border-white/10 bg-zinc-950/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_16px_40px_rgba(0,0,0,0.45)]">
           <div className="border-b border-white/5 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
             Скорость
           </div>

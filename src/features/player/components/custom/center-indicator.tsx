@@ -59,7 +59,7 @@ export function CenterIndicator({ playing, seekTrigger }: CenterIndicatorProps) 
       className="pointer-events-none absolute inset-0 z-30 flex animate-[anilyfeCenterPop_0.52s_ease-out_forwards] items-center justify-center"
       aria-hidden
     >
-      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-white/15 bg-zinc-950/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+      <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-white/15 bg-zinc-950/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_16px_40px_rgba(0,0,0,0.5)]">
         <Icon
           size={26}
           className={isFilled ? 'fill-white text-white' : 'text-white'}
