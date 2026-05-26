@@ -18,7 +18,7 @@ export function LoginForm() {
 
   return (
     <div className="card-animate w-full max-w-sm">
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 backdrop-blur shadow-2xl">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900/70 shadow-2xl">
         <div className="p-6 pb-0 space-y-1">
           <h2 className="text-2xl font-semibold text-zinc-50">С возвращением</h2>
           <p className="text-sm text-zinc-400">Войдите в свой аккаунт</p>

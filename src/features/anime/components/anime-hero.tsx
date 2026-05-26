@@ -15,7 +15,7 @@ export function AnimeHero({ posterSrc }: Props) {
         height={48}
         quality={75}
         preload
-        className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-50 -z-10"
+        className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 opacity-50 -z-10"
       />
       <div className="ad-hero__bg-overlay" />
     </div>

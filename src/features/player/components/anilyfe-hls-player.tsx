@@ -202,7 +202,7 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
       >
         <div className="flex min-w-0 items-start gap-3">
           {/* Episode number badge */}
-          <div className="flex h-11 w-11 flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/50 backdrop-blur-sm sm:h-12 sm:w-12 shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+          <div className="flex h-11 w-11 flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/50 sm:h-12 sm:w-12 shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
             <span className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/40">
               EP
             </span>
@@ -233,7 +233,7 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
             '-translate-x-1/2 -translate-y-1/2',
             'flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center',
             'rounded-full',
-            'border border-white/15 bg-black/55 backdrop-blur-md',
+            'border border-white/15 bg-black/55',
             'text-white',
             'shadow-[0_8px_32px_rgba(0,0,0,0.5)]',
             'transition-all duration-200 hover:scale-105 hover:bg-black/70 active:scale-95',

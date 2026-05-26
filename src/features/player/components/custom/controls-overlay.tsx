@@ -142,8 +142,7 @@ export const ControlsOverlay = memo(function ControlsOverlay({
               type="button"
               aria-label={state.isFullscreen ? 'Выйти из полноэкранного режима' : 'Полный экран'}
               onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => {
-                e.currentTarget.blur();
+              onClick={() => {
                 actions.toggleFullscreen();
               }}
               className={`h-9 w-9 ${iconButtonBase}`}

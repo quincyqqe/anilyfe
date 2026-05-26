@@ -28,7 +28,7 @@ export function AnimeMetaChips({ anime }: Props) {
       )}
 
       {anime.is_in_production && (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-primary/20 text-primary border border-primary/30 backdrop-blur-sm">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-primary/20 text-primary border border-primary/30">
           <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           Онгоинг
         </span>

@@ -27,7 +27,7 @@ export function PlayerLoading({ visible }: PlayerLoadingProps) {
       className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-200"
       style={{ opacity: show ? 1 : 0 }}
     >
-      <div className="relative h-11 w-11 rounded-full border border-white/10 bg-zinc-950/40 backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
+      <div className="relative h-11 w-11 rounded-full border border-white/10 bg-zinc-950/40 shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
         <div className="absolute inset-2 rounded-full border-2 border-white/8" />
         <div
           className="absolute inset-2 animate-spin rounded-full border-2 border-transparent border-t-white/70"

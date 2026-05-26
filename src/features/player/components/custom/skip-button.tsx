@@ -103,7 +103,7 @@ export function SkipButton({ episode, currentTime, hudVisible, onSkip }: SkipBut
       <button
         type="button"
         onClick={handleClick}
-        className="flex items-center gap-2 rounded-2xl border border-white/15 bg-black/65 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-150 hover:border-white/30 hover:bg-white/12 active:scale-95 focus:outline-none"
+        className="flex items-center gap-2 rounded-2xl border border-white/15 bg-black/65 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-all duration-150 hover:border-white/30 hover:bg-white/12 active:scale-95 focus:outline-none"
       >
         <ChevronsRight size={16} className="text-white/70" />
         {activeSegment?.label}

@@ -34,7 +34,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 height={48}
                 quality={75}
                 loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-50 -z-10"
+                className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-75 -z-10"
               />
               <Image
                 src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.src}`}

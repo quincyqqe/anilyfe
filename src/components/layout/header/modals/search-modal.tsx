@@ -22,7 +22,7 @@ function SearchEmptyState({ title, description }: { title: string; description: 
       className="py-24 flex flex-col items-center justify-center gap-3 text-center select-none"
     >
       <div className="relative flex items-center justify-center w-20 h-20 mb-2">
-        <div className="absolute inset-0 rounded-full  blur-xl mix-blend-screen" />
+        <div className="absolute inset-0 rounded-full mix-blend-screen" />
         <Sparkles size={32} className="text-indigo-400 relative z-10" />
       </div>
       <h3 className="text-lg font-medium tracking-wide text-zinc-100">{title}</h3>
@@ -102,7 +102,7 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
           className="flex flex-col items-center justify-center py-24 gap-4"
         >
           <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-indigo-500/20 blur-sm animate-pulse" />
+            <div className="absolute inset-0 rounded-full bg-indigo-500/20 animate-pulse" />
             <div className="w-8 h-8 rounded-full border-2 border-indigo-500/30 border-t-indigo-500 animate-spin" />
           </div>
           <p className="text-sm text-zinc-500 tracking-wide font-medium">Ищем аниме...</p>
@@ -188,9 +188,9 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
         <div className="fixed inset-0 z-100 flex items-start justify-center pt-[10vh] px-4 sm:px-6">
           {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(2px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: 'easeInOut' }}
             className="fixed inset-0 bg-black/40"
             onClick={toggleSearchModal}
@@ -202,7 +202,7 @@ export default function SearchModal({ isSearchModalOpen, toggleSearchModal }: Se
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-3xl rounded-[24px] bg-black/40 border border-white/10 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.8)] backdrop-blur-xl overflow-hidden flex flex-col max-h-[80vh]"
+            className="relative w-full max-w-3xl rounded-[24px] bg-black/70 border border-white/10 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.8)] backdrop-blur-sm overflow-hidden flex flex-col max-h-[80vh]"
           >
             {/* Spotlight effect behind the search bar */}
             {/* <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary/10 via-purple-500/5 to-transparent pointer-events-none" /> */}

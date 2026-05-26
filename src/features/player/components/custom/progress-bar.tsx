@@ -83,7 +83,7 @@ export const ProgressBar = memo(function ProgressBar({
       {/* Hover time tooltip */}
       {hoverFraction != null && (
         <div
-          className="pointer-events-none absolute bottom-[calc(100%-4px)] z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-zinc-950/85 px-2 py-1 text-[11px] font-semibold tabular-nums text-white shadow-lg backdrop-blur-sm"
+          className="pointer-events-none absolute bottom-[calc(100%-4px)] z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-zinc-950/85 px-2 py-1 text-[11px] font-semibold tabular-nums text-white shadow-lg"
           style={{ left: tooltipLeft }}
         >
           {formatTime(hoverTime)}

@@ -35,7 +35,7 @@ const Controls = ({ count, selectedIndex, onDotClick, onPrev, onNext }: Props) =
           <button
             key={i}
             onClick={action}
-            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/25 backdrop-blur-md transition-all duration-200 group"
+            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/25 transition-all duration-200 group"
           >
             <Icon className="w-5 h-5 text-white/50 group-hover:text-white transition-colors" />
           </button>
