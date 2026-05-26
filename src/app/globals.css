@@ -104,7 +104,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 
   body {
@@ -160,7 +160,6 @@
 
   border-radius: var(--radius);
 }
-
 
 .anilyfe-hls-player:fullscreen {
   width: 100vw;
