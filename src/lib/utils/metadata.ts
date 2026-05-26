@@ -7,7 +7,7 @@ import {
 /**
  * Default metadata values for the Hikka application
  */
-export const DEFAULTS = {
+const DEFAULTS = {
   siteName: 'AniLyfe',
   images: '/preview.jpg',
   title: {

@@ -1,9 +1,10 @@
 'use client';
 
 import { AnimeEpisode } from '@/shared/types/anime';
-import clsx from 'clsx';
+import { cn } from '@/lib/utils/cn';
 import { ListVideo, Play } from 'lucide-react';
 import Image from 'next/image';
+import { memo, useCallback } from 'react';
 
 function getEpisodeThumb(episode: AnimeEpisode) {
   const src = episode.preview?.optimized?.src;
@@ -21,11 +22,9 @@ export function EpisodeList({ episodes, currentIdx, onSelect }: EpisodeListProps
     <aside className="flex shrink-0 flex-col gap-3 lg:w-72 xl:w-80">
       <header className="flex items-center gap-2 px-1">
         <ListVideo size={14} className="text-zinc-500" />
-
         <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
           Список серий
         </span>
-
         <span className="ml-auto tabular-nums text-[10px] font-bold tracking-[0.14em] uppercase text-zinc-600">
           {episodes.length} эп.
         </span>
@@ -39,7 +38,7 @@ export function EpisodeList({ episodes, currentIdx, onSelect }: EpisodeListProps
               episode={episode}
               index={idx}
               active={idx === currentIdx}
-              onClick={() => onSelect(idx)}
+              onSelect={onSelect}
             />
           ))}
         </div>
@@ -52,24 +51,30 @@ interface EpisodeItemProps {
   episode: AnimeEpisode;
   index: number;
   active: boolean;
-  onClick: () => void;
+  onSelect: (idx: number) => void;
 }
 
-function EpisodeItem({ episode, index, active, onClick }: EpisodeItemProps) {
+// Memoized to prevent re-render of all items when currentIdx changes
+const EpisodeItem = memo(function EpisodeItem({
+  episode,
+  index,
+  active,
+  onSelect,
+}: EpisodeItemProps) {
   const thumb = getEpisodeThumb(episode);
   const ordinal = episode.ordinal ?? index + 1;
+
+  const handleClick = useCallback(() => onSelect(index), [onSelect, index]);
 
   return (
     <button
       aria-current={active}
       data-active={active}
       data-episode={ordinal}
-      onClick={onClick}
-      className={clsx(
+      onClick={handleClick}
+      className={cn(
         'group relative flex w-full items-center gap-3 px-3 py-2.5 text-left transition-all duration-200',
-        active
-          ? 'bg-primary/10 text-zinc-100'
-          : 'text-zinc-400 hover:bg-white/4 hover:text-zinc-200',
+        active ? 'bg-primary/10 text-zinc-100' : 'text-zinc-400 hover:bg-white/4 hover:text-zinc-200',
       )}
     >
       <div className="relative h-10 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
@@ -89,16 +94,18 @@ function EpisodeItem({ episode, index, active, onClick }: EpisodeItemProps) {
         )}
 
         <div
-          className={clsx(
+          className={cn(
             'absolute inset-0 flex items-center justify-center transition',
             active ? 'bg-primary/30' : 'bg-black/0 group-hover:bg-black/40',
           )}
         >
           <Play
             size={10}
-            className={clsx(
+            className={cn(
               'transition',
-              active ? 'fill-primary text-primary' : 'text-white opacity-0 group-hover:opacity-100',
+              active
+                ? 'fill-primary text-primary'
+                : 'text-white opacity-0 group-hover:opacity-100',
             )}
           />
         </div>
@@ -106,7 +113,6 @@ function EpisodeItem({ episode, index, active, onClick }: EpisodeItemProps) {
 
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="text-xs font-semibold leading-tight">Эпизод {ordinal}</span>
-
         {episode.name ? (
           <span className="truncate text-[11px] leading-tight text-zinc-500">{episode.name}</span>
         ) : (
@@ -121,4 +127,4 @@ function EpisodeItem({ episode, index, active, onClick }: EpisodeItemProps) {
       )}
     </button>
   );
-}
+});
