@@ -11,7 +11,7 @@ interface Pagination {
   total_pages: number;
 }
 
-export interface CatalogResponse {
+interface CatalogResponse {
   data: Anime[];
   meta: { pagination: Pagination };
 }
