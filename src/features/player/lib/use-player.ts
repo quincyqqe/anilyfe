@@ -94,9 +94,7 @@ function readPlaybackRate(): number {
 function writeStorage(key: string, value: string) {
   try {
     localStorage.setItem(key, value);
-  } catch {
-    /* noop */
-  }
+  } catch {}
 }
 
 export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOptions) {
@@ -105,7 +103,6 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
   const hlsRef = useRef<Hls | null>(null);
   const onProgressRef = useRef(onProgress);
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const loadedEpisodeIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -129,14 +126,10 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     videoReady: false,
   }));
 
-  const patch = useCallback(
-    (p: Partial<PlayerState>) => setState((prev) => ({ ...prev, ...p })),
-    [],
-  );
+  const patch = useCallback((p: Partial<PlayerState>) => {
+    setState((prev) => ({ ...prev, ...p }));
+  }, []);
 
-  /* ========================================================== */
-  /*  HLS + Video lifecycle                                      */
-  /* ========================================================== */
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -144,16 +137,13 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     const url = getBestUrl(episode);
     if (!url) return;
 
-    if (loadedEpisodeIdRef.current === episode.id) return;
-    loadedEpisodeIdRef.current = episode.id;
-
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
     }
 
     const qualities = buildQualities(episode);
-    const volume = Math.max(0, Math.min(1, readNumberStorage(VOLUME_KEY, 1)));
+    const volume = readNumberStorage(VOLUME_KEY, 1);
     const muted = readStorage(MUTED_KEY, 'false') === 'true';
     const rate = readPlaybackRate();
 
@@ -178,9 +168,7 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     if (Hls.isSupported()) {
       const hls = new Hls({
         startLevel: -1,
-
         backBufferLength: 60,
-
         maxMaxBufferLength: 30,
       });
 
@@ -190,38 +178,31 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.playbackRate = rate;
-        if (initialTime > 5) {
-          video.currentTime = initialTime;
-        }
+        if (initialTime > 5) video.currentTime = initialTime;
       });
 
-      hls.on(Hls.Events.ERROR, (_event, data) => {
+      hls.on(Hls.Events.ERROR, (_e, data) => {
         if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              hls.recoverMediaError();
-              break;
-            default:
-              hls.destroy();
-              hlsRef.current = null;
-              break;
-          }
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else hls.destroy();
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
-      const onMeta = () => {
-        video.playbackRate = rate;
-        if (initialTime > 5) video.currentTime = initialTime;
-      };
-      video.addEventListener('loadedmetadata', onMeta, { once: true });
+      video.addEventListener(
+        'loadedmetadata',
+        () => {
+          video.playbackRate = rate;
+          if (initialTime > 5) video.currentTime = initialTime;
+        },
+        { once: true },
+      );
     }
 
     return () => {};
-  }, [episode, patch]);
+  }, [episode, initialTime, patch]);
+
   useEffect(() => {
     return () => {
       if (hlsRef.current) {
@@ -235,9 +216,6 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     };
   }, []);
 
-  /* ========================================================== */
-  /*  Video event listeners                                      */
-  /* ========================================================== */
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -294,74 +272,53 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     };
   }, [patch]);
 
-  /* ========================================================== */
-  /*  Progress save timer                                        */
-  /* ========================================================== */
   useEffect(() => {
-    const clearTimer = () => {
-      if (saveTimerRef.current) {
-        clearInterval(saveTimerRef.current);
-        saveTimerRef.current = null;
-      }
-    };
-
     const video = videoRef.current;
-    if (!video) return clearTimer;
+    if (!video) return;
 
-    if (state.playing) {
-      clearTimer();
-      saveTimerRef.current = setInterval(() => {
-        if (video.currentTime > 0) {
-          onProgressRef.current?.(video.currentTime, video.duration);
-        }
-      }, SAVE_INTERVAL_MS);
-    } else {
+    if (!state.playing) {
       if (state.hasPlayed && video.currentTime > 0) {
         onProgressRef.current?.(video.currentTime, video.duration);
       }
-      clearTimer();
+      return;
     }
 
-    return clearTimer;
+    const id = setInterval(() => {
+      if (video.currentTime > 0) {
+        onProgressRef.current?.(video.currentTime, video.duration);
+      }
+    }, SAVE_INTERVAL_MS);
+
+    return () => clearInterval(id);
   }, [state.playing, state.hasPlayed]);
 
-  /* ========================================================== */
-  /*  Fullscreen listener                                        */
-  /* ========================================================== */
   useEffect(() => {
     const handler = () => patch({ isFullscreen: !!document.fullscreenElement });
     document.addEventListener('fullscreenchange', handler);
     return () => document.removeEventListener('fullscreenchange', handler);
   }, [patch]);
 
-  /* ========================================================== */
-  /*  PiP listener                                              */
-  /* ========================================================== */
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const onEnterPip = () => patch({ isPip: true });
-    const onLeavePip = () => patch({ isPip: false });
-    video.addEventListener('enterpictureinpicture', onEnterPip);
-    video.addEventListener('leavepictureinpicture', onLeavePip);
+
+    const onEnter = () => patch({ isPip: true });
+    const onLeave = () => patch({ isPip: false });
+
+    video.addEventListener('enterpictureinpicture', onEnter);
+    video.addEventListener('leavepictureinpicture', onLeave);
+
     return () => {
-      video.removeEventListener('enterpictureinpicture', onEnterPip);
-      video.removeEventListener('leavepictureinpicture', onLeavePip);
+      video.removeEventListener('enterpictureinpicture', onEnter);
+      video.removeEventListener('leavepictureinpicture', onLeave);
     };
   }, [patch]);
-
-  /* ========================================================== */
-  /*  Actions — stable references, no stale closures           */
-  /* ========================================================== */
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) {
-      video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
+    if (video.paused) video.play().catch(() => {});
+    else video.pause();
   }, []);
 
   const seek = useCallback((time: number) => {
@@ -429,7 +386,7 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
           if (wasPlaying) video.play().catch(() => {});
         });
 
-        hls.on(Hls.Events.ERROR, (_event, data) => {
+        hls.on(Hls.Events.ERROR, (_e, data) => {
           if (data.fatal) hls.destroy();
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -449,39 +406,33 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
   );
 
   const toggleFullscreen = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const el = containerRef.current;
+    if (!el) return;
+
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     } else {
-      container.requestFullscreen().catch(() => {});
+      el.requestFullscreen().catch(() => {});
     }
   }, []);
 
   const togglePip = useCallback(async () => {
     const video = videoRef.current;
     if (!video) return;
+
     try {
       if (document.pictureInPictureElement) {
         await document.exitPictureInPicture();
       } else {
         await video.requestPictureInPicture();
       }
-    } catch {
-      /* browser may not support PiP */
-    }
+    } catch {}
   }, []);
 
-  /* ========================================================== */
-  /*  Keyboard shortcuts                                         */
-  /* ========================================================== */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
-      if (!containerRef.current) return;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
 
       switch (e.key) {
         case ' ':
@@ -520,8 +471,7 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     return () => window.removeEventListener('keydown', handler);
   }, [togglePlay, seekRelative, setVolume, toggleMute, toggleFullscreen]);
 
-  // Stable actions object — memoized so downstream components don't re-render
-  const actions = useMemo<PlayerActions>(
+  const actions = useMemo(
     () => ({
       togglePlay,
       seek,
@@ -533,17 +483,7 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
       toggleFullscreen,
       togglePip,
     }),
-    [
-      togglePlay,
-      seek,
-      seekRelative,
-      setVolume,
-      toggleMute,
-      setPlaybackRate,
-      setQuality,
-      toggleFullscreen,
-      togglePip,
-    ],
+    [togglePlay, seek, seekRelative, setVolume, toggleMute, setPlaybackRate, setQuality, toggleFullscreen, togglePip],
   );
 
   return { videoRef, containerRef, state, actions };
