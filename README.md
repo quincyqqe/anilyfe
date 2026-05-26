@@ -1,6 +1,6 @@
 # Anilyfe
 
-Anilyfe is a modern anime streaming platform built with a focus on user experience, speed, and clean design. It leverages modern web technologies to deliver a smooth and immersive viewing experience.
+Modern anime streaming platform built with Next.js, using AniLiberty API.
 
 ---
 
@@ -9,7 +9,7 @@ Anilyfe is a modern anime streaming platform built with a focus on user experien
 - **Framework:** Next.js (App Router)
 - **UI & Styling:** Tailwind CSS, HeroUI, Framer Motion
 - **Backend & Auth:** Supabase
-- **Video Playback:** Vidstack, Artplayer
+- **Video Playback:** Custom HLS player
 - **Data Source:** AniLiberty API
 
 ---
