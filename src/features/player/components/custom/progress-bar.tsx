@@ -72,7 +72,7 @@ export const ProgressBar = memo(function ProgressBar({
     setIsDragging(false);
   }, [isDragging]);
 
-  
+
   const tooltipLeft =
     hoverFraction != null
       ? `clamp(28px, calc(${hoverFraction * 100}% + 12px), calc(100% - 28px))`
@@ -92,7 +92,7 @@ export const ProgressBar = memo(function ProgressBar({
 
       <div
         ref={barRef}
-        className="relative h-1 rounded-full bg-white/15 transition-[height] duration-150 group-hover/progress:h-[5px]"
+        className="relative h-[5px] rounded-full bg-white/15 transition-[height] duration-150 group-hover/progress:h-[9px]"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
