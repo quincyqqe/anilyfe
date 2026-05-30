@@ -1,19 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { Menu, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Search, User } from 'lucide-react';
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { useState } from 'react';
 
-import { siteConfig } from '@/config/site.config';
 import Image from '@/components/ui/image';
+import { siteConfig } from '@/config/site.config';
 import type { AuthUserWithProfile } from '@/lib/db/queries';
 
-import SearchModal from './modals/search-modal';
+import { useIsMobile } from './hooks/use-mobile';
 import { useSearchModal } from './hooks/use-search-modal';
 import { MobileMenu } from './mobile-menu';
-import { useIsMobile } from './hooks/use-mobile';
+import SearchModal from './modals/search-modal';
 
 interface NavigationProps {
   user: AuthUserWithProfile | null;
@@ -23,25 +23,23 @@ interface NavigationProps {
 const headerVariants = {
   top: {
     opacity: 1,
-    scale: 1,
     marginTop: 20,
     paddingTop: 16,
     paddingBottom: 16,
     paddingLeft: 24,
     paddingRight: 24,
     borderRadius: 16,
-    backgroundColor: 'rgba(9, 9, 11, 0.4)',
+    backgroundColor: 'rgba(9, 9, 11, 0.75)',
   },
   scrolled: {
     opacity: 1,
-    scale: 1,
     marginTop: 12,
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 16,
     paddingRight: 16,
     borderRadius: 24,
-    backgroundColor: 'rgba(9, 9, 11, 0.65)',
+    backgroundColor: 'rgba(9, 9, 11, 0.85)',
   },
 };
 function isActiveLink(pathname: string, href: string) {
@@ -77,17 +75,14 @@ export function Navigation({ user, onSearchClick }: NavigationProps) {
     <>
       <header className="fixed inset-x-0 top-0 z-50 px-4 pointer-events-none">
         <motion.div
-          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden backdrop-blur-md shadow-[0_24px_80px_rgba(0,0,0,0.7)] border"
-          initial={{ opacity: 0, borderColor: 'rgba(255,255,255,0.05)' }}
+          initial={false}
           animate={isScrolled ? 'scrolled' : 'top'}
-          transition={{
-            opacity: { duration: 0.5 },
-            default: {
-              duration: 0.45,
-              ease: [0.4, 0, 0.2, 1],
-            },
-          }}
           variants={headerVariants}
+          transition={{
+            duration: 0.45,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden border border-white/5 shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
         >
           <Link
             href="/"
