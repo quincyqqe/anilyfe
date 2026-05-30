@@ -4,14 +4,10 @@ import { updateAnimeProgress } from '@/lib/db/actions/anime-list';
 import type { Anime, AnimeEpisode } from '@/shared/types/anime';
 import { Clapperboard } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { saveAnimeHistory } from '../../lib/utils/anime-history';
 import { AnilyfeHlsPlayer } from './components/anilyfe-hls-player';
 import { EpisodeList } from './components/episode-list';
 
-function resolveThumb(episode: AnimeEpisode): string | undefined {
-  const src = episode.preview?.optimized?.src;
-  return src ? `${process.env.NEXT_PUBLIC_MEDIA_URL}${src}` : undefined;
-}
+import { resolveThumb } from './lib/resolve-thumb';
 
 interface Props {
   anime: Anime;
@@ -32,53 +28,40 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
   const lastEpisodeRef = useRef<number | null>(null);
   const lastProgressSyncRef = useRef(0);
 
-  const handleEpisodeSelect = useCallback(
-    (idx: number) => {
-      setCurrentIdx(idx);
+  // Keep a stable ref of frequently changing values to keep callbacks completely stable
+  const stateRef = useRef({ anime, currentIdx, dbEntry });
+  useEffect(() => {
+    stateRef.current = { anime, currentIdx, dbEntry };
+  }, [anime, currentIdx, dbEntry]);
 
-      if (!dbEntry || !anime.alias) return;
+  const handleEpisodeSelect = useCallback((idx: number) => {
+    setCurrentIdx(idx);
 
-      if (lastEpisodeRef.current === idx) return;
-      lastEpisodeRef.current = idx;
+    const { dbEntry: currentDbEntry, anime: currentAnime } = stateRef.current;
+    if (!currentDbEntry || !currentAnime.alias) return;
 
-      updateAnimeProgress(anime.alias, idx + 1, 0, 0);
-    },
-    [dbEntry, anime.alias],
-  );
+    if (lastEpisodeRef.current === idx) return;
+    lastEpisodeRef.current = idx;
 
-  const handleProgress = useCallback(
-    (currentTime: number, duration: number) => {
-      console.log('progress tick', currentTime);
+    updateAnimeProgress(currentAnime.alias, idx + 1, 0, 0);
+  }, []);
 
-      const episode = anime.episodes?.[currentIdx];
-      if (!episode) return;
+  const handleProgress = useCallback((currentTime: number, duration: number) => {
+    console.log('progress tick', currentTime);
 
-      saveAnimeHistory({
-        animeId: anime.id,
-        animeSlug: anime.alias,
-        animeTitle: anime.name?.main,
-        episode: currentIdx,
-        preview: resolveThumb(episode),
-        time: currentTime,
-        timeLeft: duration - currentTime,
-      });
+    const { anime: currentAnime, currentIdx: idx, dbEntry: currentDbEntry } = stateRef.current;
+    const episode = currentAnime.episodes?.[idx];
+    if (!episode) return;
 
-      const now = Date.now();
+    const now = Date.now();
 
-      if (now - lastProgressSyncRef.current < 10000) return;
-      lastProgressSyncRef.current = now;
+    if (now - lastProgressSyncRef.current < 10000) return;
+    lastProgressSyncRef.current = now;
 
-      if (!dbEntry || !anime.alias) return;
+    if (!currentDbEntry || !currentAnime.alias) return;
 
-      updateAnimeProgress(
-        anime.alias,
-        currentIdx + 1,
-        Math.round(currentTime),
-        Math.round(duration),
-      );
-    },
-    [anime, currentIdx, dbEntry],
-  );
+    updateAnimeProgress(currentAnime.alias, idx + 1, Math.round(currentTime), Math.round(duration));
+  }, []);
 
   if (!episodes.length) {
     return (
