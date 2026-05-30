@@ -165,6 +165,9 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
       videoReady: false,
     });
 
+    let mediaRetryCount = 0;
+    let networkRetryCount = 0;
+
     if (Hls.isSupported()) {
       const hls = new Hls({
         startLevel: -1,
@@ -183,9 +186,28 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
 
       hls.on(Hls.Events.ERROR, (_e, data) => {
         if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-          else hls.destroy();
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            if (networkRetryCount < 3) {
+              networkRetryCount++;
+              console.warn(`HLS fatal network error: attempting retry ${networkRetryCount}/3...`);
+              hls.startLoad();
+            } else {
+              console.error('HLS fatal network error: exceeded retry limit. Destroying stream.');
+              hls.destroy();
+            }
+          } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            if (mediaRetryCount < 3) {
+              mediaRetryCount++;
+              console.warn(`HLS fatal media error: attempting recover ${mediaRetryCount}/3...`);
+              hls.recoverMediaError();
+            } else {
+              console.error('HLS fatal media error: exceeded retry limit. Destroying stream.');
+              hls.destroy();
+            }
+          } else {
+            console.error('HLS unrecoverable fatal error. Destroying stream.');
+            hls.destroy();
+          }
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -200,7 +222,12 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
       );
     }
 
-    return () => {};
+    return () => {
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+    };
   }, [episode, initialTime, patch]);
 
   useEffect(() => {
@@ -432,7 +459,8 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+        return;
 
       switch (e.key) {
         case ' ':
@@ -483,7 +511,17 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
       toggleFullscreen,
       togglePip,
     }),
-    [togglePlay, seek, seekRelative, setVolume, toggleMute, setPlaybackRate, setQuality, toggleFullscreen, togglePip],
+    [
+      togglePlay,
+      seek,
+      seekRelative,
+      setVolume,
+      toggleMute,
+      setPlaybackRate,
+      setQuality,
+      toggleFullscreen,
+      togglePip,
+    ],
   );
 
   return { videoRef, containerRef, state, actions };
