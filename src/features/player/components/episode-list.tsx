@@ -6,10 +6,7 @@ import { ListVideo, Play } from 'lucide-react';
 import Image from 'next/image';
 import { memo, useCallback } from 'react';
 
-function getEpisodeThumb(episode: AnimeEpisode) {
-  const src = episode.preview?.optimized?.src;
-  return src ? `${process.env.NEXT_PUBLIC_MEDIA_URL}${src}` : undefined;
-}
+import { resolveThumb } from '../lib/resolve-thumb';
 
 interface EpisodeListProps {
   episodes: AnimeEpisode[];
@@ -17,7 +14,11 @@ interface EpisodeListProps {
   onSelect: (idx: number) => void;
 }
 
-export function EpisodeList({ episodes, currentIdx, onSelect }: EpisodeListProps) {
+export const EpisodeList = memo(function EpisodeList({
+  episodes,
+  currentIdx,
+  onSelect,
+}: EpisodeListProps) {
   return (
     <aside className="flex shrink-0 flex-col gap-3 lg:w-72 xl:w-80">
       <header className="flex items-center gap-2 px-1">
@@ -45,7 +46,7 @@ export function EpisodeList({ episodes, currentIdx, onSelect }: EpisodeListProps
       </div>
     </aside>
   );
-}
+});
 
 interface EpisodeItemProps {
   episode: AnimeEpisode;
@@ -61,7 +62,7 @@ const EpisodeItem = memo(function EpisodeItem({
   active,
   onSelect,
 }: EpisodeItemProps) {
-  const thumb = getEpisodeThumb(episode);
+  const thumb = resolveThumb(episode);
   const ordinal = episode.ordinal ?? index + 1;
 
   const handleClick = useCallback(() => onSelect(index), [onSelect, index]);
@@ -74,7 +75,9 @@ const EpisodeItem = memo(function EpisodeItem({
       onClick={handleClick}
       className={cn(
         'group relative flex w-full items-center gap-3 px-3 py-2.5 text-left transition-all duration-200',
-        active ? 'bg-primary/10 text-zinc-100' : 'text-zinc-400 hover:bg-white/4 hover:text-zinc-200',
+        active
+          ? 'bg-primary/10 text-zinc-100'
+          : 'text-zinc-400 hover:bg-white/4 hover:text-zinc-200',
       )}
     >
       <div className="relative h-10 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-zinc-900">
@@ -103,9 +106,7 @@ const EpisodeItem = memo(function EpisodeItem({
             size={10}
             className={cn(
               'transition',
-              active
-                ? 'fill-primary text-primary'
-                : 'text-white opacity-0 group-hover:opacity-100',
+              active ? 'fill-primary text-primary' : 'text-white opacity-0 group-hover:opacity-100',
             )}
           />
         </div>
