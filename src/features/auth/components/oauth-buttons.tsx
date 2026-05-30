@@ -1,6 +1,6 @@
 'use client';
 
-import { Chrome } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { addToast } from '@heroui/react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -36,7 +36,7 @@ export function OAuthButtons({ loading }: OAuthButtonsProps) {
         onClick={() => handleOAuth('google')}
         className="inline-flex items-center justify-center gap-2 h-10 rounded-lg border border-zinc-800 bg-zinc-950 text-zinc-50 text-sm font-medium hover:bg-zinc-900/80 transition-colors disabled:opacity-50"
       >
-        <Chrome className="h-4 w-4" /> Google
+        <Globe className="h-4 w-4" /> Google
       </button>
     </div>
   );

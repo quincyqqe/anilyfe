@@ -38,7 +38,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
     onProgress,
   });
 
-  console.log('render')
   const [controlsVisible, setControlsVisible] = useState(true);
   const [seekTrigger, setSeekTrigger] = useState<SeekTrigger>(null);
 
@@ -46,7 +45,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   const lastMoveTimeRef = useRef(0);
   const isPlayingRef = useRef(false);
 
-  // Keep a ref in sync with state.playing to avoid stale closure in revealControls
   useEffect(() => {
     isPlayingRef.current = state.playing;
   }, [state.playing]);
@@ -68,7 +66,7 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
 
   const revealControls = useCallback(() => {
     const now = Date.now();
-    // throttle: ignore if called < 80ms ago
+
     if (now - lastMoveTimeRef.current < 80) return;
     lastMoveTimeRef.current = now;
 
@@ -76,7 +74,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
     scheduleHide();
   }, [scheduleHide]);
 
-  // When playback starts, schedule a hide; when paused, always show controls
   useEffect(() => {
     if (state.playing) {
       scheduleHide();
@@ -121,13 +118,11 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   const episodeTitle = episode?.name ?? title ?? `Эпизод ${episodeNumber}`;
   const episodeBadge = String(episodeNumber).padStart(2, '0');
 
-  // Controls / HUD are visible when: controls are shown, OR paused, OR never played
   const hudVisible = useMemo(
     () => controlsVisible || !state.playing || !state.hasPlayed,
     [controlsVisible, state.playing, state.hasPlayed],
   );
 
-  // Show poster until video has actual frame data
   const showPoster = poster && !state.videoReady;
 
   return (
@@ -147,7 +142,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         state.playing && !hudVisible && 'cursor-none',
       )}
     >
-      {/* Video element */}
       <video
         ref={videoRef}
         playsInline
@@ -156,7 +150,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         className="relative z-[1] h-full w-full bg-black object-contain"
       />
 
-      {/* Poster overlay — shown until video has data, fades out smoothly */}
       {poster && (
         <div
           className={cn(
@@ -168,7 +161,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         />
       )}
 
-      {/* Cinematic gradient overlay — always present, changes opacity with HUD */}
       <div
         aria-hidden
         className={cn(
@@ -181,17 +173,14 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         }}
       />
 
-      {/* Subtle always-on vignette so edges are always slightly darkened */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-[3]"
         style={{
-          background:
-            'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%)',
         }}
       />
 
-      {/* Top bar — episode info */}
       <div
         aria-hidden={!hudVisible}
         className={cn(
@@ -201,7 +190,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         )}
       >
         <div className="flex min-w-0 items-start gap-3">
-          {/* Episode number badge */}
           <div className="flex h-11 w-11 flex-col items-center justify-center rounded-2xl border border-white/10 bg-black/50 sm:h-12 sm:w-12 shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
             <span className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/40">
               EP
@@ -222,7 +210,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         </div>
       </div>
 
-      {/* Big play button — shown only before first play */}
       {!state.hasPlayed && (
         <button
           type="button"

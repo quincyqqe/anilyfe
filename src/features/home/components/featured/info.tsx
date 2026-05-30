@@ -21,7 +21,7 @@ export function Info({ release, description }: Props) {
 
       {release && <Badges release={release} />}
 
-      <p className="text-white/50 text-sm md:text-base leading-relaxed line-clamp-3 max-w-xl mx-auto md:mx-0 px-4">
+      <p className="text-white/50 text-sm md:text-base leading-relaxed line-clamp-3 max-w-2xl mx-auto md:mx-0">
         {description}
       </p>
 

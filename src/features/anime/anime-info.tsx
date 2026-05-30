@@ -10,7 +10,8 @@ import Image from '@/components/ui/image';
 import { FranchiseItem } from '@/shared/types/franchise';
 import { UserAnimeListEntry } from '@/shared/types/user-anime-list';
 import { AnimeFranchise } from './components/anime-franchise';
-import { AnimeTabs } from './components/anime-tabs';
+import { AnimeDescription } from './components/anime-description';
+
 
 interface Props {
   anime: Anime;
@@ -80,7 +81,7 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
               <AnimeGenres genres={anime.genres} />
             </div>
 
-            <AnimeTabs anime={anime} />
+            <AnimeDescription anime={anime} />
 
             {franchise && (
               <div className="flex flex-col gap-3">
