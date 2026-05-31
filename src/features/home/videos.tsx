@@ -76,7 +76,7 @@ export default async function Videos() {
 
                 <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-medium mt-auto">
                   <Eye className="w-3.5 h-3.5" />
-                  <span>{video.views.toLocaleString('ru-RU')} просмотров</span>
+                  <span>{Number(video.views || 0).toLocaleString('ru-RU')} просмотров</span>
                 </div>
               </div>
             </a>
