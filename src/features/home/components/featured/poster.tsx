@@ -24,6 +24,7 @@ const Poster = ({ release }: { release: PosterRelease }) => {
             alt={release.name.main}
             fill
             className="object-cover"
+            loading='eager'
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300">
