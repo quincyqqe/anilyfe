@@ -82,7 +82,7 @@ export function Navigation({ user, onSearchClick }: NavigationProps) {
             duration: 0.45,
             ease: [0.4, 0, 0.2, 1],
           }}
-          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden border border-white/5 shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
+          className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between overflow-hidden border border-white/5 shadow-[0_24px_80px_rgba(0,0,0,0.7)] backdrop-blur-sm"
         >
           <Link
             href="/"
