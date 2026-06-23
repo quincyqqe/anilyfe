@@ -1,5 +1,5 @@
 'use client';
-import { ToastProvider } from '@heroui/toast';
+import { ToastProvider } from '@heroui/react';
 
 export function AppToastProvider() {
   return (

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from '@/components/ui/image';
-import { ScrollShadow } from '@heroui/scroll-shadow';
+import { ScrollShadow } from '@heroui/react';
 
 interface Props {
   franchise: any;

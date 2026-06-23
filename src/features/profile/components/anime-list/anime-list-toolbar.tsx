@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils/cn';
 import { FILTER_TABS, SORT_OPTIONS } from '../../model/anime-list/constants';
 import type { FilterKey, SortKey, ViewMode } from '../../model/anime-list/types';
 
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/dropdown';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@heroui/react';
 
-import { Button } from '@heroui/button';
+
 
 interface AnimeListToolbarProps {
   activeFilter: FilterKey;
