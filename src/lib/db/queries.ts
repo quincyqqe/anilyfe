@@ -49,9 +49,11 @@ export const getProfileWithAnimeByUsername = cache(
           anime_name,
           anime_poster,
           status,
+          total_episodes,
           current_episode,
           episode_progress,
           episode_duration,
+          is_favourite,
           created_at,
           updated_at
         )
