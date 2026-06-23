@@ -60,21 +60,6 @@ export function getAnimeProgress(anime: UserAnimeEntry): AnimeProgress {
   };
 }
 
-export function getEpisodeLabel({
-  currentEpisode,
-  totalEpisodes,
-}: Pick<AnimeProgress, 'currentEpisode' | 'totalEpisodes'>): string | null {
-  if (totalEpisodes > 0) {
-    return `${currentEpisode} / ${totalEpisodes} эп.`;
-  }
-
-  if (currentEpisode > 0) {
-    return `Серия ${currentEpisode}`;
-  }
-
-  return null;
-}
-
 export function getStatusCounts(animeList: UserAnimeEntry[]): Record<FilterKey, number> {
   const counts = {
     all: animeList.length,
