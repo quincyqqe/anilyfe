@@ -79,12 +79,3 @@ export const getUserAnimeEntry = cache(async (slug: string): Promise<any | null>
   if (error) return null;
   return data ?? null;
 });
-
-export const getUserAnimeList = cache(async (): Promise<any[]> => {
-  const user = await getCurrentUser();
-  if (!user) return [];
-  const supabase = await createClient();
-  const { data, error } = await supabase.from('user_anime_list').select('*').eq('user_id', user.id);
-  if (error) return [];
-  return data ?? [];
-});
