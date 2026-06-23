@@ -16,7 +16,7 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
   return data.user ?? null;
 });
 
-export const getProfileByUserId = cache(async (userId: string): Promise<Profile | null> => {
+const getProfileByUserId = cache(async (userId: string): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('profiles')
