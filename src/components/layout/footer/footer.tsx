@@ -8,17 +8,24 @@ const socialIconMap = {
 } as const;
 
 const Footer = () => {
-  const { brand, infoLinks, socialLinks } = siteConfig.footer;
+  const { brand, infoLinks, socialLinks, legalLinks } = siteConfig.footer;
 
   return (
     <footer className="border-t border-white/10 mt-24 relative">
       <div className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+
+          {/* Brand */}
           <div className="flex flex-col gap-4">
-            <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">{brand.name}</span>
-            <p className="text-sm text-zinc-600 leading-relaxed">{brand.description}</p>
+            <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">
+              {brand.name}
+            </span>
+            <p className="text-sm text-zinc-600 leading-relaxed">
+              {brand.description}
+            </p>
           </div>
 
+          {/* Navigation */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Навигация
@@ -28,8 +35,7 @@ const Footer = () => {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors duration-200"
-                    aria-label={`Перейти на: ${item.label}`}
+                    className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -38,6 +44,7 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Info */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Информация
@@ -49,7 +56,7 @@ const Footer = () => {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors duration-200"
+                    className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
                     {link.label}
                   </a>
@@ -58,20 +65,42 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Legal */}
+          <div className="flex flex-col gap-4">
+            <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
+              Юридическая информация
+            </span>
+            <ul className="flex flex-col gap-2.5">
+              {legalLinks?.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Social */}
           <div className="flex flex-col gap-4">
             <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
               Социальные сети
             </span>
+
             <div className="flex gap-3">
               {socialLinks.map((social) => {
                 const Icon = socialIconMap[social.icon];
+
                 return (
                   <a
                     key={social.href}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-lg border border-zinc-800 bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-colors duration-200"
+                    className="w-9 h-9 rounded-lg border border-zinc-800 bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition"
                     aria-label={social.label}
                   >
                     <Icon className="w-4 h-4" />
@@ -80,6 +109,7 @@ const Footer = () => {
               })}
             </div>
           </div>
+
         </div>
       </div>
     </footer>
