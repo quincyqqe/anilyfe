@@ -19,6 +19,10 @@ export const siteConfig = {
       { href: 'https://anilibria.top/api/docs/v1#/', label: 'API' },
       { href: 'https://anilibria.top/support', label: 'Поддержка' },
     ],
+    legalLinks: [
+      { href: '/privacy', label: 'Политика конфиденциальности' },
+      { href: '/terms', label: 'Условия использования' },
+    ],
     socialLinks: [
       {
         href: 'https://t.me/quincyqqe',

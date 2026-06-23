@@ -16,7 +16,7 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
   return data.user ?? null;
 });
 
-export const getProfileByUserId = cache(async (userId: string): Promise<Profile | null> => {
+const getProfileByUserId = cache(async (userId: string): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('profiles')
@@ -49,9 +49,11 @@ export const getProfileWithAnimeByUsername = cache(
           anime_name,
           anime_poster,
           status,
+          total_episodes,
           current_episode,
           episode_progress,
           episode_duration,
+          is_favourite,
           created_at,
           updated_at
         )
@@ -76,13 +78,4 @@ export const getUserAnimeEntry = cache(async (slug: string): Promise<any | null>
     .maybeSingle();
   if (error) return null;
   return data ?? null;
-});
-
-export const getUserAnimeList = cache(async (): Promise<any[]> => {
-  const user = await getCurrentUser();
-  if (!user) return [];
-  const supabase = await createClient();
-  const { data, error } = await supabase.from('user_anime_list').select('*').eq('user_id', user.id);
-  if (error) return [];
-  return data ?? [];
 });

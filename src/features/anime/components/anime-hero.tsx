@@ -15,7 +15,7 @@ export function AnimeHero({ posterSrc }: Props) {
         sizes="100vw"
         preload
         fetchPriority="high"
-        quality={70}
+        quality={75}
         className="object-cover opacity-50 -z-10"
       />
 

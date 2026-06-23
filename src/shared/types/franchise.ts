@@ -1,12 +1,12 @@
 import { Release } from './anime';
 
-export interface FranchiseImage {
+interface FranchiseImage {
   preview: string;
   thumbnail: string;
   optimized: Record<string, string>;
 }
 
-export interface FranchiseRelease {
+interface FranchiseRelease {
   id: string;
   sort_order: number;
   release_id: number;

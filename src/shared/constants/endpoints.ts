@@ -37,4 +37,10 @@ export const ENDPOINTS = {
   anime: (slug: string) => `${BASE_API_URL}/anime/releases/${slug}`,
 
   catalog: `${BASE_API_URL}/anime/catalog/releases`,
+
+  recommended: (releaseId: string) =>
+    `${BASE_API_URL}/anime/releases/recommended?${createSearchParams({
+      release_id: releaseId,
+      limit: '7',
+    })}`,
 } as const;
