@@ -75,14 +75,6 @@ export const STATUS_PILL = {
   planned: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
 } as const;
 
-export const STATUS_BAR = {
-  watching: 'bg-blue-400',
-  completed: 'bg-emerald-400',
-  on_hold: 'bg-amber-400',
-  dropped: 'bg-red-400',
-  planned: 'bg-violet-400',
-} as const;
-
 export const EMPTY_STATE_MESSAGES = {
   all: {
     title: 'Список пуст',
