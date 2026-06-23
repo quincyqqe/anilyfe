@@ -24,8 +24,7 @@ export const VolumeControl = memo(function VolumeControl({
   const safeVolume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0;
   const effectiveVolume = muted ? 0 : safeVolume;
 
-  const VolumeIcon =
-    effectiveVolume === 0 ? VolumeX : effectiveVolume < 0.5 ? Volume1 : Volume2;
+  const VolumeIcon = effectiveVolume === 0 ? VolumeX : effectiveVolume < 0.5 ? Volume1 : Volume2;
 
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
 
@@ -100,10 +99,12 @@ export const VolumeControl = memo(function VolumeControl({
           <div
             className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-white/80 transition-[width] duration-75"
             style={{ width: `${effectiveVolume * 100}%` }}
+            suppressHydrationWarning
           />
           <div
             className="pointer-events-none absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.4)]"
             style={{ left: `${effectiveVolume * 100}%` }}
+            suppressHydrationWarning
           />
         </div>
       </div>
