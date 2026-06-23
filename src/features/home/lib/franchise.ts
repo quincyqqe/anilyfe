@@ -15,13 +15,3 @@ export function formatYearRange(franchise: any) {
     ? `${franchise.first_year}`
     : `${franchise.first_year} - ${franchise.last_year}`;
 }
-
-export function getReleaseMeta(release: any) {
-  return [
-    release.year ? `${release.year}` : null,
-    release.season?.description ?? null,
-    release.type?.description ?? null,
-    release.episodes_total ? `${release.episodes_total} эп.` : null,
-    release.age_rating?.label ?? null,
-  ].filter(Boolean);
-}
