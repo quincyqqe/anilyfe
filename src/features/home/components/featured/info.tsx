@@ -7,7 +7,7 @@ interface Props {
   description: string;
 }
 
-export function Info({ release, description }: Props) {
+function Info({ release, description }: Props) {
   return (
     <div className="flex flex-col gap-5 min-w-0 flex-1 text-center md:text-left">
       <div>
