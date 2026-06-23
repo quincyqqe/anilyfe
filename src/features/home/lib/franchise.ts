@@ -16,16 +16,6 @@ export function formatYearRange(franchise: any) {
     : `${franchise.first_year} - ${franchise.last_year}`;
 }
 
-export function getReleasePoster(release: any) {
-  return (
-    release.poster?.optimized?.src ??
-    release.poster?.src ??
-    release.poster?.optimized?.thumbnail ??
-    release.poster?.thumbnail ??
-    null
-  );
-}
-
 export function getReleaseMeta(release: any) {
   return [
     release.year ? `${release.year}` : null,
