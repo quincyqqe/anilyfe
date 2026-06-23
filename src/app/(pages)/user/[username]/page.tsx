@@ -1,5 +1,5 @@
 import { ProfileHeader } from '@/features/profile/components/profile-header';
-import { AnimeList } from '@/features/profile/components/anime-list';
+import { AnimeList } from '@/features/profile/components/anime-list/anime-list';
 import { getCurrentUser, getProfileWithAnimeByUsername } from '@/lib/db/queries';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
