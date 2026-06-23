@@ -1,5 +1,5 @@
-import AnimeSection from '@/features/profile/components/anime-section';
 import { ProfileHeader } from '@/features/profile/components/profile-header';
+import { AnimeList } from '@/features/profile/components/anime-list';
 import { getCurrentUser, getProfileWithAnimeByUsername } from '@/lib/db/queries';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -33,7 +33,9 @@ const UserProfilePage = async ({ params }: Props) => {
   return (
     <div className="container mx-auto px-4 pt-28 md:pt-32">
       <ProfileHeader profile={profile} isOwner={isOwner} />
-      <AnimeSection profile={profile} />
+      <div className="pb-20">
+        <AnimeList animeList={profile.user_anime_list ?? []} />
+      </div>
     </div>
   );
 };
