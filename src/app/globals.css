@@ -222,7 +222,7 @@
 
 .embla__slide__img {
   display: block;
-  height: 100svh;
+  height: 100dvh;
   width: 100%;
   object-fit: cover;
 }
