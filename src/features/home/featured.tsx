@@ -92,8 +92,8 @@ const Featured = ({ promotions }: FeaturedProps) => {
           WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 40%)',
         }}
       >
-        <div className="embla__viewport h-dvh" ref={emblaRef}>
-          <div className="embla__container h-dvh">
+        <div className="embla__viewport" ref={emblaRef}>
+          <div className="embla__container">
             {promotions.map((promo, i) => (
               <Slide key={promo.id} promo={promo} priority={i === 0} />
             ))}
