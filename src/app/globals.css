@@ -193,20 +193,54 @@
   }
 }
 
+
 .embla {
-  position: relative;
-  overflow: hidden;
   width: 100%;
+  margin: auto;
+
+  --slide-height: 19rem;
+  --slide-spacing: 1rem;
+  --slide-size: 100%;
+}
+
+.embla__viewport {
+  overflow: hidden;
 }
 
 .embla__container {
   display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--slide-spacing) * -1);
 }
 
 .embla__slide {
-  flex: 0 0 100%;
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 var(--slide-size);
   min-width: 0;
+  padding-left: var(--slide-spacing);
 }
+
+.embla__slide__img {
+  display: block;
+  height: 100svh;
+  width: 100%;
+  object-fit: cover;
+}
+
+@keyframes heroProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.hero-progress-fill {
+  transform-origin: left center;
+  animation: heroProgress linear forwards;
+}
+
 
 .anime-hero {
   position: relative;

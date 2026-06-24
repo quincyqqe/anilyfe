@@ -33,7 +33,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: number; la
   return (
     <div className="flex items-center gap-2 text-sm text-white/50">
       {icon}
-      <span className="text-white/80 font-bold">{value.toLocaleString()}</span>
+      <span className="text-white/80 font-bold">{value.toLocaleString('ru-RU')}</span>
       <span className="hidden sm:inline">{label}</span>
     </div>
   );
