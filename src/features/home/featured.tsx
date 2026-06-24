@@ -36,14 +36,12 @@ const Featured = ({ promotions }: FeaturedProps) => {
     if (!emblaApi) return;
 
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
-
     const onPlay = () => setIsPlaying(true);
     const onStop = () => setIsPlaying(false);
 
     emblaApi.on('select', onSelect);
     emblaApi.on('autoplay:play', onPlay);
     emblaApi.on('autoplay:stop', onStop);
-
     onSelect();
 
     return () => {
@@ -74,7 +72,6 @@ const Featured = ({ promotions }: FeaturedProps) => {
   const toggleAutoplay = useCallback(() => {
     const plugin = autoplay.current;
     if (!plugin) return;
-
     plugin.isPlaying() ? plugin.stop() : plugin.play();
   }, []);
 
@@ -84,7 +81,7 @@ const Featured = ({ promotions }: FeaturedProps) => {
 
   return (
     <section
-      className="relative w-full h-screen md:h-[100dvh] overflow-hidden embla"
+      className="relative w-full h-dvh overflow-hidden embla"
       aria-roledescription="carousel"
       aria-label="Рекомендуемые релизы"
     >

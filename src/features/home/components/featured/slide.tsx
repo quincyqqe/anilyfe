@@ -9,7 +9,7 @@ interface Props {
 
 const FeaturedSlide = ({ promo, priority = false }: Props) => {
   return (
-    <div className="embla__slide  relative min-h-[100svh]">
+    <div className="embla__slide relative min-h-dvh">
       <Image
         src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${promo.image.optimized.preview}`}
         alt={promo.release?.name.main || promo.title || ''}

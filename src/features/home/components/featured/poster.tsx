@@ -21,7 +21,7 @@ const Poster = ({ release }: { release: PosterRelease }) => {
       aria-label={`Открыть «${release.name.main}»`}
       className="group block w-32 shrink-0 sm:w-44 md:w-52 lg:w-60 xl:w-64"
     >
-      <div className="relative aspect-[2/3] w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+      <div className="relative aspect-2/3 w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
         <Image
           src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${release.poster.optimized.src}`}
           alt={release.name.main}
