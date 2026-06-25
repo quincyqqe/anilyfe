@@ -40,7 +40,7 @@ const AnimeCard = ({ anime }: Props) => {
         <CardOverlay anime={anime} />
       </div>
 
-      <h3 className="mt-2 px-0.5 pb-1 line-clamp-2 text-[13px] font-semibold leading-snug text-white/90 transition-colors duration-300 group-hover:text-primary">
+      <h3 className="mt-2 px-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-white/90 transition-colors duration-300 group-hover:text-primary">
         {title}
       </h3>
     </Link>
