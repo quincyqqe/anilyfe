@@ -12,7 +12,6 @@ import { UserAnimeListEntry } from '@/shared/types/user-anime-list';
 import { AnimeFranchise } from './components/anime-franchise';
 import { AnimeDescription } from './components/anime-description';
 
-
 interface Props {
   anime: Anime;
   franchise: FranchiseItem | null;
@@ -26,24 +25,24 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 ">
           <aside className="flex flex-col gap-5">
-            <div className="relative mx-auto shrink-0 w-[220px] lg:w-full h-[310px] lg:h-[370px]">
+            <div className="relative mx-auto h-77 w-55 shrink-0 lg:h-92.5 lg:w-full">
               <Image
                 src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.optimized.src}`}
                 alt=""
                 aria-hidden
-                width={32}
-                height={48}
-                quality={75}
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover rounded-2xl scale-110 blur-2xl opacity-75 -z-10"
+                fill
+                sizes="(max-width: 1024px) 220px, 320px"
+                className="absolute inset-0 -z-10 scale-105 rounded-2xl object-cover opacity-60 blur-lg"
               />
+
               <Image
                 src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.src}`}
                 alt={anime.name.main}
-                width={260}
-                height={370}
+                fill
                 preload
-                className="relative w-full h-full object-cover rounded-2xl border border-white/8 shadow-2xl z-10"
+                quality={75}
+                sizes="(max-width: 1024px) 220px, 320px"
+                className="relative z-10 rounded-2xl border border-white/8 object-cover"
                 id="anime-poster"
               />
             </div>
