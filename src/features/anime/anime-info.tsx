@@ -32,9 +32,8 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 aria-hidden
                 fill
                 sizes="(max-width: 1024px) 220px, 320px"
-                className="absolute inset-0 -z-10 scale-105 rounded-2xl object-cover opacity-60 blur-lg"
+                className="absolute inset-0 -z-10 scale-105 rounded-sm object-cover opacity-70 blur-xl"
               />
-
               <Image
                 src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${anime.poster.src}`}
                 alt={anime.name.main}
@@ -42,19 +41,19 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
                 preload
                 quality={75}
                 sizes="(max-width: 1024px) 220px, 320px"
-                className="relative z-10 rounded-2xl border border-white/8 object-cover"
+                className="relative z-10 rounded-sm border border-white/8 object-cover"
                 id="anime-poster"
               />
             </div>
 
             <AnimeCollectionButton anime={anime} animeEntry={animeList} />
 
-            <div className="rounded-2xl p-4 glass">
+            <div className="p-4 glass">
               <AnimeStats anime={anime} />
             </div>
 
             {anime.members.length > 0 && (
-              <div className="rounded-2xl p-4 glass">
+              <div className="p-4 glass">
                 <AnimeTeam members={anime.members} />
               </div>
             )}
@@ -63,13 +62,15 @@ export function AnimeInfo({ anime, franchise, animeList }: Props) {
           <section className="flex flex-col gap-5.5 pt-6 ">
             <header className="flex flex-col gap-1.5">
               <h1
-                className="text-4xl font-bold text-zinc-50 leading-tight text-balance line-clamp-2"
+                className="text-xl md:text-4xl font-bold text-zinc-50 leading-tight line-clamp-2"
                 id="anime-title"
               >
                 {anime.name.main}
               </h1>
               {!!anime.name.english && (
-                <span className="text-base text-zinc-400 font-medium">{anime.name.english}</span>
+                <span className="text-sm md:text-base text-zinc-400 font-medium">
+                  {anime.name.english}
+                </span>
               )}
             </header>
 

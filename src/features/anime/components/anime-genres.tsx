@@ -15,7 +15,7 @@ export function AnimeGenres({ genres }: Props) {
           <Link
             href={`/catalog?genres=${genre.id}&page=1`}
             prefetch={false}
-            className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border border-white/8 bg-white/3 text-zinc-400 hover:text-primary hover:border-primary/30 hover:bg-primary/6 transition-all duration-200"
+            className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border border-white/8 bg-white/3 text-zinc-400 hover:text-primary hover:border-primary/30 hover:bg-primary/6 transition-colors duration-200"
           >
             {genre.name}
           </Link>
