@@ -88,8 +88,8 @@ const Featured = ({ promotions }: FeaturedProps) => {
       <div
         className="absolute inset-0"
         style={{
-          maskImage: 'linear-gradient(to top, transparent 0%, black 40%)',
-          WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 40%)',
+          maskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
+          WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
         }}
       >
         <div className="embla__viewport" ref={emblaRef}>
@@ -101,8 +101,7 @@ const Featured = ({ promotions }: FeaturedProps) => {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/70 via-black/30 to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent md:via-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-black/50 via-black/30 to-transparent" />
 
       <div className="absolute inset-0 z-10 flex items-end md:items-center pb-24 sm:pb-28 md:pb-0">
         <div className="container mx-auto px-4 sm:px-6">
