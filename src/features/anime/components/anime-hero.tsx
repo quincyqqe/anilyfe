@@ -6,7 +6,7 @@ interface Props {
 
 export function AnimeHero({ posterSrc }: Props) {
   return (
-    <div className="anime-hero ad-hero__bg relative overflow-hidden">
+    <div className="ad-hero__bg relative overflow-hidden">
       <Image
         fill
         src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}

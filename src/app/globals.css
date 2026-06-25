@@ -243,14 +243,6 @@
   animation: heroProgress linear forwards;
 }
 
-.anime-hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-}
-
 .ad-hero__bg {
   position: absolute;
   inset: 0;
