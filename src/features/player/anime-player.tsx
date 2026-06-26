@@ -5,7 +5,8 @@ import type { Anime, AnimeEpisode } from '@/shared/types/anime';
 import { Clapperboard } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnilyfeHlsPlayer } from './components/anilyfe-hls-player';
-import { EpisodeList } from './components/episode-list';
+// import { EpisodeList } from './components/episode-list';
+import { EpisodeList } from './components/episode-list/episode-list';
 
 import { resolveThumb } from './lib/resolve-thumb';
 
