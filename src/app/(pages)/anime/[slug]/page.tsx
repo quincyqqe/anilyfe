@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 import { AnimeInfo } from '@/features/anime';
 import { fetchAnime } from '@/features/anime/api/anime';
@@ -7,97 +8,84 @@ import { fetchFranchise } from '@/features/anime/api/franchise';
 import { AnimePlayer } from '@/features/player/anime-player';
 import { getUserAnimeEntry } from '@/lib/db/queries';
 import { generateMetadata as buildMetadata } from '@/lib/utils/metadata';
-import { Anime } from '@/shared/types/anime';
+import type { Anime } from '@/shared/types/anime';
 
-type Params = {
-  slug: string;
-};
+const getAnime = cache(async (slug: string) => fetchAnime(slug));
 
-interface Props {
-  params: Params;
+type PageParams = { slug: string };
+interface PageProps {
+  params: Promise<PageParams>;
 }
 
-const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_URL!;
+const MEDIA_BASE = process.env.NEXT_PUBLIC_MEDIA_URL ?? '';
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const anime = await fetchAnime(slug);
+  const anime = await getAnime(slug);
 
   if (!anime) {
     return buildMetadata({
       title: 'Аниме не найдено',
-      robots: {
-        index: false,
-        follow: false,
-      },
+      robots: { index: false, follow: false },
     });
   }
 
-  const title = anime.name.main;
-  const description = getAnimeDescription(anime);
-  const posterUrl = `${MEDIA_BASE_URL}${anime.poster.src}`;
-
   return buildMetadata({
-    title,
-    description,
-    images: [
-      {
-        url: posterUrl,
-        alt: anime.name.main,
-      },
-    ],
-    alternates: {
-      canonical: `/anime/${slug}`,
-    },
-    openGraph: {
-      url: `/anime/${slug}`,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-    },
+    title: anime.name.main,
+    description: buildDescription(anime),
+    images: [{ url: `${MEDIA_BASE}${anime.poster.src}`, alt: anime.name.main }],
+    alternates: { canonical: `/anime/${slug}` },
+    openGraph: { url: `/anime/${slug}`, type: 'website' },
+    twitter: { card: 'summary_large_image' },
     keywords: [
       anime.name.main,
       anime.name.english,
       anime.name.alternative,
       anime.type.description,
-      anime.year.toString(),
-      ...anime.genres.map((genre) => genre.name),
-    ].filter(isNonEmptyString),
+      String(anime.year),
+      ...anime.genres.map((g) => g.name),
+    ].filter(isNonEmpty),
   });
 }
 
-export default async function AnimePage({ params }: Props) {
+export default async function AnimePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const anime = await fetchAnime(slug);
+  const anime = await getAnime(slug);
 
   if (!anime) return notFound();
 
-  const franchise = await fetchFranchise(anime.id.toString());
+  const [franchise, rawDbEntry] = await Promise.all([
+    fetchFranchise(anime.id.toString()),
+    getUserAnimeEntry(slug),
+  ]);
 
-  const dbEntryAnime = await getUserAnimeEntry(slug);
+  if (!anime) return notFound();
+
+  const dbEntry: any | null = rawDbEntry
+    ? {
+        current_episode: rawDbEntry.current_episode ?? null,
+        episode_progress: rawDbEntry.episode_progress ?? null,
+        episode_duration: rawDbEntry.episode_duration ?? null,
+        status: rawDbEntry.status ?? null,
+      }
+    : null;
 
   return (
     <>
-      <AnimeInfo anime={anime} franchise={franchise} animeList={dbEntryAnime} />
-      <AnimePlayer anime={anime} dbEntry={dbEntryAnime} />
+      <AnimeInfo anime={anime} franchise={franchise} animeList={rawDbEntry} />
+      <AnimePlayer anime={anime} dbEntry={dbEntry} />
     </>
   );
 }
 
-function getAnimeDescription(anime: Anime) {
+function buildDescription(anime: Anime): string {
   const summary = anime.description?.replace(/\s+/g, ' ').trim() ?? '';
-  const extra = [anime.type.description, anime.year.toString()].filter(Boolean).join(' | ');
-  const description = [summary, extra].filter(Boolean).join(' ');
-
-  if (description.length <= 200) {
-    return description;
-  }
-
-  return `${description.slice(0, 197).trimEnd()}...`;
+  const extra = [anime.type.description, String(anime.year)].filter(Boolean).join(' | ');
+  const full = [summary, extra].filter(Boolean).join(' ');
+  return full.length <= 200 ? full : `${full.slice(0, 197).trimEnd()}...`;
 }
 
-function isNonEmptyString(value: string | null | undefined): value is string {
-  return Boolean(value);
+function isNonEmpty(v: string | null | undefined): v is string {
+  return Boolean(v);
 }

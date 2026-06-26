@@ -1,47 +1,100 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import clsx from 'clsx';
 
 interface Props {
   count: number;
   selectedIndex: number;
+  autoplayDelay: number;
+  isPlaying: boolean;
   onDotClick: (i: number) => void;
   onPrev: () => void;
   onNext: () => void;
+  onToggleAutoplay: () => void;
 }
 
-const Controls = ({ count, selectedIndex, onDotClick, onPrev, onNext }: Props) => {
+const Controls = ({
+  count,
+  selectedIndex,
+  autoplayDelay,
+  isPlaying,
+  onDotClick,
+  onPrev,
+  onNext,
+  onToggleAutoplay,
+}: Props) => {
   return (
-    <>
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        {Array.from({ length: count }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => onDotClick(i)}
-            className={clsx(
-              'h-1.5 rounded-full transition-all duration-300',
-              i === selectedIndex
-                ? 'w-8 bg-primary'
-                : 'w-2.5 bg-white/20 hover:bg-white/50',
-            )}
-          />
-        ))}
-      </div>
+    <div className="absolute inset-x-0 bottom-0 z-20 px-4 pb-6 sm:px-6 sm:pb-7">
+      <div className="container mx-auto flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2" role="tablist" aria-label="Слайды">
+          {Array.from({ length: count }).map((_, i) => {
+            const active = i === selectedIndex;
 
-      <div className="absolute bottom-7 right-6 md:right-10 z-20 flex gap-2">
-        {[
-          { icon: ChevronLeft, action: onPrev },
-          { icon: ChevronRight, action: onNext },
-        ].map(({ icon: Icon, action }, i) => (
+            return (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-label={`Слайд ${i + 1}`}
+                onClick={() => onDotClick(i)}
+                className={clsx(
+                  'h-1.5 overflow-hidden rounded-full duration-300 transition-[width,background-color]',
+                  active ? 'w-10 bg-white/20' : 'w-2.5 bg-white/20 hover:bg-white/40',
+                )}
+              >
+                {active && (
+                  <span
+                    key={`${selectedIndex}-${isPlaying}`}
+                    className={clsx(
+                      'block h-full w-full rounded-full bg-primary',
+                      isPlaying && 'hero-progress-fill',
+                    )}
+                    style={
+                      isPlaying
+                        ? { animationDuration: `${autoplayDelay}ms` }
+                        : { transform: 'scaleX(1)', transformOrigin: 'left center' }
+                    }
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center gap-2">
           <button
-            key={i}
-            onClick={action}
-            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/25 transition-all duration-200 group"
+            type="button"
+            onClick={onToggleAutoplay}
+            aria-label={isPlaying ? 'Пауза' : 'Воспроизвести'}
+            className="group hidden rounded-xl border border-white/10 bg-white/5 p-2.5 transition-colors hover:border-white/25 hover:bg-white/15 sm:block"
           >
-            <Icon className="w-5 h-5 text-white/50 group-hover:text-white transition-colors" />
+            {isPlaying ? (
+              <Pause className="h-5 w-5 text-white/60 transition-colors group-hover:text-white" />
+            ) : (
+              <Play className="h-5 w-5 text-white/60 transition-colors group-hover:text-white" />
+            )}
           </button>
-        ))}
+
+          <button
+            type="button"
+            onClick={onPrev}
+            aria-label="Предыдущий слайд"
+            className="group rounded-xl border border-white/10 bg-white/5 p-2.5 transition-colors hover:border-white/25 hover:bg-white/15"
+          >
+            <ChevronLeft className="h-5 w-5 text-white/60 transition-colors group-hover:text-white" />
+          </button>
+
+          <button
+            type="button"
+            onClick={onNext}
+            aria-label="Следующий слайд"
+            className="group rounded-xl border border-white/10 bg-white/5 p-2.5 transition-colors hover:border-white/25 hover:bg-white/15"
+          >
+            <ChevronRight className="h-5 w-5 text-white/60 transition-colors group-hover:text-white" />
+          </button>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

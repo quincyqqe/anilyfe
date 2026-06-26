@@ -148,9 +148,6 @@
 }
 
 .glass {
-  backdrop-filter: blur(18px) saturate(170%) contrast(1.05) brightness(1.04);
-  -webkit-backdrop-filter: blur(18px) saturate(170%) contrast(1.05) brightness(1.04);
-
   background: oklch(0.08 0.014 255 / 0.42);
   border: 1px solid oklch(1 0 0 / 0.07);
 
@@ -194,26 +191,53 @@
 }
 
 .embla {
-  position: relative;
-  overflow: hidden;
   width: 100%;
+  margin: auto;
+
+  --slide-spacing: 0;
+  --slide-size: 100%;
+}
+
+.embla__viewport {
+  overflow: hidden;
+  height: 100dvh;
 }
 
 .embla__container {
   display: flex;
+  touch-action: pan-y pinch-zoom;
+  height: 100%;
+  margin-left: 0;
 }
 
 .embla__slide {
-  flex: 0 0 100%;
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 var(--slide-size);
   min-width: 0;
+  padding-left: 0;
+  height: 100%;
+  position: relative;
 }
 
-.anime-hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
+.embla__slide__img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+@keyframes heroProgress {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+.hero-progress-fill {
+  transform-origin: left center;
+  animation: heroProgress linear forwards;
 }
 
 .ad-hero__bg {
