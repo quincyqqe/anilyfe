@@ -30,6 +30,7 @@ export const EpisodeItem = memo(
         type="button"
         aria-current={active}
         data-active={active}
+        data-episode={ordinal}
         onClick={handleClick}
         className={cn(
           'group relative flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-200',
@@ -73,13 +74,12 @@ export const EpisodeItem = memo(
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-xs font-semibold leading-tight">Эпизод {ordinal}</span>
+          <span className="text-xs font-medium leading-snug text-zinc-100">Эпизод {ordinal}</span>
+
           {episode.name ? (
-            <span className="truncate text-[11px] leading-tight text-zinc-500">{episode.name}</span>
+            <span className="truncate text-xs leading-snug text-zinc-400">{episode.name}</span>
           ) : (
-            <span className="text-[11px] leading-tight text-zinc-600">
-              {episode.duration ? `${Math.floor(episode.duration / 60)} мин` : '—'}
-            </span>
+            <span className="truncate text-xs leading-snug text-zinc-500">Без названия</span>
           )}
         </div>
 
