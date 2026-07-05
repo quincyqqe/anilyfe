@@ -44,6 +44,9 @@ interface UsePlayerOptions {
   poster?: string;
   initialTime?: number;
   onProgress?: (currentTime: number, duration: number) => void;
+  title?: string;
+  artist?: string;
+  artwork?: string;
 }
 
 const SAVE_INTERVAL_MS = 10_000;
@@ -97,12 +100,21 @@ function writeStorage(key: string, value: string) {
   } catch {}
 }
 
-export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOptions) {
+export function usePlayer({
+  episode,
+  initialTime = 0,
+  onProgress,
+  title,
+  artist,
+  artwork,
+}: UsePlayerOptions) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const onProgressRef = useRef(onProgress);
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -341,6 +353,8 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     };
   }, [patch]);
 
+  
+
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -498,6 +512,28 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [togglePlay, seekRelative, setVolume, toggleMute, toggleFullscreen]);
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: title || 'Anilyfe',
+      artist: artist || 'Anilyfe',
+      artwork: artwork ? [{ src: artwork, sizes: '512x512', type: 'image/jpeg' }] : [],
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => videoRef.current?.play());
+    navigator.mediaSession.setActionHandler('pause', () => videoRef.current?.pause());
+    navigator.mediaSession.setActionHandler('seekbackward', () => seekRelative(-10));
+    navigator.mediaSession.setActionHandler('seekforward', () => seekRelative(10));
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('seekbackward', null);
+      navigator.mediaSession.setActionHandler('seekforward', null);
+    };
+  }, [title, artist, artwork, seekRelative]);
 
   const actions = useMemo(
     () => ({

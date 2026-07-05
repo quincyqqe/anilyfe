@@ -122,6 +122,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
             <AnilyfeHlsPlayer
               episode={episode}
               poster={poster}
+              animeTitle={anime.name.main}
               initialTime={initialTime}
               title={episodeTitle}
               onProgress={handleProgress}

@@ -15,6 +15,7 @@ interface Props {
   poster?: string;
   initialTime: number;
   title?: string;
+  animeTitle?: string;
   onProgress: (currentTime: number, duration: number) => void;
 }
 
@@ -30,12 +31,19 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   poster,
   initialTime,
   title,
+  animeTitle,
   onProgress,
 }: Props) {
+
+  const episodeTitle = episode?.name ?? title ?? `Эпизод ${episode.ordinal ?? episode.episode}`;
+
   const { videoRef, containerRef, state, actions } = usePlayer({
     episode,
     initialTime,
     onProgress,
+    title: episodeTitle,
+    artist: animeTitle,
+    artwork: poster,
   });
 
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -115,7 +123,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   }, [state.playing, clearHideTimer]);
 
   const episodeNumber = episode.ordinal ?? episode.episode;
-  const episodeTitle = episode?.name ?? title ?? `Эпизод ${episodeNumber}`;
   const episodeBadge = String(episodeNumber).padStart(2, '0');
 
   const hudVisible = useMemo(
@@ -136,18 +143,18 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
       className={cn(
         'group/player relative aspect-video w-full overflow-hidden bg-black outline-none select-none',
         'contain-layout contain-paint',
-        state.isFullscreen
-          ? 'rounded-none'
-          : 'rounded-2xl border border-white/[0.07] shadow-[0_20px_60px_rgba(0,0,0,0.6)]',
+        state.isFullscreen ? 'rounded-none' : 'rounded-2xl border border-white/[0.07]',
         state.playing && !hudVisible && 'cursor-none',
       )}
     >
       <video
         ref={videoRef}
+        aria-label={episodeTitle || title}
         playsInline
         preload="metadata"
         crossOrigin="anonymous"
         className="relative z-[1] h-full w-full bg-black object-contain"
+        poster={poster}
       />
 
       {poster && (
