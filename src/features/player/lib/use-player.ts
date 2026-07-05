@@ -4,6 +4,12 @@ import type { AnimeEpisode } from '@/shared/types/anime';
 import Hls from 'hls.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+interface IOSVideoElement extends HTMLVideoElement {
+  webkitEnterFullscreen?: () => void;
+  webkitExitFullscreen?: () => void;
+  webkitDisplayingFullscreen?: boolean;
+}
+
 export interface QualityLevel {
   label: string;
   url: string;
@@ -113,8 +119,6 @@ export function usePlayer({
   const hlsRef = useRef<Hls | null>(null);
   const onProgressRef = useRef(onProgress);
   const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  
 
   useEffect(() => {
     onProgressRef.current = onProgress;
@@ -332,9 +336,19 @@ export function usePlayer({
   }, [state.playing, state.hasPlayed]);
 
   useEffect(() => {
-    const handler = () => patch({ isFullscreen: !!document.fullscreenElement });
-    document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onBegin = () => patch({ isFullscreen: true });
+    const onEnd = () => patch({ isFullscreen: false });
+
+    video.addEventListener('webkitbeginfullscreen', onBegin);
+    video.addEventListener('webkitendfullscreen', onEnd);
+
+    return () => {
+      video.removeEventListener('webkitbeginfullscreen', onBegin);
+      video.removeEventListener('webkitendfullscreen', onEnd);
+    };
   }, [patch]);
 
   useEffect(() => {
@@ -352,8 +366,6 @@ export function usePlayer({
       video.removeEventListener('leavepictureinpicture', onLeave);
     };
   }, [patch]);
-
-  
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -448,12 +460,28 @@ export function usePlayer({
 
   const toggleFullscreen = useCallback(() => {
     const el = containerRef.current;
+    const video = videoRef.current as IOSVideoElement | null;
+
+    const iosNativeFullscreen =
+      video && typeof video.webkitEnterFullscreen === 'function' && !el?.requestFullscreen;
+
+    if (iosNativeFullscreen) {
+      if (video!.webkitDisplayingFullscreen) {
+        video!.webkitExitFullscreen?.();
+      } else {
+        video!.webkitEnterFullscreen?.();
+      }
+      return;
+    }
+
     if (!el) return;
 
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     } else {
-      el.requestFullscreen().catch(() => {});
+      el.requestFullscreen().catch(() => {
+        video?.webkitEnterFullscreen?.();
+      });
     }
   }, []);
 
