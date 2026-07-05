@@ -4,6 +4,12 @@ import type { AnimeEpisode } from '@/shared/types/anime';
 import Hls from 'hls.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+interface IOSVideoElement extends HTMLVideoElement {
+  webkitEnterFullscreen?: () => void;
+  webkitExitFullscreen?: () => void;
+  webkitDisplayingFullscreen?: boolean;
+}
+
 export interface QualityLevel {
   label: string;
   url: string;
@@ -44,6 +50,9 @@ interface UsePlayerOptions {
   poster?: string;
   initialTime?: number;
   onProgress?: (currentTime: number, duration: number) => void;
+  title?: string;
+  artist?: string;
+  artwork?: string;
 }
 
 const SAVE_INTERVAL_MS = 10_000;
@@ -97,7 +106,14 @@ function writeStorage(key: string, value: string) {
   } catch {}
 }
 
-export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOptions) {
+export function usePlayer({
+  episode,
+  initialTime = 0,
+  onProgress,
+  title,
+  artist,
+  artwork,
+}: UsePlayerOptions) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -320,9 +336,19 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
   }, [state.playing, state.hasPlayed]);
 
   useEffect(() => {
-    const handler = () => patch({ isFullscreen: !!document.fullscreenElement });
-    document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onBegin = () => patch({ isFullscreen: true });
+    const onEnd = () => patch({ isFullscreen: false });
+
+    video.addEventListener('webkitbeginfullscreen', onBegin);
+    video.addEventListener('webkitendfullscreen', onEnd);
+
+    return () => {
+      video.removeEventListener('webkitbeginfullscreen', onBegin);
+      video.removeEventListener('webkitendfullscreen', onEnd);
+    };
   }, [patch]);
 
   useEffect(() => {
@@ -434,12 +460,28 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
 
   const toggleFullscreen = useCallback(() => {
     const el = containerRef.current;
+    const video = videoRef.current as IOSVideoElement | null;
+
+    const iosNativeFullscreen =
+      video && typeof video.webkitEnterFullscreen === 'function' && !el?.requestFullscreen;
+
+    if (iosNativeFullscreen) {
+      if (video!.webkitDisplayingFullscreen) {
+        video!.webkitExitFullscreen?.();
+      } else {
+        video!.webkitEnterFullscreen?.();
+      }
+      return;
+    }
+
     if (!el) return;
 
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     } else {
-      el.requestFullscreen().catch(() => {});
+      el.requestFullscreen().catch(() => {
+        video?.webkitEnterFullscreen?.();
+      });
     }
   }, []);
 
@@ -498,6 +540,28 @@ export function usePlayer({ episode, initialTime = 0, onProgress }: UsePlayerOpt
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [togglePlay, seekRelative, setVolume, toggleMute, toggleFullscreen]);
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: title || 'Anilyfe',
+      artist: artist || 'Anilyfe',
+      artwork: artwork ? [{ src: artwork, sizes: '512x512', type: 'image/jpeg' }] : [],
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => videoRef.current?.play());
+    navigator.mediaSession.setActionHandler('pause', () => videoRef.current?.pause());
+    navigator.mediaSession.setActionHandler('seekbackward', () => seekRelative(-10));
+    navigator.mediaSession.setActionHandler('seekforward', () => seekRelative(10));
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null);
+      navigator.mediaSession.setActionHandler('pause', null);
+      navigator.mediaSession.setActionHandler('seekbackward', null);
+      navigator.mediaSession.setActionHandler('seekforward', null);
+    };
+  }, [title, artist, artwork, seekRelative]);
 
   const actions = useMemo(
     () => ({
