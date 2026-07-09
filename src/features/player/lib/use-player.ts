@@ -336,18 +336,24 @@ export function usePlayer({
   }, [state.playing, state.hasPlayed]);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const video = videoRef.current as IOSVideoElement | null;
 
-    const onBegin = () => patch({ isFullscreen: true });
-    const onEnd = () => patch({ isFullscreen: false });
+    const sync = () => {
+      patch({
+        isFullscreen:
+          document.fullscreenElement === containerRef.current ||
+          !!video?.webkitDisplayingFullscreen,
+      });
+    };
 
-    video.addEventListener('webkitbeginfullscreen', onBegin);
-    video.addEventListener('webkitendfullscreen', onEnd);
+    document.addEventListener('fullscreenchange', sync);
+    video?.addEventListener('webkitbeginfullscreen', sync);
+    video?.addEventListener('webkitendfullscreen', sync);
 
     return () => {
-      video.removeEventListener('webkitbeginfullscreen', onBegin);
-      video.removeEventListener('webkitendfullscreen', onEnd);
+      document.removeEventListener('fullscreenchange', sync);
+      video?.removeEventListener('webkitbeginfullscreen', sync);
+      video?.removeEventListener('webkitendfullscreen', sync);
     };
   }, [patch]);
 

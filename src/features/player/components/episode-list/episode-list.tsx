@@ -38,11 +38,11 @@ export const EpisodeList = memo(function EpisodeList({
   return (
     <aside className="flex shrink-0 flex-col gap-3 lg:w-72 xl:w-80">
       <header className="flex items-center gap-2 px-1">
-        <ListVideo size={14} className="text-zinc-500" />
-        <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-500">
+        <ListVideo size={14} className="text-zinc-400" />
+        <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-zinc-400">
           Список серий
         </span>
-        <span className="ml-auto tabular-nums text-[10px] font-bold tracking-[0.14em] uppercase text-zinc-600">
+        <span className="ml-auto tabular-nums text-[10px] font-bold tracking-[0.12em] uppercase text-zinc-500">
           {episodes.length} эп.
         </span>
       </header>

@@ -4,11 +4,14 @@ import { memo, useCallback, useRef, useState } from 'react';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
+
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
-  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  return `${m}:${String(s).padStart(2, '0')}`;
+
+  return h > 0
+    ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+    : `${m}:${String(s).padStart(2, '0')}`;
 }
 
 interface ProgressBarProps {
@@ -25,6 +28,7 @@ export const ProgressBar = memo(function ProgressBar({
   onSeek,
 }: ProgressBarProps) {
   const barRef = useRef<HTMLDivElement>(null);
+
   const [isDragging, setIsDragging] = useState(false);
   const [hoverFraction, setHoverFraction] = useState<number | null>(null);
 
@@ -33,34 +37,44 @@ export const ProgressBar = memo(function ProgressBar({
   const hoverTime = hoverFraction != null ? hoverFraction * duration : 0;
 
   const getFractionFromX = useCallback(
-    (clientX: number): number => {
+    (clientX: number) => {
       const bar = barRef.current;
+
       if (!bar || duration <= 0) return 0;
+
       const rect = bar.getBoundingClientRect();
+
       return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     },
     [duration],
   );
 
   const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
+    (e: React.PointerEvent<HTMLDivElement>) => {
       e.preventDefault();
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+
+      e.currentTarget.setPointerCapture(e.pointerId);
+
+      const fraction = getFractionFromX(e.clientX);
+
       setIsDragging(true);
-      const f = getFractionFromX(e.clientX);
-      setHoverFraction(f);
-      onSeek(f * duration);
+      setHoverFraction(fraction);
+      onSeek(fraction * duration);
     },
-    [getFractionFromX, onSeek, duration],
+    [duration, getFractionFromX, onSeek],
   );
 
   const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      const f = getFractionFromX(e.clientX);
-      setHoverFraction(f);
-      if (isDragging) onSeek(f * duration);
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const fraction = getFractionFromX(e.clientX);
+
+      setHoverFraction(fraction);
+
+      if (isDragging) {
+        onSeek(fraction * duration);
+      }
     },
-    [isDragging, getFractionFromX, onSeek, duration],
+    [duration, getFractionFromX, isDragging, onSeek],
   );
 
   const handlePointerUp = useCallback(() => {
@@ -68,22 +82,23 @@ export const ProgressBar = memo(function ProgressBar({
   }, []);
 
   const handlePointerLeave = useCallback(() => {
-    if (!isDragging) setHoverFraction(null);
+    if (!isDragging) {
+      setHoverFraction(null);
+    }
+
     setIsDragging(false);
   }, [isDragging]);
 
-
   const tooltipLeft =
     hoverFraction != null
-      ? `clamp(28px, calc(${hoverFraction * 100}% + 12px), calc(100% - 28px))`
+      ? `clamp(32px, calc(${hoverFraction * 100}% + 12px), calc(100% - 32px))`
       : '0';
 
   return (
-    <div className="group/progress relative w-full cursor-pointer select-none px-3 pb-1 pt-2">
-      {/* Hover time tooltip */}
+    <div className="group/progress relative w-full cursor-pointer select-none px-3 pt-2 pb-1">
       {hoverFraction != null && (
         <div
-          className="pointer-events-none absolute bottom-[calc(100%-4px)] z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-zinc-950/85 px-2 py-1 text-[11px] font-semibold tabular-nums text-white shadow-lg"
+          className="pointer-events-none absolute bottom-[calc(100%+4px)] z-10 -translate-x-1/2 select-none whitespace-nowrap rounded-md border border-white/10 bg-zinc-950/80 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-white"
           style={{ left: tooltipLeft }}
         >
           {formatTime(hoverTime)}
@@ -92,35 +107,32 @@ export const ProgressBar = memo(function ProgressBar({
 
       <div
         ref={barRef}
-        className="relative h-[5px] rounded-full bg-white/15 transition-[height] duration-150 group-hover/progress:h-[9px]"
+        className="relative h-[4px] rounded-full bg-white/10 transition-[height] duration-200 ease-out group-hover/progress:h-[7px]"
+        style={isDragging ? { height: '7px' } : undefined}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
       >
-        {/* Buffered */}
         <div
-          className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-white/20 transition-[width] duration-200"
+          className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-white/15 transition-[width] duration-200"
           style={{ width: `${bufferedFraction * 100}%` }}
         />
 
-        {/* Played */}
         <div
-          className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-primary shadow-[0_0_6px_rgba(var(--primary-rgb,200,50,100),0.4)]"
+          className="pointer-events-none absolute inset-y-0 left-0 rounded-full bg-white"
           style={{ width: `${fraction * 100}%` }}
         />
 
-        {/* Hover ghost position */}
-        {hoverFraction != null && (
+        {hoverFraction != null && !isDragging && (
           <div
-            className="pointer-events-none absolute top-1/2 h-2 w-0.5 -translate-y-1/2 rounded-full bg-white/30"
+            className="pointer-events-none absolute top-1/2 h-2.5 w-0.5 -translate-y-1/2 rounded-full bg-white/35"
             style={{ left: `${hoverFraction * 100}%` }}
           />
         )}
 
-        {/* Thumb — always present, visible on hover/drag */}
         <div
-          className="pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-opacity duration-150 group-hover/progress:opacity-100"
+          className="pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 transition-opacity duration-200 ease-out group-hover/progress:opacity-100"
           style={{
             left: `${fraction * 100}%`,
             opacity: isDragging ? 1 : undefined,

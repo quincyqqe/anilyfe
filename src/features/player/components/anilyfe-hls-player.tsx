@@ -24,7 +24,7 @@ type SeekTrigger = {
   ts: number;
 } | null;
 
-const CONTROLS_HIDE_DELAY = 2800;
+const CONTROLS_HIDE_DELAY = 2000;
 
 export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   episode,
@@ -34,7 +34,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
   animeTitle,
   onProgress,
 }: Props) {
-
   const episodeTitle = episode?.name ?? title ?? `Эпизод ${episode.ordinal ?? episode.episode}`;
 
   const { videoRef, containerRef, state, actions } = usePlayer({
@@ -132,6 +131,8 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
 
   const showPoster = poster && !state.videoReady;
 
+  console.log(state.isFullscreen);
+
   return (
     <div
       ref={containerRef}
@@ -142,7 +143,6 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
       onMouseLeave={handleMouseLeave}
       className={cn(
         'group/player relative aspect-video w-full overflow-hidden bg-black outline-none select-none',
-        'contain-layout contain-paint',
         state.isFullscreen ? 'rounded-none' : 'rounded-2xl border border-white/[0.07]',
         state.playing && !hudVisible && 'cursor-none',
       )}
@@ -153,7 +153,7 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
         playsInline
         preload="metadata"
         crossOrigin="anonymous"
-        className="relative z-[1] h-full w-full bg-black object-contain"
+        className="h-full w-full bg-black object-contain"
         poster={poster}
       />
 
@@ -175,16 +175,17 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
           hudVisible ? 'opacity-100' : 'opacity-0',
         )}
         style={{
-          background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.45) 80%, rgba(0,0,0,0.75) 100%)',
-        }}
-      />
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-[3]"
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%)',
+          background: `
+      linear-gradient(
+        to bottom,
+        rgba(0,0,0,.38) 0%,
+        rgba(0,0,0,.18) 12%,
+        rgba(0,0,0,0) 24%,
+        rgba(0,0,0,0) 76%,
+        rgba(0,0,0,.18) 88%,
+        rgba(0,0,0,.42) 100%
+      )
+    `,
         }}
       />
 
