@@ -56,7 +56,7 @@ export const ControlsOverlay = memo(function ControlsOverlay({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-b-2xl"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
             'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
