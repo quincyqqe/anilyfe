@@ -1,24 +1,26 @@
 'use client';
 
-import { updateAnimeProgress } from '@/lib/db/actions/anime-list';
 import type { Anime, AnimeEpisode } from '@/shared/types/anime';
 import { Clapperboard } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnilyfeHlsPlayer } from './components/anilyfe-hls-player';
-// import { EpisodeList } from './components/episode-list';
 import { EpisodeList } from './components/episode-list/episode-list';
+import { usePlayerPersistence } from './hooks/use-player-persistence';
+import type { PlayerProgress } from './model/player-types';
 
 import { resolveThumb } from './lib/resolve-thumb';
 
 interface Props {
   anime: Anime;
-  dbEntry: any | null;
+  dbEntry: PlayerProgress | null;
 }
 
 export function AnimePlayer({ anime, dbEntry }: Props) {
   const episodes = useMemo(() => anime.episodes ?? [], [anime.episodes]);
 
-  const initialIdx = dbEntry?.current_episode ? Math.max(0, dbEntry.current_episode - 1) : 0;
+  const initialIdx = dbEntry?.current_episode
+    ? Math.min(Math.max(0, dbEntry.current_episode - 1), Math.max(episodes.length - 1, 0))
+    : 0;
 
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
 
@@ -27,42 +29,48 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
   }, [initialIdx]);
 
   const lastEpisodeRef = useRef<number | null>(null);
-  const lastProgressSyncRef = useRef(0);
+  const saveProgress = usePlayerPersistence({
+    animeSlug: anime.alias,
+    enabled: Boolean(dbEntry),
+  });
 
   // Keep a stable ref of frequently changing values to keep callbacks completely stable
   const stateRef = useRef({ anime, currentIdx, dbEntry });
+  stateRef.current = { anime, currentIdx, dbEntry };
+
   useEffect(() => {
-    stateRef.current = { anime, currentIdx, dbEntry };
-  }, [anime, currentIdx, dbEntry]);
+    lastEpisodeRef.current = null;
+  }, [anime.alias]);
 
-  const handleEpisodeSelect = useCallback((idx: number) => {
-    setCurrentIdx(idx);
+  const handleEpisodeSelect = useCallback(
+    (idx: number) => {
+      if (idx < 0 || idx >= episodes.length) return;
 
-    const { dbEntry: currentDbEntry, anime: currentAnime } = stateRef.current;
-    if (!currentDbEntry || !currentAnime.alias) return;
+      setCurrentIdx(idx);
 
-    if (lastEpisodeRef.current === idx) return;
-    lastEpisodeRef.current = idx;
+      const { dbEntry: currentDbEntry, anime: currentAnime } = stateRef.current;
+      if (!currentDbEntry || !currentAnime.alias) return;
 
-    updateAnimeProgress(currentAnime.alias, idx + 1, 0, 0);
-  }, []);
+      if (lastEpisodeRef.current === idx) return;
+      lastEpisodeRef.current = idx;
 
-  const handleProgress = useCallback((currentTime: number, duration: number) => {
-    console.log('progress tick', currentTime);
+      saveProgress(idx + 1, 0, 0, true);
+    },
+    [episodes.length, saveProgress],
+  );
 
-    const { anime: currentAnime, currentIdx: idx, dbEntry: currentDbEntry } = stateRef.current;
-    const episode = currentAnime.episodes?.[idx];
-    if (!episode) return;
+  const handleProgress = useCallback(
+    (currentTime: number, duration: number) => {
+      const { anime: currentAnime, currentIdx: idx, dbEntry: currentDbEntry } = stateRef.current;
+      const episode = currentAnime.episodes?.[idx];
+      if (!episode) return;
 
-    const now = Date.now();
+      if (!currentDbEntry || !currentAnime.alias) return;
 
-    if (now - lastProgressSyncRef.current < 10000) return;
-    lastProgressSyncRef.current = now;
-
-    if (!currentDbEntry || !currentAnime.alias) return;
-
-    updateAnimeProgress(currentAnime.alias, idx + 1, Math.round(currentTime), Math.round(duration));
-  }, []);
+      saveProgress(idx + 1, currentTime, duration);
+    },
+    [saveProgress],
+  );
 
   if (!episodes.length) {
     return (

@@ -39,6 +39,7 @@ export const VolumeControl = memo(function VolumeControl({
     (value: number) => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
         onVolumeChange(Number(value.toFixed(3)));
       });
     },
@@ -67,6 +68,12 @@ export const VolumeControl = memo(function VolumeControl({
     };
   }, [isDragging, emitVolume, getVolumeFromClientX]);
 
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   const sliderOpen = isHovered || isDragging;
 
   return (
@@ -93,7 +100,31 @@ export const VolumeControl = memo(function VolumeControl({
       >
         <div
           ref={sliderRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Volume"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(effectiveVolume * 100)}
           className="relative h-1 w-[80px] cursor-pointer rounded-full bg-white/15"
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+              event.preventDefault();
+              onVolumeChange(effectiveVolume - 0.05);
+            }
+            if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+              event.preventDefault();
+              onVolumeChange(effectiveVolume + 0.05);
+            }
+            if (event.key === 'Home') {
+              event.preventDefault();
+              onVolumeChange(0);
+            }
+            if (event.key === 'End') {
+              event.preventDefault();
+              onVolumeChange(1);
+            }
+          }}
           onPointerDown={handlePointerDown}
         >
           <div
