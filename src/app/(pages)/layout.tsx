@@ -1,15 +1,15 @@
 import { ReactNode } from 'react';
 
-import { Navigation } from '@/components/layout/header/navigation';
 import { getCurrentUserWithProfile } from '@/lib/db/queries';
 import Footer from '@/components/layout/footer/footer';
+import { Header } from '@/components/layout/header';
 
 const PagesLayout = async ({ children }: { children: ReactNode }) => {
   const user = await getCurrentUserWithProfile();
 
   return (
     <>
-      <Navigation user={user} />
+      <Header user={user} />
       <main>{children}</main>
       <Footer />
     </>
