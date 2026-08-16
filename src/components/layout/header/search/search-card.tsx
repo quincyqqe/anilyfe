@@ -7,7 +7,7 @@ import { Calendar, Clock, Crown, Eye, Heart, TrendingUp, ChevronRight } from 'lu
 import Image from '@/components/ui/image';
 import { Anime } from '@/shared/types/anime';
 
-type Props = {
+type SearchCardProps = {
   anime: Anime;
   onClick: () => void;
 };
@@ -21,12 +21,11 @@ const getPopularityLevel = (favorites: number) => {
   return null;
 };
 
-export const SearchResultCard = ({ anime, onClick }: Props) => {
+export function SearchCard({ anime, onClick }: SearchCardProps) {
   const popularity = getPopularityLevel(anime.added_in_users_favorites);
   const PopularityIcon = popularity?.icon;
 
   const watchingCount = anime.added_in_watching_collection + anime.added_in_planned_collection;
-
   const posterSrc = anime.poster.optimized?.src || anime.poster.src;
 
   return (
