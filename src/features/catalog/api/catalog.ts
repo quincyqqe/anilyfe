@@ -28,7 +28,7 @@ export async function fetchCatalog({
   publishStatuses = [],
   productionStatuses = [],
   page = 1,
-  limit = 28,
+  limit = 30,
 }: Partial<CatalogFilters> & {
   limit?: number;
 } = {}): Promise<CatalogResponse> {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useTransition } from 'react';
 import type { CatalogFilters } from '../types/catalog';
 
 const PARAM_MAP: Record<keyof Omit<CatalogFilters, 'page'>, string> = {
@@ -20,6 +20,7 @@ const PARAM_MAP: Record<keyof Omit<CatalogFilters, 'page'>, string> = {
 export function useCatalogFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const filters = useMemo<CatalogFilters>(
     () => ({
@@ -61,17 +62,21 @@ export function useCatalogFilters() {
       const strVal = Array.isArray(value) ? value.join(',') : String(value);
       strVal ? params.set(PARAM_MAP[key], strVal) : params.delete(PARAM_MAP[key]);
       params.set('page', '1');
-      router.push(`?${params.toString()}`);
+      startTransition(() => router.push(`?${params.toString()}`));
     },
-    [router, searchParams],
+    [router, searchParams, startTransition],
   );
 
-  const reset = useCallback(() => router.push('/catalog'), [router]);
+  const reset = useCallback(
+    () => startTransition(() => router.push('/catalog')),
+    [router, startTransition],
+  );
 
   return {
     filters,
     activeCount,
     hasActiveFilters: activeCount > 0,
+    isPending,
     update,
     reset,
   };
