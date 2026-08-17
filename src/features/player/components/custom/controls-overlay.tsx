@@ -50,7 +50,6 @@ export const ControlsOverlay = memo(function ControlsOverlay({
       className="absolute inset-x-0 bottom-0 z-30 transition-all duration-300 ease-out"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(8px)',
         pointerEvents: visible ? 'auto' : 'none',
       }}
     >

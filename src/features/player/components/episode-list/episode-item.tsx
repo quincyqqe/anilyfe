@@ -33,13 +33,13 @@ export const EpisodeItem = memo(
         data-episode={ordinal}
         onClick={handleClick}
         className={cn(
-          'group relative flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-200',
+          'group relative flex min-h-[72px] w-full items-center gap-3 px-3 py-2.5 text-left transition-colors duration-200',
           active
-            ? 'bg-primary/10 text-zinc-100'
+            ? 'bg-primary/[0.12] text-zinc-100 before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-primary before:shadow-[0_0_10px_rgba(110,130,255,0.55)]'
             : 'text-zinc-400 hover:bg-white/4 hover:text-zinc-200',
         )}
       >
-        <div className="relative h-11 w-[76px] shrink-0 overflow-hidden rounded-xl border border-white/[0.06] bg-zinc-950/60 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+        <div className="relative h-11 w-[76px] shrink-0 overflow-hidden rounded-[10px] border border-white/[0.07] bg-zinc-950/60 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
           {thumb ? (
             <Image
               src={thumb}
@@ -74,10 +74,12 @@ export const EpisodeItem = memo(
         </div>
 
         <div className="flex min-w-0 flex-col gap-1">
-          <span className={cn(
-            'text-xs font-semibold leading-none tracking-[0.01em]',
-            active ? 'text-primary' : 'text-zinc-200'
-          )}>
+          <span
+            className={cn(
+              'text-xs font-semibold leading-none tracking-[0.01em]',
+              active ? 'text-primary' : 'text-zinc-200',
+            )}
+          >
             Эпизод {ordinal}
           </span>
 
@@ -86,15 +88,11 @@ export const EpisodeItem = memo(
               {episode.name}
             </span>
           ) : (
-            <span className="truncate text-[12px] leading-none text-zinc-500/80">
-              Без названия
-            </span>
+            <span className="truncate text-[12px] leading-none text-zinc-500/80">Без названия</span>
           )}
         </div>
 
-        {active && (
-          <span className="ml-auto flex h-2 w-2 shrink-0 rounded-full bg-primary" />
-        )}
+        {active && <span className="ml-auto flex h-2 w-2 shrink-0 rounded-full bg-primary" />}
       </button>
     );
   }),

@@ -38,8 +38,10 @@ export const EpisodeList = memo(function EpisodeList({
   return (
     <aside className="flex shrink-0 flex-col gap-3 lg:w-72 xl:w-80">
       <header className="flex items-center gap-2 px-1">
-        <ListVideo size={14} className="text-zinc-400" />
-        <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-zinc-400">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary/80">
+          <ListVideo size={14} />
+        </span>
+        <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-zinc-300">
           Список серий
         </span>
         <span className="ml-auto tabular-nums text-[10px] font-bold tracking-[0.12em] uppercase text-zinc-500">
@@ -47,10 +49,10 @@ export const EpisodeList = memo(function EpisodeList({
         </span>
       </header>
 
-      <div className="glass overflow-hidden rounded-2xl">
+      <div className="overflow-hidden rounded-[18px] border border-white/[0.07] bg-white/[0.025] shadow-[0_16px_42px_rgba(0,0,0,0.24)]">
         <div
           ref={scrollRef}
-          className="scrollbar-hide flex max-h-[625px] flex-col divide-y divide-white/5 overflow-y-auto"
+          className="scrollbar-hide flex max-h-[360px] flex-col divide-y divide-white/[0.06] overflow-y-auto lg:max-h-[614px]"
         >
           {episodes.map((episode, idx) => (
             <EpisodeItem
