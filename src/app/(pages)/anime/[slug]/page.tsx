@@ -60,10 +60,9 @@ export default async function AnimePage({ params }: PageProps) {
     getUserAnimeEntry(slug),
   ]);
 
-
   return (
     <>
-      <AnimeInfo anime={anime} franchise={franchise} animeList={rawDbEntry} />
+      <AnimeInfo anime={anime} franchise={franchise} animeEntry={rawDbEntry} />
       <AnimePlayer anime={anime} dbEntry={rawDbEntry} />
     </>
   );
