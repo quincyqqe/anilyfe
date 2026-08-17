@@ -1,5 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
+import type { UserAnimeEntry } from '@/features/profile/types/profile';
 import { createClient } from '@/lib/supabase/server';
 import type { User } from '@supabase/supabase-js';
 import type { Profile } from '@/features/profile/types/profile';
@@ -66,7 +67,7 @@ export const getProfileWithAnimeByUsername = cache(
   },
 );
 
-export const getUserAnimeEntry = cache(async (slug: string): Promise<any | null> => {
+export const getUserAnimeEntry = cache(async (slug: string): Promise<UserAnimeEntry | null> => {
   const user = await getCurrentUser();
   if (!user) return null;
   const supabase = await createClient();
@@ -77,5 +78,5 @@ export const getUserAnimeEntry = cache(async (slug: string): Promise<any | null>
     .eq('anime_slug', slug)
     .maybeSingle();
   if (error) return null;
-  return data ?? null;
+  return (data as UserAnimeEntry | null) ?? null;
 });

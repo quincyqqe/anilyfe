@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -28,6 +28,10 @@ export const ProgressBar = memo(function ProgressBar({
   onSeek,
 }: ProgressBarProps) {
   const barRef = useRef<HTMLDivElement>(null);
+  const seekRafRef = useRef<number | null>(null);
+  const pendingSeekRef = useRef<number | null>(null);
+  const hoverRafRef = useRef<number | null>(null);
+  const pendingHoverRef = useRef<number | null>(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const [hoverFraction, setHoverFraction] = useState<number | null>(null);
@@ -64,17 +68,44 @@ export const ProgressBar = memo(function ProgressBar({
     [duration, getFractionFromX, onSeek],
   );
 
+  const scheduleSeek = useCallback(
+    (time: number) => {
+      pendingSeekRef.current = time;
+      if (seekRafRef.current !== null) return;
+
+      seekRafRef.current = requestAnimationFrame(() => {
+        seekRafRef.current = null;
+        const pendingTime = pendingSeekRef.current;
+        pendingSeekRef.current = null;
+        if (pendingTime !== null) onSeek(pendingTime);
+      });
+    },
+    [onSeek],
+  );
+
+  const scheduleHover = useCallback((fraction: number) => {
+    pendingHoverRef.current = fraction;
+    if (hoverRafRef.current !== null) return;
+
+    hoverRafRef.current = requestAnimationFrame(() => {
+      hoverRafRef.current = null;
+      const pendingFraction = pendingHoverRef.current;
+      pendingHoverRef.current = null;
+      if (pendingFraction !== null) setHoverFraction(pendingFraction);
+    });
+  }, []);
+
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       const fraction = getFractionFromX(e.clientX);
 
-      setHoverFraction(fraction);
+      scheduleHover(fraction);
 
       if (isDragging) {
-        onSeek(fraction * duration);
+        scheduleSeek(fraction * duration);
       }
     },
-    [duration, getFractionFromX, isDragging, onSeek],
+    [duration, getFractionFromX, isDragging, scheduleHover, scheduleSeek],
   );
 
   const handlePointerUp = useCallback(() => {
@@ -82,12 +113,32 @@ export const ProgressBar = memo(function ProgressBar({
   }, []);
 
   const handlePointerLeave = useCallback(() => {
-    if (!isDragging) {
-      setHoverFraction(null);
-    }
-
-    setIsDragging(false);
+    if (!isDragging) setHoverFraction(null);
   }, [isDragging]);
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (duration <= 0) return;
+
+      let nextTime: number | null = null;
+      if (event.key === 'ArrowLeft') nextTime = currentTime - 5;
+      if (event.key === 'ArrowRight') nextTime = currentTime + 5;
+      if (event.key === 'Home') nextTime = 0;
+      if (event.key === 'End') nextTime = duration;
+      if (nextTime === null) return;
+
+      event.preventDefault();
+      onSeek(Math.max(0, Math.min(duration, nextTime)));
+    },
+    [currentTime, duration, onSeek],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (seekRafRef.current !== null) cancelAnimationFrame(seekRafRef.current);
+      if (hoverRafRef.current !== null) cancelAnimationFrame(hoverRafRef.current);
+    };
+  }, []);
 
   const tooltipLeft =
     hoverFraction != null
@@ -107,11 +158,20 @@ export const ProgressBar = memo(function ProgressBar({
 
       <div
         ref={barRef}
+        role="slider"
+        tabIndex={0}
+        aria-label="Video progress"
+        aria-valuemin={0}
+        aria-valuemax={duration}
+        aria-valuenow={currentTime}
+        aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
         className="relative h-[4px] rounded-full bg-white/10 transition-[height] duration-200 ease-out group-hover/progress:h-[7px]"
         style={isDragging ? { height: '7px' } : undefined}
+        onKeyDown={handleKeyDown}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
         onPointerLeave={handlePointerLeave}
       >
         <div

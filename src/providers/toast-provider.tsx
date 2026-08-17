@@ -1,12 +1,6 @@
 'use client';
-import { ToastProvider } from '@heroui/react';
+import { Toaster } from '@/components/ui/toast';
 
 export function AppToastProvider() {
-  return (
-    <ToastProvider
-      toastProps={{
-        timeout: 3000,
-      }}
-    />
-  );
+  return <Toaster />;
 }

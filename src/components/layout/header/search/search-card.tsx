@@ -1,13 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Tooltip } from '@heroui/react';
 import { Calendar, Clock, Crown, Eye, Heart, TrendingUp, ChevronRight } from 'lucide-react';
 
 import Image from '@/components/ui/image';
 import { Anime } from '@/shared/types/anime';
 
-type Props = {
+type SearchCardProps = {
   anime: Anime;
   onClick: () => void;
 };
@@ -21,12 +20,11 @@ const getPopularityLevel = (favorites: number) => {
   return null;
 };
 
-export const SearchResultCard = ({ anime, onClick }: Props) => {
+export function SearchCard({ anime, onClick }: SearchCardProps) {
   const popularity = getPopularityLevel(anime.added_in_users_favorites);
   const PopularityIcon = popularity?.icon;
 
   const watchingCount = anime.added_in_watching_collection + anime.added_in_planned_collection;
-
   const posterSrc = anime.poster.optimized?.src || anime.poster.src;
 
   return (
@@ -70,13 +68,11 @@ export const SearchResultCard = ({ anime, onClick }: Props) => {
               </h3>
 
               {popularity && PopularityIcon && (
-                <Tooltip content={popularity.label}>
                   <div
                     className={`flex items-center ${popularity.color} bg-white/5 p-1.5 rounded-full border border-white/10`}
                   >
                     <PopularityIcon size={14} />
                   </div>
-                </Tooltip>
               )}
             </div>
 

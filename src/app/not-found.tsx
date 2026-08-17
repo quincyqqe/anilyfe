@@ -1,3 +1,6 @@
+import Link from 'next/link';
+import { CompassIcon, HomeIcon } from 'lucide-react';
+
 import {
   Empty,
   EmptyContent,
@@ -5,39 +8,35 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from '@/components/ui/empty';
-import { HomeIcon, CompassIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils/cn';
 
 export default function NotFound() {
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden">
+    <main className="flex min-h-[calc(100svh-4rem)] w-full items-center justify-center px-6">
       <Empty>
         <EmptyHeader>
-          <EmptyTitle className="mask-b-from-20% mask-b-to-80% font-extrabold text-9xl">
-            404
-          </EmptyTitle>
-          <EmptyDescription className="-mt-8 text-nowrap text-foreground/80">
-            The page you're looking for might have been <br />
-            moved or doesn't exist.
+          <EmptyTitle className="text-9xl font-extrabold tracking-tighter">404</EmptyTitle>
+
+          <EmptyDescription className="max-w-md text-balance">
+            The page you're looking for might have been moved or doesn't exist.
           </EmptyDescription>
         </EmptyHeader>
-        <EmptyContent>
-          <div className="flex gap-2">
-            <Button asChild>
-              <a href="/">
-                <HomeIcon className="size-4 mr-2" data-icon="inline-start" />
-                Go Home
-              </a>
-            </Button>
 
-            <Button asChild variant="outline">
-              <a href="/catalog">
-                <CompassIcon className="size-4 mr-2" data-icon="inline-start" /> Explore
-              </a>
-            </Button>
+        <EmptyContent>
+          <div className="flex items-center justify-center gap-2">
+            <Link href="/" className={buttonVariants()}>
+              <HomeIcon />
+              Домой
+            </Link>
+
+            <Link href="/catalog" className={cn(buttonVariants({ variant: 'outline' }))}>
+              <CompassIcon />
+              Каталог
+            </Link>
           </div>
         </EmptyContent>
       </Empty>
-    </div>
+    </main>
   );
 }

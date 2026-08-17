@@ -1,203 +1,497 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Input, Chip, Select, SelectItem } from '@heroui/react';
-import { Search, Filter, X } from 'lucide-react';
-import { useCatalogFilters } from '../hooks/use-catalog-filters';
+import { useEffect, useState } from 'react';
+import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
-  genres,
-  formats,
-  seasons,
-  years,
-  sortingOptions,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils/cn';
+
+import {
   ageRatings,
-  publishStatuses,
+  formats,
+  genres,
   productionStatuses,
+  publishStatuses,
+  seasons,
+  sortingOptions,
+  years,
 } from '../constants';
+import { useCatalogFilters } from '../hooks/use-catalog-filters';
+
+type FilterOption = {
+  value: string | number;
+  label: string;
+};
 
 export function CatalogFilters() {
-  const { filters, activeCount, hasActiveFilters, update, reset } = useCatalogFilters();
-  const [isOpen, setIsOpen] = useState(false);
+  const { filters, activeCount, hasActiveFilters, isPending, reset, update } =
+    useCatalogFilters();
+
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(filters.search);
 
+  useEffect(() => {
+    setSearchValue(filters.search);
+  }, [filters.search]);
+
+  const submitSearch = () => {
+    update('search', searchValue.trim());
+  };
+
   return (
-    <div className="w-full  space-y-4">
+    <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
       <div className="lg:hidden">
         <Button
-          variant="bordered"
-          onPress={() => setIsOpen((v) => !v)}
-          className="w-full justify-between border-white/10 bg-white/5 text-white"
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={() => setIsMobileOpen((open) => !open)}
+          aria-expanded={isMobileOpen}
+          className="h-12 w-full justify-between rounded-2xl border-white/10 bg-card/60 px-4 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-sm"
         >
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-primary" />
-            <span>Фильтры</span>
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal data-icon="inline-start" />
+            Настроить выдачу
             {hasActiveFilters && (
-              <Chip size="sm" color="primary">
-                {activeCount}
-              </Chip>
+              <Badge variant="secondary">{activeCount}</Badge>
             )}
-          </div>
+          </span>
+
+          <ChevronDown
+            data-icon="inline-end"
+            className={cn(
+              'transition-transform duration-200',
+              isMobileOpen && 'rotate-180',
+            )}
+          />
         </Button>
-      </div>
 
-      <div className={`${isOpen ? 'flex' : 'hidden'} lg:flex flex-col gap-4`}>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            update('search', searchValue);
-          }}
-        >
-          <Input
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Поиск аниме..."
-            size="lg"
-            radius="lg"
-            variant="faded"
-            startContent={<Search size={18} className="text-default-400 shrink-0" />}
-            classNames={{
-              input: 'text-white placeholder:text-default-500',
-              inputWrapper: 'bg-white/5 border-white/10 ',
-            }}
-          />
-        </form>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          <FilterSelect
-            label="Жанр"
-            options={genres.map((g) => ({
-              value: String(g.id),
-              label: g.name,
-            }))}
-            selectedKeys={new Set(filters.genres.map(String))}
-            onSelectionChange={(keys) => update('genres', [...keys].map(Number))}
-            multiple
-          />
-          <FilterSelect
-            label="Формат"
-            options={formats.map((f) => ({
-              value: f.value,
-              label: f.description,
-            }))}
-            selectedKeys={new Set(filters.types)}
-            onSelectionChange={(keys) => update('types', [...keys] as string[])}
-            multiple
-          />
-          <FilterSelect
-            label="Сезон"
-            options={seasons.map((s) => ({
-              value: s.value,
-              label: s.description,
-            }))}
-            selectedKeys={new Set(filters.seasons)}
-            onSelectionChange={(keys) => update('seasons', [...keys] as string[])}
-            multiple
-          />
-          <FilterSelect
-            label="Сортировка"
-            options={sortingOptions.map((s) => ({
-              value: s.value,
-              label: s.description,
-            }))}
-            selectedKeys={filters.sorting ? new Set([filters.sorting]) : new Set()}
-            onSelectionChange={(keys) => update('sorting', ([...keys][0] as string) ?? '')}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-          <FilterSelect
-            label="Год от"
-            options={years.map((y) => ({ value: String(y), label: String(y) }))}
-            selectedKeys={filters.fromYear ? new Set([filters.fromYear]) : new Set()}
-            onSelectionChange={(keys) => update('fromYear', ([...keys][0] as string) ?? '')}
-          />
-          <FilterSelect
-            label="Год до"
-            options={years.map((y) => ({ value: String(y), label: String(y) }))}
-            selectedKeys={filters.toYear ? new Set([filters.toYear]) : new Set()}
-            onSelectionChange={(keys) => update('toYear', ([...keys][0] as string) ?? '')}
-          />
-          <FilterSelect
-            label="Возраст"
-            options={ageRatings.map((a) => ({
-              value: a.value,
-              label: a.description,
-            }))}
-            selectedKeys={new Set(filters.ageRatings)}
-            onSelectionChange={(keys) => update('ageRatings', [...keys] as string[])}
-            multiple
-          />
-          <FilterSelect
-            label="Статус публикации"
-            options={publishStatuses.map((p) => ({
-              value: p.value,
-              label: p.description,
-            }))}
-            selectedKeys={new Set(filters.publishStatuses)}
-            onSelectionChange={(keys) => update('publishStatuses', [...keys] as string[])}
-            multiple
-          />
-          <FilterSelect
-            label="Статус производства"
-            options={productionStatuses.map((p) => ({
-              value: p.value,
-              label: p.description,
-            }))}
-            selectedKeys={new Set(filters.productionStatuses)}
-            onSelectionChange={(keys) => update('productionStatuses', [...keys] as string[])}
-            multiple
-          />
-        </div>
-
-        {hasActiveFilters && (
-          <Button
-            variant="bordered"
-            onPress={reset}
-            startContent={<X size={16} />}
-            className="self-start border-white/10 bg-white/5 text-white/70 hover:text-white hover:border-primary"
-          >
-            Сбросить все фильтры
-          </Button>
+        {isMobileOpen && (
+          <div className="mt-3 rounded-2xl border border-white/10 bg-card/85 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
+            <FilterWorkspace
+              activeCount={activeCount}
+              filters={filters}
+              hasActiveFilters={hasActiveFilters}
+              isPending={isPending}
+              onReset={reset}
+              onSearchChange={setSearchValue}
+              onSearchSubmit={submitSearch}
+              searchId="catalog-search-mobile"
+              searchValue={searchValue}
+              update={update}
+            />
+          </div>
         )}
       </div>
+
+      <aside className="hidden rounded-3xl border border-white/[0.08] bg-card/20 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl lg:block">
+        <FilterWorkspace
+          activeCount={activeCount}
+          filters={filters}
+          hasActiveFilters={hasActiveFilters}
+          isPending={isPending}
+          onReset={reset}
+          onSearchChange={setSearchValue}
+          onSearchSubmit={submitSearch}
+          searchId="catalog-search-desktop"
+          searchValue={searchValue}
+          update={update}
+        />
+      </aside>
     </div>
   );
 }
 
-interface FilterSelectProps {
-  label: string;
-  options: { value: string; label: string }[];
-  selectedKeys: Set<string>;
-  onSelectionChange: (keys: Set<string>) => void;
-  multiple?: boolean;
+type FilterWorkspaceProps = {
+  activeCount: number;
+  filters: ReturnType<typeof useCatalogFilters>['filters'];
+  hasActiveFilters: boolean;
+  isPending: boolean;
+  onReset: () => void;
+  onSearchChange: (value: string) => void;
+  onSearchSubmit: () => void;
+  searchId: string;
+  searchValue: string;
+  update: ReturnType<typeof useCatalogFilters>['update'];
+};
+
+function FilterWorkspace({
+  activeCount,
+  filters,
+  hasActiveFilters,
+  isPending,
+  onReset,
+  onSearchChange,
+  onSearchSubmit,
+  searchId,
+  searchValue,
+  update,
+}: FilterWorkspaceProps) {
+  return (
+    <div aria-busy={isPending} className="flex flex-col gap-5">
+      <div className="flex items-center justify-between gap-3 px-1 pt-1">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            Навигация
+          </p>
+          <h2 className="mt-1 text-sm font-semibold text-foreground">
+            Параметры поиска
+          </h2>
+        </div>
+
+        {hasActiveFilters && (
+          <Badge variant="secondary">{activeCount}</Badge>
+        )}
+      </div>
+
+      <form
+        className="flex flex-col gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSearchSubmit();
+        }}
+      >
+        <label
+          htmlFor={searchId}
+          className="text-xs font-medium text-muted-foreground"
+        >
+          Найти аниме
+        </label>
+
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+          <Input
+            id={searchId}
+            value={searchValue}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Название или франшиза"
+            className="pr-10 pl-10"
+          />
+
+          {searchValue && (
+            <button
+              type="button"
+              aria-label="Очистить поиск"
+              onClick={() => {
+                onSearchChange('');
+                update('search', '');
+              }}
+              className="absolute right-1 top-1/2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+
+        <p className="text-[11px] leading-relaxed text-muted-foreground">
+          Нажмите Enter, чтобы применить запрос.
+        </p>
+      </form>
+
+      <FilterGroup title="Сначала показать">
+        <SingleSelectMenu
+          label="Сортировка"
+          options={sortingOptions.map((option) => ({
+            value: option.value,
+            label: option.description,
+          }))}
+          value={filters.sorting}
+          onChange={(value) => update('sorting', value)}
+        />
+      </FilterGroup>
+
+      <FilterGroup title="О произведении">
+        <MultiSelectMenu
+          label="Жанры"
+          options={genres.map((genre) => ({
+            value: genre.id,
+            label: genre.name,
+          }))}
+          values={filters.genres}
+          onChange={(value) => update('genres', value as number[])}
+        />
+
+        <MultiSelectMenu
+          label="Формат"
+          options={formats.map((format) => ({
+            value: format.value,
+            label: format.description,
+          }))}
+          values={filters.types}
+          onChange={(value) => update('types', value as string[])}
+        />
+
+        <MultiSelectMenu
+          label="Сезон"
+          options={seasons.map((season) => ({
+            value: season.value,
+            label: season.description,
+          }))}
+          values={filters.seasons}
+          onChange={(value) => update('seasons', value as string[])}
+        />
+
+        <MultiSelectMenu
+          label="Возрастной рейтинг"
+          options={ageRatings.map((rating) => ({
+            value: rating.value,
+            label: rating.description,
+          }))}
+          values={filters.ageRatings}
+          onChange={(value) => update('ageRatings', value as string[])}
+        />
+      </FilterGroup>
+
+      <FilterGroup title="Время и статус">
+        <div className="grid grid-cols-2 gap-2">
+          <SingleSelectMenu
+            label="Год от"
+            options={years.map((year) => ({
+              value: String(year),
+              label: String(year),
+            }))}
+            value={filters.fromYear}
+            onChange={(value) => update('fromYear', value)}
+          />
+
+          <SingleSelectMenu
+            label="Год до"
+            options={years.map((year) => ({
+              value: String(year),
+              label: String(year),
+            }))}
+            value={filters.toYear}
+            onChange={(value) => update('toYear', value)}
+          />
+        </div>
+
+        <MultiSelectMenu
+          label="Статус публикации"
+          options={publishStatuses.map((status) => ({
+            value: status.value,
+            label: status.description,
+          }))}
+          values={filters.publishStatuses}
+          onChange={(value) =>
+            update('publishStatuses', value as string[])
+          }
+        />
+
+        <MultiSelectMenu
+          label="Статус производства"
+          options={productionStatuses.map((status) => ({
+            value: status.value,
+            label: status.description,
+          }))}
+          values={filters.productionStatuses}
+          onChange={(value) =>
+            update('productionStatuses', value as string[])
+          }
+        />
+      </FilterGroup>
+
+      {hasActiveFilters && (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onReset}
+          className="h-10 w-full justify-center rounded-xl text-muted-foreground hover:text-foreground"
+        >
+          <X data-icon="inline-start" />
+          Сбросить фильтры
+        </Button>
+      )}
+
+      <p
+        className="px-1 text-[10px] text-muted-foreground"
+        aria-live="polite"
+      >
+        {isPending
+          ? 'Обновляем выдачу…'
+          : 'Фильтры сохраняются в ссылке.'}
+      </p>
+    </div>
+  );
 }
 
-function FilterSelect({
+function FilterGroup({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className="flex flex-col gap-2 border-t border-white/[0.07] pt-4">
+      <legend className="pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+        {title}
+      </legend>
+
+      {children}
+    </fieldset>
+  );
+}
+
+function MultiSelectMenu({
   label,
   options,
-  selectedKeys,
-  onSelectionChange,
-  multiple = false,
-}: FilterSelectProps) {
+  values,
+  onChange,
+}: {
+  label: string;
+  options: FilterOption[];
+  values: ReadonlyArray<string | number>;
+  onChange: (values: Array<string | number>) => void;
+}) {
+  const selectedCount = values.length;
+
   return (
-    <Select
-      label={label}
-      selectionMode={multiple ? 'multiple' : 'single'}
-      selectedKeys={selectedKeys}
-      onSelectionChange={(keys) => onSelectionChange(new Set(keys as Set<string>))}
-      size="md"
-      radius="lg"
-      variant="faded"
-      classNames={{
-        trigger: 'bg-white/5 border-white/10',
-        label: 'text-default-400',
-        value: 'text-white',
-        popoverContent: 'bg-content1 border border-white/10',
-      }}
-    >
-      {options.map((opt) => (
-        <SelectItem key={opt.value}>{opt.label}</SelectItem>
-      ))}
-    </Select>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            className={cn(
+              'h-11 w-full justify-between rounded-xl bg-transparent px-3 text-left text-xs font-medium',
+              selectedCount > 0 &&
+                'border-foreground/25 bg-muted/50 text-foreground',
+            )}
+          />
+        }
+      >
+        <span className="truncate">{label}</span>
+
+        <span className="flex shrink-0 items-center gap-2 text-muted-foreground">
+          {selectedCount > 0 && (
+            <Badge variant="secondary">{selectedCount}</Badge>
+          )}
+          <ChevronDown data-icon="inline-end" />
+        </span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        sideOffset={6}
+        className="max-h-[min(60dvh,32rem)] w-72 rounded-2xl p-1.5"
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{label}</DropdownMenuLabel>
+
+          <DropdownMenuSeparator />
+
+          {options.map((option) => {
+            const isSelected = values.includes(option.value);
+
+            return (
+              <DropdownMenuCheckboxItem
+                key={String(option.value)}
+                checked={isSelected}
+                closeOnClick={false}
+                onCheckedChange={(checked) =>
+                  onChange(
+                    checked
+                      ? [...values, option.value]
+                      : values.filter(
+                          (value) => value !== option.value,
+                        ),
+                  )
+                }
+                className="min-h-9 cursor-pointer py-2 text-xs"
+              >
+                {option.label}
+              </DropdownMenuCheckboxItem>
+            );
+          })}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function SingleSelectMenu({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: FilterOption[];
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const activeLabel = options.find(
+    (option) => String(option.value) === value,
+  )?.label;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            className={cn(
+              'h-11 w-full justify-between rounded-xl bg-transparent px-3 text-left text-xs font-medium',
+              value &&
+                'border-foreground/25 bg-muted/50 text-foreground',
+            )}
+          />
+        }
+      >
+        <span className="truncate">{activeLabel ?? label}</span>
+
+        <ChevronDown
+          data-icon="inline-end"
+          className="text-muted-foreground"
+        />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        sideOffset={6}
+        className="max-h-[min(60dvh,32rem)] w-72 rounded-2xl p-1.5"
+      >
+        <DropdownMenuRadioGroup
+          value={value}
+          onValueChange={onChange}
+        >
+          <DropdownMenuLabel>{label}</DropdownMenuLabel>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuRadioItem
+            value=""
+            closeOnClick
+            className="min-h-9 cursor-pointer py-2 text-xs"
+          >
+            Любой вариант
+          </DropdownMenuRadioItem>
+
+          {options.map((option) => (
+            <DropdownMenuRadioItem
+              key={String(option.value)}
+              value={String(option.value)}
+              closeOnClick
+              className="min-h-9 cursor-pointer py-2 text-xs"
+            >
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -1,53 +1,23 @@
 'use client';
 
 import type { AnimeEpisode } from '@/shared/types/anime';
-import Hls from 'hls.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { usePlayerBrowser } from '../hooks/use-player-browser';
+import {
+  buildQualities,
+  getBestUrl,
+  type PlayerActions,
+  type PlayerError,
+  type PlayerState,
+} from '../model/player-types';
+import { readPlayerPreferences, writePlayerPreference } from './player-storage';
 
-interface IOSVideoElement extends HTMLVideoElement {
-  webkitEnterFullscreen?: () => void;
-  webkitExitFullscreen?: () => void;
-  webkitDisplayingFullscreen?: boolean;
-}
+import type Hls from 'hls.js';
 
-export interface QualityLevel {
-  label: string;
-  url: string;
-}
-
-export interface PlayerState {
-  playing: boolean;
-  currentTime: number;
-  duration: number;
-  buffered: number;
-  volume: number;
-  muted: boolean;
-  playbackRate: number;
-  isFullscreen: boolean;
-  isPip: boolean;
-  isBuffering: boolean;
-  isSeeking: boolean;
-  qualities: QualityLevel[];
-  activeQualityUrl: string | null;
-  hasPlayed: boolean;
-  videoReady: boolean;
-}
-
-export interface PlayerActions {
-  togglePlay: () => void;
-  seek: (time: number) => void;
-  seekRelative: (delta: number) => void;
-  setVolume: (v: number) => void;
-  toggleMute: () => void;
-  setPlaybackRate: (r: number) => void;
-  setQuality: (url: string) => void;
-  toggleFullscreen: () => void;
-  togglePip: () => void;
-}
+export type { PlayerActions, PlayerError, PlayerState, QualityLevel } from '../model/player-types';
 
 interface UsePlayerOptions {
   episode: AnimeEpisode;
-  poster?: string;
   initialTime?: number;
   onProgress?: (currentTime: number, duration: number) => void;
   title?: string;
@@ -55,55 +25,49 @@ interface UsePlayerOptions {
   artwork?: string;
 }
 
+type PlayerAction = { type: 'patch'; patch: Partial<PlayerState> };
+
+const INITIAL_STATE: PlayerState = {
+  status: 'idle',
+  playing: false,
+  currentTime: 0,
+  duration: 0,
+  buffered: 0,
+  volume: 1,
+  muted: false,
+  playbackRate: 1,
+  isFullscreen: false,
+  isPip: false,
+  canPip: false,
+  isBuffering: false,
+  isSeeking: false,
+  qualities: [],
+  activeQualityUrl: null,
+  hasPlayed: false,
+  videoReady: false,
+  error: null,
+};
+
 const SAVE_INTERVAL_MS = 10_000;
-const VOLUME_KEY = 'anilyfe-player-volume';
-const MUTED_KEY = 'anilyfe-player-muted';
-const RATE_KEY = 'anilyfe-player-rate';
 
-function buildQualities(ep: AnimeEpisode): QualityLevel[] {
-  const list: QualityLevel[] = [];
-  if (ep.hls_1080) list.push({ label: '1080p', url: ep.hls_1080 });
-  if (ep.hls_720) list.push({ label: '720p', url: ep.hls_720 });
-  if (ep.hls_480) list.push({ label: '480p', url: ep.hls_480 });
-  return list;
-}
-
-function getBestUrl(ep: AnimeEpisode): string | null {
-  return ep.hls_1080 ?? ep.hls_720 ?? ep.hls_480 ?? null;
+function reducer(state: PlayerState, action: PlayerAction): PlayerState {
+  return { ...state, ...action.patch };
 }
 
 function getBufferedEnd(video: HTMLVideoElement): number {
-  if (video.buffered.length === 0) return 0;
+  const currentTime = video.currentTime;
 
-  for (let i = 0; i < video.buffered.length; i++) {
-    if (video.currentTime <= video.buffered.end(i)) {
-      return video.buffered.end(i);
-    }
+  for (let index = 0; index < video.buffered.length; index += 1) {
+    const start = video.buffered.start(index);
+    const end = video.buffered.end(index);
+    if (currentTime >= start && currentTime <= end) return end;
   }
-  return video.buffered.end(video.buffered.length - 1);
+
+  return video.buffered.length > 0 ? video.buffered.end(video.buffered.length - 1) : 0;
 }
 
-function readStorage(key: string, fallback: string): string {
-  try {
-    return localStorage.getItem(key) ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function readNumberStorage(key: string, fallback: number): number {
-  const value = Number.parseFloat(readStorage(key, String(fallback)));
-  return Number.isFinite(value) ? value : fallback;
-}
-
-function readPlaybackRate(): number {
-  return Math.max(0.25, Math.min(2, readNumberStorage(RATE_KEY, 1)));
-}
-
-function writeStorage(key: string, value: string) {
-  try {
-    localStorage.setItem(key, value);
-  } catch {}
+function getPlayerError(kind: PlayerError['kind'], message: string, retryable = true): PlayerError {
+  return { kind, message, retryable };
 }
 
 export function usePlayer({
@@ -117,176 +81,240 @@ export function usePlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const nativeCleanupRef = useRef<(() => void) | null>(null);
+  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sourceGenerationRef = useRef(0);
+  const pendingRestoreRef = useRef<{
+    generation: number;
+    time: number;
+    autoplay: boolean;
+  } | null>(null);
   const onProgressRef = useRef(onProgress);
-  const saveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
   useEffect(() => {
     onProgressRef.current = onProgress;
   }, [onProgress]);
 
-  const [state, setState] = useState<PlayerState>(() => ({
-    playing: false,
-    currentTime: 0,
-    duration: 0,
-    buffered: 0,
-    volume: readNumberStorage(VOLUME_KEY, 1),
-    muted: readStorage(MUTED_KEY, 'false') === 'true',
-    playbackRate: readPlaybackRate(),
-    isFullscreen: false,
-    isPip: false,
-    isBuffering: false,
-    isSeeking: false,
-    qualities: buildQualities(episode),
-    activeQualityUrl: getBestUrl(episode),
-    hasPlayed: false,
-    videoReady: false,
-  }));
-
-  const patch = useCallback((p: Partial<PlayerState>) => {
-    setState((prev) => ({ ...prev, ...p }));
+  const patch = useCallback((patchValue: Partial<PlayerState>) => {
+    dispatch({ type: 'patch', patch: patchValue });
   }, []);
 
-  useEffect(() => {
+  const clearSource = useCallback(() => {
+    nativeCleanupRef.current?.();
+    nativeCleanupRef.current = null;
+
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+
+    hlsRef.current?.destroy();
+    hlsRef.current = null;
+    pendingRestoreRef.current = null;
+
     const video = videoRef.current;
     if (!video) return;
 
-    const url = getBestUrl(episode);
-    if (!url) return;
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+  }, []);
 
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
+  const loadSource = useCallback(
+    async (url: string, resumeTime: number, autoplay: boolean) => {
+      const video = videoRef.current;
+      if (!video) return;
 
+      const generation = sourceGenerationRef.current + 1;
+      sourceGenerationRef.current = generation;
+      clearSource();
+
+      pendingRestoreRef.current = { generation, time: resumeTime, autoplay };
+      patch({
+        status: 'loading',
+        playing: false,
+        currentTime: 0,
+        duration: 0,
+        buffered: 0,
+        isBuffering: true,
+        isSeeking: false,
+        videoReady: false,
+        error: null,
+      });
+
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        const onLoadedMetadata = () => {
+          if (sourceGenerationRef.current !== generation) return;
+          patch({ status: 'ready', isBuffering: false });
+        };
+
+        video.addEventListener('loadedmetadata', onLoadedMetadata, { once: true });
+        nativeCleanupRef.current = () =>
+          video.removeEventListener('loadedmetadata', onLoadedMetadata);
+        video.src = url;
+        video.load();
+        return;
+      }
+
+      try {
+        const HlsConstructor = (await import('hls.js')).default;
+        if (sourceGenerationRef.current !== generation) return;
+
+        if (!HlsConstructor.isSupported()) {
+          patch({
+            status: 'error',
+            isBuffering: false,
+            error: getPlayerError('unsupported', 'This browser cannot play this stream.', false),
+          });
+          return;
+        }
+
+        let networkRetries = 0;
+        let mediaRetries = 0;
+        const hls = new HlsConstructor({
+          startLevel: -1,
+          capLevelToPlayerSize: true,
+          backBufferLength: 60,
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+        });
+
+        hlsRef.current = hls;
+        hls.on(HlsConstructor.Events.MANIFEST_PARSED, () => {
+          if (sourceGenerationRef.current !== generation) return;
+          patch({ status: 'ready', error: null });
+        });
+        hls.on(HlsConstructor.Events.ERROR, (_event, data) => {
+          if (sourceGenerationRef.current !== generation || !data.fatal) return;
+
+          if (data.type === HlsConstructor.ErrorTypes.NETWORK_ERROR && networkRetries < 3) {
+            networkRetries += 1;
+            retryTimerRef.current = setTimeout(
+              () => {
+                if (sourceGenerationRef.current === generation) hls.startLoad();
+              },
+              500 * 2 ** (networkRetries - 1),
+            );
+            return;
+          }
+
+          if (data.type === HlsConstructor.ErrorTypes.MEDIA_ERROR && mediaRetries < 2) {
+            mediaRetries += 1;
+            hls.recoverMediaError();
+            return;
+          }
+
+          const kind = data.type === HlsConstructor.ErrorTypes.NETWORK_ERROR ? 'network' : 'media';
+          patch({
+            status: 'error',
+            isBuffering: false,
+            playing: false,
+            error: getPlayerError(kind, 'Playback failed. Try again.', true),
+          });
+        });
+
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      } catch {
+        if (sourceGenerationRef.current !== generation) return;
+        patch({
+          status: 'error',
+          isBuffering: false,
+          error: getPlayerError('unknown', 'The stream could not be loaded.', true),
+        });
+      }
+    },
+    [clearSource, patch],
+  );
+
+  useEffect(() => {
     const qualities = buildQualities(episode);
-    const volume = readNumberStorage(VOLUME_KEY, 1);
-    const muted = readStorage(MUTED_KEY, 'false') === 'true';
-    const rate = readPlaybackRate();
-
-    video.volume = volume;
-    video.muted = muted;
-    video.playbackRate = rate;
+    const url = getBestUrl(episode);
 
     patch({
       qualities,
       activeQualityUrl: url,
-      hasPlayed: false,
-      playing: false,
-      currentTime: 0,
-      duration: 0,
-      buffered: 0,
-      volume,
-      muted,
-      playbackRate: rate,
-      videoReady: false,
+      status: url ? 'loading' : 'error',
+      error: url ? null : getPlayerError('unsupported', 'No playable stream is available.', false),
     });
 
-    let mediaRetryCount = 0;
-    let networkRetryCount = 0;
-
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        startLevel: -1,
-        backBufferLength: 60,
-        maxMaxBufferLength: 30,
-      });
-
-      hlsRef.current = hls;
-      hls.loadSource(url);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.playbackRate = rate;
-        if (initialTime > 5) video.currentTime = initialTime;
-      });
-
-      hls.on(Hls.Events.ERROR, (_e, data) => {
-        if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-            if (networkRetryCount < 3) {
-              networkRetryCount++;
-              console.warn(`HLS fatal network error: attempting retry ${networkRetryCount}/3...`);
-              hls.startLoad();
-            } else {
-              console.error('HLS fatal network error: exceeded retry limit. Destroying stream.');
-              hls.destroy();
-            }
-          } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-            if (mediaRetryCount < 3) {
-              mediaRetryCount++;
-              console.warn(`HLS fatal media error: attempting recover ${mediaRetryCount}/3...`);
-              hls.recoverMediaError();
-            } else {
-              console.error('HLS fatal media error: exceeded retry limit. Destroying stream.');
-              hls.destroy();
-            }
-          } else {
-            console.error('HLS unrecoverable fatal error. Destroying stream.');
-            hls.destroy();
-          }
-        }
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = url;
-      video.addEventListener(
-        'loadedmetadata',
-        () => {
-          video.playbackRate = rate;
-          if (initialTime > 5) video.currentTime = initialTime;
-        },
-        { once: true },
-      );
-    }
+    if (url) void loadSource(url, initialTime, false);
 
     return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
+      sourceGenerationRef.current += 1;
+      clearSource();
     };
-  }, [episode, initialTime, patch]);
-
-  useEffect(() => {
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-      if (saveTimerRef.current) {
-        clearInterval(saveTimerRef.current);
-        saveTimerRef.current = null;
-      }
-    };
-  }, []);
+  }, [clearSource, episode, initialTime, loadSource, patch, reloadKey]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const onPlay = () => patch({ playing: true, hasPlayed: true });
-    const onPause = () => patch({ playing: false });
-    const onTimeUpdate = () =>
-      patch({ currentTime: video.currentTime, buffered: getBufferedEnd(video) });
+    const preferences = readPlayerPreferences();
+    video.volume = preferences.volume;
+    video.muted = preferences.muted;
+    video.playbackRate = preferences.playbackRate;
+    patch(preferences);
+  }, [patch]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let frameId: number | null = null;
+    const publishTime = () => {
+      if (frameId !== null) return;
+      frameId = requestAnimationFrame(() => {
+        frameId = null;
+        patch({ currentTime: video.currentTime, buffered: getBufferedEnd(video) });
+      });
+    };
+    const onPlay = () => patch({ status: 'playing', playing: true, hasPlayed: true, error: null });
+    const onPause = () => patch({ status: 'paused', playing: false });
     const onDurationChange = () => patch({ duration: video.duration || 0 });
     const onVolumeChange = () => {
       patch({ volume: video.volume, muted: video.muted });
-      writeStorage(VOLUME_KEY, String(video.volume));
-      writeStorage(MUTED_KEY, String(video.muted));
+      writePlayerPreference('volume', video.volume);
+      writePlayerPreference('muted', video.muted);
     };
     const onRateChange = () => {
       patch({ playbackRate: video.playbackRate });
-      writeStorage(RATE_KEY, String(video.playbackRate));
+      writePlayerPreference('playbackRate', video.playbackRate);
     };
-    const onWaiting = () => patch({ isBuffering: true });
-    const onCanPlay = () => patch({ isBuffering: false, isSeeking: false });
-    const onSeeking = () => patch({ isSeeking: true });
+    const onWaiting = () => patch({ status: 'buffering', isBuffering: true });
+    const onCanPlay = () =>
+      patch({ status: video.paused ? 'paused' : 'playing', isBuffering: false, isSeeking: false });
+    const onSeeking = () => patch({ status: 'seeking', isSeeking: true });
     const onSeeked = () => patch({ isSeeking: false });
-    const onEnded = () => patch({ playing: false });
+    const onEnded = () => patch({ status: 'ended', playing: false, isBuffering: false });
     const onLoadedData = () => patch({ videoReady: true });
+    const onError = () => {
+      if (video.error?.code !== MediaError.MEDIA_ERR_ABORTED && sourceGenerationRef.current > 0) {
+        patch({
+          status: 'error',
+          playing: false,
+          isBuffering: false,
+          error: getPlayerError('media', 'The video could not be decoded.', true),
+        });
+      }
+    };
+    const onLoadedMetadata = () => {
+      const pending = pendingRestoreRef.current;
+      if (!pending || pending.generation !== sourceGenerationRef.current) return;
+
+      const duration = Number.isFinite(video.duration) ? video.duration : 0;
+      const maxTime = duration > 1 ? duration - 0.5 : duration;
+      const time = Math.max(0, Math.min(pending.time, Math.max(0, maxTime)));
+      if (time > 0) video.currentTime = time;
+      if (pending.autoplay) video.play().catch(() => undefined);
+      pendingRestoreRef.current = null;
+    };
 
     video.addEventListener('play', onPlay);
     video.addEventListener('pause', onPause);
-    video.addEventListener('timeupdate', onTimeUpdate);
+    video.addEventListener('timeupdate', publishTime);
     video.addEventListener('durationchange', onDurationChange);
     video.addEventListener('volumechange', onVolumeChange);
     video.addEventListener('ratechange', onRateChange);
@@ -297,11 +325,14 @@ export function usePlayer({
     video.addEventListener('seeked', onSeeked);
     video.addEventListener('ended', onEnded);
     video.addEventListener('loadeddata', onLoadedData);
+    video.addEventListener('loadedmetadata', onLoadedMetadata);
+    video.addEventListener('error', onError);
 
     return () => {
+      if (frameId !== null) cancelAnimationFrame(frameId);
       video.removeEventListener('play', onPlay);
       video.removeEventListener('pause', onPause);
-      video.removeEventListener('timeupdate', onTimeUpdate);
+      video.removeEventListener('timeupdate', publishTime);
       video.removeEventListener('durationchange', onDurationChange);
       video.removeEventListener('volumechange', onVolumeChange);
       video.removeEventListener('ratechange', onRateChange);
@@ -312,264 +343,125 @@ export function usePlayer({
       video.removeEventListener('seeked', onSeeked);
       video.removeEventListener('ended', onEnded);
       video.removeEventListener('loadeddata', onLoadedData);
+      video.removeEventListener('loadedmetadata', onLoadedMetadata);
+      video.removeEventListener('error', onError);
     };
   }, [patch]);
+
+  const flushProgress = useCallback(() => {
+    const video = videoRef.current;
+    if (video && video.currentTime > 0) {
+      onProgressRef.current?.(video.currentTime, video.duration);
+    }
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (!state.playing) {
-      if (state.hasPlayed && video.currentTime > 0) {
-        onProgressRef.current?.(video.currentTime, video.duration);
-      }
-      return;
-    }
-
-    const id = setInterval(() => {
-      if (video.currentTime > 0) {
+    const interval = window.setInterval(() => {
+      if (!video.paused && video.currentTime > 0) {
         onProgressRef.current?.(video.currentTime, video.duration);
       }
     }, SAVE_INTERVAL_MS);
 
-    return () => clearInterval(id);
-  }, [state.playing, state.hasPlayed]);
-
-  useEffect(() => {
-    const video = videoRef.current as IOSVideoElement | null;
-
-    const sync = () => {
-      patch({
-        isFullscreen:
-          document.fullscreenElement === containerRef.current ||
-          !!video?.webkitDisplayingFullscreen,
-      });
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') flushProgress();
     };
 
-    document.addEventListener('fullscreenchange', sync);
-    video?.addEventListener('webkitbeginfullscreen', sync);
-    video?.addEventListener('webkitendfullscreen', sync);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pagehide', flushProgress);
 
     return () => {
-      document.removeEventListener('fullscreenchange', sync);
-      video?.removeEventListener('webkitbeginfullscreen', sync);
-      video?.removeEventListener('webkitendfullscreen', sync);
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pagehide', flushProgress);
+      flushProgress();
     };
-  }, [patch]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    const onEnter = () => patch({ isPip: true });
-    const onLeave = () => patch({ isPip: false });
-
-    video.addEventListener('enterpictureinpicture', onEnter);
-    video.addEventListener('leavepictureinpicture', onLeave);
-
-    return () => {
-      video.removeEventListener('enterpictureinpicture', onEnter);
-      video.removeEventListener('leavepictureinpicture', onLeave);
-    };
-  }, [patch]);
+  }, [flushProgress]);
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.paused) video.play().catch(() => {});
-    else video.pause();
-  }, []);
+
+    if (video.paused) {
+      video.play().catch(() => {
+        patch({
+          status: 'error',
+          error: getPlayerError('unknown', 'Playback was blocked. Press play to try again.', true),
+        });
+      });
+    } else {
+      video.pause();
+    }
+  }, [patch]);
 
   const seek = useCallback((time: number) => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !Number.isFinite(time)) return;
     video.currentTime = Math.max(0, Math.min(time, video.duration || 0));
   }, []);
 
   const seekRelative = useCallback((delta: number) => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !Number.isFinite(delta)) return;
     video.currentTime = Math.max(0, Math.min(video.currentTime + delta, video.duration || 0));
   }, []);
 
-  const setVolume = useCallback((v: number) => {
+  const setVolume = useCallback((value: number) => {
     const video = videoRef.current;
-    if (!video) return;
-    video.volume = Math.max(0, Math.min(1, v));
-    if (video.muted && v > 0) video.muted = false;
+    if (!video || !Number.isFinite(value)) return;
+    video.volume = Math.max(0, Math.min(1, value));
+    if (video.muted && value > 0) video.muted = false;
   }, []);
 
   const toggleMute = useCallback(() => {
     const video = videoRef.current;
-    if (!video) return;
-    video.muted = !video.muted;
+    if (video) video.muted = !video.muted;
   }, []);
 
-  const setPlaybackRate = useCallback(
-    (r: number) => {
-      const video = videoRef.current;
-      if (!video) return;
-      const rate = Math.max(0.25, Math.min(2, r));
-      video.playbackRate = rate;
-      writeStorage(RATE_KEY, String(rate));
-      patch({ playbackRate: rate });
-    },
-    [patch],
-  );
+  const setPlaybackRate = useCallback((value: number) => {
+    const video = videoRef.current;
+    if (!video || !Number.isFinite(value)) return;
+    video.playbackRate = Math.max(0.25, Math.min(2, value));
+  }, []);
 
   const setQuality = useCallback(
     (url: string) => {
+      const quality = state.qualities.find((item) => item.url === url);
       const video = videoRef.current;
-      if (!video) return;
+      if (!quality || !video || url === state.activeQualityUrl) return;
 
-      const currentTime = video.currentTime;
-      const wasPlaying = !video.paused;
-      const rate = video.playbackRate;
-
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-
-      patch({ activeQualityUrl: url, isBuffering: true });
-
-      if (Hls.isSupported()) {
-        const hls = new Hls({ startLevel: -1 });
-        hlsRef.current = hls;
-        hls.loadSource(url);
-        hls.attachMedia(video);
-
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.currentTime = currentTime;
-          video.playbackRate = rate;
-          if (wasPlaying) video.play().catch(() => {});
-        });
-
-        hls.on(Hls.Events.ERROR, (_e, data) => {
-          if (data.fatal) hls.destroy();
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.addEventListener(
-          'loadedmetadata',
-          () => {
-            video.currentTime = currentTime;
-            video.playbackRate = rate;
-            if (wasPlaying) video.play().catch(() => {});
-          },
-          { once: true },
-        );
-      }
+      void loadSource(url, video.currentTime, !video.paused);
+      patch({ activeQualityUrl: quality.url });
     },
-    [patch],
+    [loadSource, patch, state.activeQualityUrl, state.qualities],
   );
 
-  const toggleFullscreen = useCallback(() => {
-    const el = containerRef.current;
-    const video = videoRef.current as IOSVideoElement | null;
+  const retry = useCallback(() => setReloadKey((key) => key + 1), []);
 
-    const iosNativeFullscreen =
-      video && typeof video.webkitEnterFullscreen === 'function' && !el?.requestFullscreen;
+  const onFullscreenChange = useCallback(
+    (value: boolean) => patch({ isFullscreen: value }),
+    [patch],
+  );
+  const onPipChange = useCallback((value: boolean) => patch({ isPip: value }), [patch]);
+  const onPipSupportChange = useCallback((value: boolean) => patch({ canPip: value }), [patch]);
+  const browser = usePlayerBrowser({
+    videoRef,
+    containerRef,
+    title,
+    artist,
+    artwork,
+    togglePlay,
+    seekRelative,
+    setVolume,
+    toggleMute,
+    onFullscreenChange,
+    onPipChange,
+    onPipSupportChange,
+  });
 
-    if (iosNativeFullscreen) {
-      if (video!.webkitDisplayingFullscreen) {
-        video!.webkitExitFullscreen?.();
-      } else {
-        video!.webkitEnterFullscreen?.();
-      }
-      return;
-    }
-
-    if (!el) return;
-
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    } else {
-      el.requestFullscreen().catch(() => {
-        video?.webkitEnterFullscreen?.();
-      });
-    }
-  }, []);
-
-  const togglePip = useCallback(async () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    try {
-      if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-      } else {
-        await video.requestPictureInPicture();
-      }
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
-        return;
-
-      switch (e.key) {
-        case ' ':
-        case 'k':
-          e.preventDefault();
-          togglePlay();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          seekRelative(-10);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          seekRelative(10);
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setVolume((videoRef.current?.volume ?? 1) + 0.05);
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          setVolume((videoRef.current?.volume ?? 1) - 0.05);
-          break;
-        case 'm':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'f':
-          e.preventDefault();
-          toggleFullscreen();
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [togglePlay, seekRelative, setVolume, toggleMute, toggleFullscreen]);
-
-  useEffect(() => {
-    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
-
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: title || 'Anilyfe',
-      artist: artist || 'Anilyfe',
-      artwork: artwork ? [{ src: artwork, sizes: '512x512', type: 'image/jpeg' }] : [],
-    });
-
-    navigator.mediaSession.setActionHandler('play', () => videoRef.current?.play());
-    navigator.mediaSession.setActionHandler('pause', () => videoRef.current?.pause());
-    navigator.mediaSession.setActionHandler('seekbackward', () => seekRelative(-10));
-    navigator.mediaSession.setActionHandler('seekforward', () => seekRelative(10));
-
-    return () => {
-      navigator.mediaSession.setActionHandler('play', null);
-      navigator.mediaSession.setActionHandler('pause', null);
-      navigator.mediaSession.setActionHandler('seekbackward', null);
-      navigator.mediaSession.setActionHandler('seekforward', null);
-    };
-  }, [title, artist, artwork, seekRelative]);
-
-  const actions = useMemo(
+  const actions = useMemo<PlayerActions>(
     () => ({
       togglePlay,
       seek,
@@ -578,21 +470,23 @@ export function usePlayer({
       toggleMute,
       setPlaybackRate,
       setQuality,
-      toggleFullscreen,
-      togglePip,
+      toggleFullscreen: browser.toggleFullscreen,
+      togglePip: browser.togglePip,
+      retry,
     }),
     [
-      togglePlay,
+      browser.toggleFullscreen,
+      browser.togglePip,
+      retry,
       seek,
       seekRelative,
-      setVolume,
-      toggleMute,
       setPlaybackRate,
       setQuality,
-      toggleFullscreen,
-      togglePip,
+      setVolume,
+      toggleMute,
+      togglePlay,
     ],
   );
 
-  return { videoRef, containerRef, state, actions };
+  return { videoRef, containerRef, state, actions, handleKeyDown: browser.handleKeyDown };
 }

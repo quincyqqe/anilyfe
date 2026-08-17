@@ -1,7 +1,15 @@
+import { AnimeCard } from '@/components/anime-card';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { CatalogFilters, CatalogPagination, parseSearchParams } from '@/features/catalog';
 import { fetchCatalog } from '@/features/catalog/api/catalog';
-import { TrendingUp } from 'lucide-react';
-import { AnimeCard } from '@/components/anime-card';
+import { Compass, Sparkles } from 'lucide-react';
 
 type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -10,55 +18,87 @@ type Props = {
 export default async function CatalogPage({ searchParams }: Props) {
   const raw = await searchParams;
   const { page, ...filters } = parseSearchParams(raw ?? {});
-
   const { data: animeList, meta } = await fetchCatalog({ ...filters, page });
+  const total = meta.pagination?.total ?? 0;
 
   return (
-    <main className="min-h-screen w-full pt-28 pb-16 container mx-auto max-md:px-4">
-      <header className="mb-8 space-y-6">
-        <div>
-          <h1 className="font-black text-4xl sm:text-5xl text-white">
-            {filters.search ? `Поиск: ${filters.search}` : 'Каталог Аниме'}
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Найдено {meta.pagination?.total ?? 0} тайтлов
-          </p>
+    <main
+      id="main-content"
+      className="mx-auto min-h-[100dvh] w-full container px-4 pb-20 pt-28 sm:px-6 lg:px-8"
+    >
+      <header className="border-b border-white/[0.08] pb-7 sm:pb-9">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+          <div className="max-w-3xl">
+            <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <Compass className="size-3.5" />
+              Библиотека AniLyfe
+            </div>
+            <h1 className="max-w-2xl text-4xl font-black tracking-[-0.045em] text-foreground sm:text-5xl">
+              {filters.search ? `Поиск: ${filters.search}` : 'Каталог аниме'}
+            </h1>
+          </div>
+
+          <div className="flex items-end gap-3 border-l border-white/[0.08] pl-4 lg:justify-end">
+            <Sparkles className="mb-1 size-4 text-muted-foreground" />
+            <p className="text-sm leading-tight text-muted-foreground">
+              <span className="block text-2xl font-semibold tabular-nums text-foreground">
+                {total}
+              </span>
+              тайтлов найдено
+            </p>
+          </div>
         </div>
-        <nav aria-label="Фильтры каталога">
-          <CatalogFilters />
-        </nav>
       </header>
 
-      <section className="space-y-8">
-        {animeList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="max-w-md w-full p-8 rounded-2xl glass-effect text-center space-y-4">
-              <div className="w-20 h-20 mx-auto rounded-full bg-card flex items-center justify-center">
-                <TrendingUp className="w-10 h-10 text-muted-foreground" />
-              </div>
-              <h2 className="text-2xl font-bold text-white">Ничего не найдено</h2>
-              <p className="text-muted-foreground">
-                Попробуйте изменить фильтры или вернитесь позже
-              </p>
-            </div>
+      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(16rem,18rem)_minmax(0,1fr)] lg:gap-10">
+        <CatalogFilters />
+
+        <section aria-label="Результаты каталога" className="min-w-0">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+              Страница {page} из {meta.pagination?.total_pages ?? 1}
+            </p>
+            <p className="hidden text-xs text-muted-foreground sm:block">
+              Наведите на карточку, чтобы увидеть детали
+            </p>
           </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 sm:gap-6">
-              {animeList.map((anime) => (
-                <AnimeCard key={anime.id} anime={anime} />
-              ))}
-            </div>
-            <nav aria-label="Пагинация" className="pt-8">
-              <CatalogPagination
-                page={page}
-                totalPages={meta.pagination?.total_pages ?? 1}
-                filters={filters}
-              />
-            </nav>
-          </>
-        )}
-      </section>
+
+          {animeList.length === 0 ? (
+            <Empty className="min-h-80 border-white/[0.12] bg-card/30">
+              <EmptyHeader>
+                <EmptyMedia variant="icon" className="size-12 rounded-2xl bg-muted/80">
+                  <Compass className="size-6" />
+                </EmptyMedia>
+                <EmptyTitle>По этим параметрам ничего нет</EmptyTitle>
+                <EmptyDescription>
+                  Попробуйте расширить период, снять часть фильтров или изменить поисковый запрос.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <p className="text-xs text-muted-foreground">
+                  Панель фильтров остаётся рядом — настройте выдачу без возврата наверх.
+                </p>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-8 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                {animeList.map((anime) => (
+                  <AnimeCard key={anime.id} anime={anime} />
+                ))}
+              </div>
+
+              <nav aria-label="Пагинация каталога" className="pt-12">
+                <CatalogPagination
+                  page={page}
+                  totalPages={meta.pagination?.total_pages ?? 1}
+                  filters={filters}
+                />
+              </nav>
+            </>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

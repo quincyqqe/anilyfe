@@ -36,7 +36,7 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
 }: Props) {
   const episodeTitle = episode?.name ?? title ?? `Эпизод ${episode.ordinal ?? episode.episode}`;
 
-  const { videoRef, containerRef, state, actions } = usePlayer({
+  const { videoRef, containerRef, state, actions, handleKeyDown } = usePlayer({
     episode,
     initialTime,
     onProgress,
@@ -131,18 +131,19 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
 
   const showPoster = poster && !state.videoReady;
 
-  console.log(state.isFullscreen);
-
   return (
     <div
       ref={containerRef}
       tabIndex={0}
+      role="region"
+      aria-label={episodeTitle || title}
       onClick={handleSurfaceClick}
+      onKeyDown={handleKeyDown}
       onPointerMove={revealControls}
       onPointerDown={revealControls}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        'group/player relative aspect-video w-full overflow-hidden bg-black outline-none select-none',
+        'anilyfe-hls-player group/player relative aspect-video w-full overflow-hidden bg-black outline-none select-none focus-visible:ring-2 focus-visible:ring-primary/80',
         state.isFullscreen ? 'rounded-none' : 'rounded-2xl border border-white/[0.07]',
         state.playing && !hudVisible && 'cursor-none',
       )}
@@ -239,6 +240,23 @@ export const AnilyfeHlsPlayer = memo(function AnilyfeHlsPlayer({
       )}
 
       <PlayerLoading visible={state.isBuffering || state.isSeeking} />
+
+      {state.error && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/65 p-6 text-center">
+          <div role="alert" className="flex max-w-sm flex-col items-center gap-3">
+            <p className="text-sm font-semibold text-white">{state.error.message}</p>
+            {state.error.retryable && (
+              <button
+                type="button"
+                onClick={actions.retry}
+                className="rounded-xl bg-white/12 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80"
+              >
+                Try again
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <CenterIndicator playing={state.playing} seekTrigger={seekTrigger} />
 

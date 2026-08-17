@@ -36,7 +36,7 @@ interface ControlsOverlayProps {
 }
 
 const iconButtonBase =
-  'flex items-center justify-center rounded-xl text-white/65 transition-all duration-150 hover:bg-white/10 hover:text-white active:scale-95 focus:outline-none';
+  'flex items-center justify-center rounded-xl text-white/65 transition-all duration-150 hover:bg-white/10 hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80';
 
 export const ControlsOverlay = memo(function ControlsOverlay({
   state,
@@ -50,7 +50,6 @@ export const ControlsOverlay = memo(function ControlsOverlay({
       className="absolute inset-x-0 bottom-0 z-30 transition-all duration-300 ease-out"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(8px)',
         pointerEvents: visible ? 'auto' : 'none',
       }}
     >
@@ -77,7 +76,7 @@ export const ControlsOverlay = memo(function ControlsOverlay({
               type="button"
               onClick={actions.togglePlay}
               aria-label={state.playing ? 'Пауза' : 'Воспроизвести'}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/12 text-white transition-all duration-150 hover:bg-white/20 active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/12 text-white transition-all duration-150 hover:bg-white/20 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80"
             >
               {state.playing ? (
                 <Pause size={18} className="fill-white" />
@@ -129,14 +128,16 @@ export const ControlsOverlay = memo(function ControlsOverlay({
               onSelect={actions.setQuality}
             />
 
-            <button
-              type="button"
-              onClick={actions.togglePip}
-              aria-label="Картинка в картинке"
-              className={`h-9 w-9 ${iconButtonBase}`}
-            >
-              <PictureInPicture2 size={16} />
-            </button>
+            {state.canPip && (
+              <button
+                type="button"
+                onClick={actions.togglePip}
+                aria-label="Картинка в картинке"
+                className={`h-9 w-9 ${iconButtonBase}`}
+              >
+                <PictureInPicture2 size={16} />
+              </button>
+            )}
 
             <button
               type="button"

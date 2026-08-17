@@ -60,21 +60,10 @@ export default async function AnimePage({ params }: PageProps) {
     getUserAnimeEntry(slug),
   ]);
 
-  if (!anime) return notFound();
-
-  const dbEntry: any | null = rawDbEntry
-    ? {
-        current_episode: rawDbEntry.current_episode ?? null,
-        episode_progress: rawDbEntry.episode_progress ?? null,
-        episode_duration: rawDbEntry.episode_duration ?? null,
-        status: rawDbEntry.status ?? null,
-      }
-    : null;
-
   return (
     <>
-      <AnimeInfo anime={anime} franchise={franchise} animeList={rawDbEntry} />
-      <AnimePlayer anime={anime} dbEntry={dbEntry} />
+      <AnimeInfo anime={anime} franchise={franchise} animeEntry={rawDbEntry} />
+      <AnimePlayer anime={anime} dbEntry={rawDbEntry} />
     </>
   );
 }
