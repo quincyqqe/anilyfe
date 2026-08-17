@@ -2,10 +2,6 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-@plugin './hero.ts';
-
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-
 @custom-variant dark (&:is(.dark *));
 
 /* ──────────────────────────────────────────────────────────────
@@ -427,106 +423,102 @@
 /* ──────────────────────────────────────────────────────────────
    ScrollShadow
    ────────────────────────────────────────────────────────────── */
- 
+
 .scroll-shadow {
   position: relative;
- 
+
   --scroll-shadow-size: 40px;
   --scroll-shadow-scrollbar-size: 10px;
 }
- 
+
 .scroll-shadow--vertical {
   overflow-y: auto;
 }
- 
+
 .scroll-shadow--horizontal {
   overflow-x: auto;
 }
- 
+
 .scroll-shadow--vertical:where(
-    [data-top-scroll='true'],
-    [data-bottom-scroll='true'],
-    [data-top-bottom-scroll='true']
-  ) {
-    -webkit-mask-image: linear-gradient(var(--scroll-linear-gradient)),
-      linear-gradient(#000, #000);
-    mask-image: linear-gradient(var(--scroll-linear-gradient)),
-      linear-gradient(#000, #000);
-    -webkit-mask-position:
-      left top,
-      right top;
-    mask-position:
-      left top,
-      right top;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size:
-      calc(100% - var(--scroll-shadow-scrollbar-size)) 100%,
-      var(--scroll-shadow-scrollbar-size) 100%;
-    mask-size:
-      calc(100% - var(--scroll-shadow-scrollbar-size)) 100%,
-      var(--scroll-shadow-scrollbar-size) 100%;
-  }
- 
+  [data-top-scroll='true'],
+  [data-bottom-scroll='true'],
+  [data-top-bottom-scroll='true']
+) {
+  -webkit-mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+  mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+  -webkit-mask-position:
+    left top,
+    right top;
+  mask-position:
+    left top,
+    right top;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size:
+    calc(100% - var(--scroll-shadow-scrollbar-size)) 100%,
+    var(--scroll-shadow-scrollbar-size) 100%;
+  mask-size:
+    calc(100% - var(--scroll-shadow-scrollbar-size)) 100%,
+    var(--scroll-shadow-scrollbar-size) 100%;
+}
+
 .scroll-shadow--vertical[data-top-scroll='true'] {
   --scroll-linear-gradient: 0deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--vertical[data-bottom-scroll='true'] {
   --scroll-linear-gradient: 180deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--vertical[data-top-bottom-scroll='true'] {
   --scroll-linear-gradient:
     #000, #000, transparent 0, #000 var(--scroll-shadow-size),
     #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--horizontal:where(
-    [data-left-scroll='true'],
-    [data-right-scroll='true'],
-    [data-left-right-scroll='true']
-  ) {
-    -webkit-mask-image: linear-gradient(var(--scroll-linear-gradient)),
-      linear-gradient(#000, #000);
-    mask-image: linear-gradient(var(--scroll-linear-gradient)),
-      linear-gradient(#000, #000);
-    -webkit-mask-position:
-      left top,
-      left bottom;
-    mask-position:
-      left top,
-      left bottom;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size:
-      100% calc(100% - var(--scroll-shadow-scrollbar-size)),
-      100% var(--scroll-shadow-scrollbar-size);
-    mask-size:
-      100% calc(100% - var(--scroll-shadow-scrollbar-size)),
-      100% var(--scroll-shadow-scrollbar-size);
-  }
- 
+  [data-left-scroll='true'],
+  [data-right-scroll='true'],
+  [data-left-right-scroll='true']
+) {
+  -webkit-mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+  mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+  -webkit-mask-position:
+    left top,
+    left bottom;
+  mask-position:
+    left top,
+    left bottom;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size:
+    100% calc(100% - var(--scroll-shadow-scrollbar-size)),
+    100% var(--scroll-shadow-scrollbar-size);
+  mask-size:
+    100% calc(100% - var(--scroll-shadow-scrollbar-size)),
+    100% var(--scroll-shadow-scrollbar-size);
+}
+
 .scroll-shadow--horizontal[data-left-scroll='true'] {
   --scroll-linear-gradient: 270deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--horizontal[data-right-scroll='true'] {
   --scroll-linear-gradient: 90deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--horizontal[data-left-right-scroll='true'] {
   --scroll-linear-gradient:
     to right, #000, #000, transparent 0, #000 var(--scroll-shadow-size),
     #000 calc(100% - var(--scroll-shadow-size)), transparent;
 }
- 
+
 .scroll-shadow--hide-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
   --scroll-shadow-scrollbar-size: 0px;
 }
- 
+
 .scroll-shadow--hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
