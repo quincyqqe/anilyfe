@@ -13,7 +13,6 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@bprogress/next": "^3.2.12",
-    "@heroui/react": "2.8.9",
     "@heroui/theme": "^2.4.26",
     "@hugeicons/core-free-icons": "^4.2.3",
     "@hugeicons/react": "^1.1.9",
