@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { addToast } from '@heroui/react';
 import { ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils/cn';
@@ -51,14 +50,6 @@ export function OAuthButtons({ loading = false }: OAuthButtonsProps) {
 
       if (error) throw error;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Не удалось начать вход.';
-
-      addToast({
-        title: 'Ошибка входа',
-        description: message,
-        color: 'danger',
-      });
-
       setPendingProvider(null);
     }
   };

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Tooltip } from '@heroui/react';
 import { Calendar, Clock, Crown, Eye, Heart, TrendingUp, ChevronRight } from 'lucide-react';
 
 import Image from '@/components/ui/image';
@@ -69,13 +68,11 @@ export function SearchCard({ anime, onClick }: SearchCardProps) {
               </h3>
 
               {popularity && PopularityIcon && (
-                <Tooltip content={popularity.label}>
                   <div
                     className={`flex items-center ${popularity.color} bg-white/5 p-1.5 rounded-full border border-white/10`}
                   >
                     <PopularityIcon size={14} />
                   </div>
-                </Tooltip>
               )}
             </div>
 

@@ -1,13 +1,19 @@
 'use client';
 
-import { LayoutGrid, List } from 'lucide-react';
+import { LayoutGrid, List, ChevronDown } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils/cn';
+
 import { FILTER_TABS, SORT_OPTIONS } from '../../model/anime-list/constants';
 import type { FilterKey, SortKey, ViewMode } from '../../model/anime-list/types';
-
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@heroui/react';
-
-
 
 interface AnimeListToolbarProps {
   activeFilter: FilterKey;
@@ -29,7 +35,8 @@ export function AnimeListToolbar({
   onSortChange,
   onViewModeChange,
 }: AnimeListToolbarProps) {
-  const sortLabel = SORT_OPTIONS.find((o) => o.key === activeSort)?.label ?? '';
+  const sortLabel =
+    SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
 
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -37,6 +44,7 @@ export function AnimeListToolbar({
         <div className="flex w-max items-center gap-1 rounded-2xl border border-white/[0.04] bg-zinc-950/35 p-1">
           {FILTER_TABS.map((tab) => {
             const count = counts[tab.key];
+
             if (count === 0 && tab.key !== 'all') return null;
 
             const Icon = tab.icon;
@@ -44,20 +52,24 @@ export function AnimeListToolbar({
             return (
               <button
                 key={tab.key}
+                type="button"
                 onClick={() => onFilterChange(tab.key)}
                 className={cn(
-                  'flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition',
+                  'flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors',
                   activeFilter === tab.key
                     ? tab.activeClass
-                    : 'text-muted-foreground hover:text-white',
+                    : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <Icon
                   className={cn(
-                    'h-3.5 w-3.5',
-                    activeFilter === tab.key ? tab.color : 'text-white/40',
+                    'size-3.5',
+                    activeFilter === tab.key
+                      ? tab.color
+                      : 'text-muted-foreground',
                   )}
                 />
+
                 <span>{tab.label}</span>
 
                 <span className="rounded-md border border-white/[0.02] bg-white/[0.02] px-1.5 py-0.5 font-mono text-[9px] tabular-nums">
@@ -70,9 +82,16 @@ export function AnimeListToolbar({
       </div>
 
       <div className="flex shrink-0 items-center justify-between gap-3 md:justify-end">
-        <SortDropdown activeSort={activeSort} label={sortLabel} onSortChange={onSortChange} />
+        <SortDropdown
+          activeSort={activeSort}
+          label={sortLabel}
+          onSortChange={onSortChange}
+        />
 
-        <ViewModeToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
+        <ViewModeToggle
+          viewMode={viewMode}
+          onViewModeChange={onViewModeChange}
+        />
       </div>
     </div>
   );
@@ -84,32 +103,46 @@ interface SortDropdownProps {
   onSortChange: (sort: SortKey) => void;
 }
 
-function SortDropdown({ activeSort, label, onSortChange }: SortDropdownProps) {
+function SortDropdown({
+  activeSort,
+  label,
+  onSortChange,
+}: SortDropdownProps) {
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button className="h-9 rounded-xl border border-white/[0.04] bg-zinc-950/35 px-3 text-xs font-semibold text-muted-foreground hover:text-white">
-          {label}
-        </Button>
-      </DropdownTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            className="h-9 rounded-xl border border-white/[0.04] glass px-3 text-xs font-semibold text-muted-foreground"
+          />
+        }
+      >
+        <span className="max-w-36 truncate">{label}</span>
+        <ChevronDown className="size-3.5 opacity-60" />
+      </DropdownMenuTrigger>
 
-      <DropdownMenu color="primary" variant="light">
-        {SORT_OPTIONS.map((option) => (
-          <DropdownItem
-            key={option.key}
-            onClick={() => onSortChange(option.key)}
-            className={cn(
-              'cursor-pointer rounded-lg px-3 py-2 text-xs transition',
-              activeSort === option.key
-                ? 'bg-primary/10 text-primary'
-                : 'text-muted-foreground hover:bg-white/5 hover:text-white',
-            )}
-          >
-            {option.label}
-          </DropdownItem>
-        ))}
-      </DropdownMenu>
-    </Dropdown>
+      <DropdownMenuContent
+        sideOffset={6}
+        className="min-w-44 rounded-xl p-1.5"
+      >
+        <DropdownMenuRadioGroup
+          value={activeSort}
+          onValueChange={(value) => onSortChange(value as SortKey)}
+        >
+          {SORT_OPTIONS.map((option) => (
+            <DropdownMenuRadioItem
+              key={option.key}
+              value={option.key}
+              closeOnClick
+              className="cursor-pointer rounded-lg px-3 py-2 text-xs"
+            >
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -118,15 +151,24 @@ interface ViewModeToggleProps {
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeToggleProps) {
+function ViewModeToggle({
+  viewMode,
+  onViewModeChange,
+}: ViewModeToggleProps) {
   return (
     <div className="flex items-center gap-0.5 rounded-xl border border-white/[0.04] bg-zinc-950/35 p-1">
-      <ViewModeButton active={viewMode === 'grid'} onClick={() => onViewModeChange('grid')}>
-        <LayoutGrid className="h-3.5 w-3.5" />
+      <ViewModeButton
+        active={viewMode === 'grid'}
+        onClick={() => onViewModeChange('grid')}
+      >
+        <LayoutGrid className="size-3.5" />
       </ViewModeButton>
 
-      <ViewModeButton active={viewMode === 'list'} onClick={() => onViewModeChange('list')}>
-        <List className="h-3.5 w-3.5" />
+      <ViewModeButton
+        active={viewMode === 'list'}
+        onClick={() => onViewModeChange('list')}
+      >
+        <List className="size-3.5" />
       </ViewModeButton>
     </div>
   );
@@ -143,10 +185,13 @@ function ViewModeButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        'flex h-7 w-7 items-center justify-center rounded-lg transition',
-        active ? 'bg-white/12 text-white shadow-sm' : 'text-muted-foreground hover:text-white',
+        'flex size-7 items-center justify-center rounded-lg transition-colors',
+        active
+          ? 'bg-white/12 text-white shadow-sm'
+          : 'text-muted-foreground hover:text-foreground',
       )}
     >
       {children}
