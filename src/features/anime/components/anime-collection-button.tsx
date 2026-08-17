@@ -1,27 +1,45 @@
 'use client';
 
 import { removeAnimeEntry, upsertAnimeStatus } from '@/lib/db/actions/anime-list';
-import { createClient } from '@/lib/supabase/client';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from '@/components/ui/toast';
 import type { Anime } from '@/shared/types/anime';
 import type { UserAnimeListEntry, WatchStatus } from '@/shared/types/user-anime-list';
-import {
-  addToast,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from '@heroui/react';
+import { cn } from '@/lib/utils/cn';
+import { ChevronDown, ListPlus, Trash2 } from 'lucide-react';
 import { useState, useTransition } from 'react';
-import { FaCheck, FaPlus } from 'react-icons/fa';
 
-const STATUS_OPTIONS: { key: WatchStatus; label: string }[] = [
-  { key: 'watching', label: 'Смотрю' },
-  { key: 'planned', label: 'В планах' },
-  { key: 'completed', label: 'Просмотрено' },
-  { key: 'on_hold', label: 'Отложено' },
-  { key: 'dropped', label: 'Заброшено' },
+const STATUS_OPTIONS: {
+  value: WatchStatus;
+  label: string;
+  dot: string;
+}[] = [
+  { value: 'watching', label: 'Смотрю', dot: 'bg-sky-400' },
+  { value: 'planned', label: 'В планах', dot: 'bg-violet-400' },
+  { value: 'completed', label: 'Просмотрено', dot: 'bg-emerald-400' },
+  { value: 'on_hold', label: 'Отложено', dot: 'bg-amber-400' },
+  { value: 'dropped', label: 'Заброшено', dot: 'bg-rose-400' },
 ];
+
+class AnimeListError extends Error {
+  constructor(
+    message: string,
+    public readonly code?: string,
+  ) {
+    super(message);
+    this.name = 'AnimeListError';
+  }
+}
 
 interface Props {
   anime: Anime;
@@ -32,110 +50,134 @@ export function AnimeCollectionButton({ anime, animeEntry }: Props) {
   const [status, setStatus] = useState<WatchStatus | null>(animeEntry?.status ?? null);
   const [isPending, startTransition] = useTransition();
 
-  const currentLabel = STATUS_OPTIONS.find((o) => o.key === status)?.label;
+  const current = STATUS_OPTIONS.find((option) => option.value === status);
 
-  const handleSelect = async (key: string) => {
-    const newStatus = key as WatchStatus;
+  const handleChange = (next: WatchStatus | null) => {
+    startTransition(() => {
+      const promise = (async () => {
+        const result = next
+          ? await upsertAnimeStatus(anime.alias, anime.name.main, anime.poster.optimized.src, next)
+          : await removeAnimeEntry(anime.alias);
 
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+        if (result?.error === 'Unauthorized') {
+          throw new AnimeListError(
+            'Войдите в аккаунт, чтобы управлять своей коллекцией',
+            'Unauthorized',
+          );
+        }
 
-    if (!user) {
-      addToast({
-        title: 'Ошибка',
-        description: 'Вы должны авторизоваться, чтобы добавить аниме в список',
-        color: 'danger',
+        if (result?.error) {
+          throw new AnimeListError(
+            next ? 'Не удалось обновить статус' : 'Не удалось удалить аниме',
+          );
+        }
+
+        return next;
+      })();
+
+      toast.promise(promise, {
+        loading: next ? 'Обновляем статус…' : 'Удаляем из списка…',
+
+        success: (newStatus) => {
+          setStatus(newStatus);
+
+          return newStatus
+            ? {
+                timeout: 2200,
+                title: 'Статус обновлён',
+                description: `«${anime.name.main}» — ${
+                  STATUS_OPTIONS.find((option) => option.value === newStatus)?.label
+                }`,
+              }
+            : {
+                timeout: 2200,
+                title: 'Удалено из списка',
+                description: `«${anime.name.main}» больше не в вашем списке`,
+              };
+        },
+
+        error: (error) => {
+          if (error instanceof AnimeListError && error.code === 'Unauthorized') {
+            return {
+              type: 'warning',
+              timeout: 3000,
+              title: 'Нужна авторизация',
+              description: 'Войдите в аккаунт, чтобы собирать свою коллекцию аниме',
+            };
+          }
+
+          return {
+            type: 'error',
+            timeout: 3000,
+            title: 'Не удалось обновить список',
+            description:
+              error instanceof Error ? error.message : 'Что-то пошло не так, попробуйте ещё раз',
+          };
+        },
       });
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await upsertAnimeStatus(
-        anime.alias,
-        anime.name.main,
-        anime.poster.optimized.src,
-        newStatus,
-      );
-
-      if (result?.error) {
-        addToast({
-          title: 'Ошибка',
-          description: 'Не удалось обновить статус',
-          color: 'danger',
-        });
-        return;
-      }
-
-      setStatus(newStatus);
-    });
-  };
-
-  const handleRemove = () => {
-    setStatus(null);
-
-    startTransition(async () => {
-      const result = await removeAnimeEntry(anime.alias);
-      if (result?.error) {
-        setStatus(animeEntry?.status ?? null);
-        console.error(result.error);
-      }
     });
   };
 
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <Button
-          className={`
-      w-full h-11 font-semibold
-      rounded-2xl
-      glass
-
-
-    `}
-          isLoading={isPending}
-        >
-          {status ? (
-            <>
-              <FaCheck className="h-4 w-4" />
-              {currentLabel}
-            </>
-          ) : (
-            <>
-              <FaPlus className="h-4 w-4" />
-              Добавить в список
-            </>
-          )}
-        </Button>
-      </DropdownTrigger>
-
-      <DropdownMenu
-        className="w-56"
-        variant="solid"
-        color="primary"
-        onAction={(key) => {
-          if (key === 'remove') return handleRemove();
-          handleSelect(key as string);
-        }}
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            disabled={isPending}
+            className="glass cursor-pointer h-11 w-full gap-2 px-4 text-sm font-semibold data-[popup-open]:border-white/25"
+          />
+        }
       >
-        {[
-          ...STATUS_OPTIONS.map((opt) => (
-            <DropdownItem
-              key={opt.key}
-              className={status === opt.key ? 'bg-primary/50 text-white' : ''}
+        {current ? (
+          <span className={cn('size-2 shrink-0 rounded-full', current.dot)} />
+        ) : (
+          <ListPlus className="size-4 shrink-0 text-muted-foreground" />
+        )}
+
+        <span className="flex-1 truncate text-left">{current?.label ?? 'Добавить в список'}</span>
+
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-[popup-open]/button:rotate-180" />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        sideOffset={6}
+        className="min-w-52 rounded-xl p-1.5 glass backdrop-blur-sm"
+      >
+        <DropdownMenuRadioGroup
+          value={status ?? ''}
+          onValueChange={(value) => handleChange(value as WatchStatus)}
+        >
+          <DropdownMenuLabel>Мой список</DropdownMenuLabel>
+
+          {STATUS_OPTIONS.map((option) => (
+            <DropdownMenuRadioItem
+              key={option.value}
+              value={option.value}
+              closeOnClick
+              className="py-2 text-[13px] font-medium cursor-pointer"
             >
-              {opt.label}
-            </DropdownItem>
-          )),
-          ...(status
-            ? [
-                <DropdownItem key="remove" className="text-red-400">
-                  Удалить из списка
-                </DropdownItem>,
-              ]
-            : []),
-        ]}
-      </DropdownMenu>
-    </Dropdown>
+              <span className={cn('size-2 shrink-0 rounded-full', option.dot)} />
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+
+        {status && (
+          <>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              variant="destructive"
+              className="py-2 text-[13px] font-medium cursor-pointer"
+              onClick={() => handleChange(null)}
+            >
+              <Trash2 />
+              Удалить из списка
+            </DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
