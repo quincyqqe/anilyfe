@@ -5,39 +5,15 @@
 </h1>
 
 <p align="center">
-  <a href="#">
-    <img
-      src="https://img.shields.io/badge/typescript-%23007acc.svg?style=for-the-badge&logo=typescript&logoColor=%23ffffff"
-      alt="TypeScript"
-    />
-  </a>
-  <a href="#">
-    <img
-      src="https://img.shields.io/badge/shadcn/UI-%23ffffff.svg?style=for-the-badge&logo=shadcnui&logoColor=black"
-      alt="shadcn/ui"
-    />
-  </a>
-  <a href="#">
-    <img
-      src="https://img.shields.io/badge/nextjs-%2320232a.svg?style=for-the-badge&logo=nextdotjs&logoColor=white"
-      alt="Next.js"
-    />
-  </a>
-  <a href="#">
-    <img
-      src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white"
-      alt="Vercel"
-    />
-  </a>
+  <a href="#"><img src="https://img.shields.io/badge/typescript-%23007acc.svg?style=for-the-badge&logo=typescript&logoColor=%23ffffff"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/shadcn/UI-%23ffffff.svg?style=for-the-badge&logo=shadcnui&logoColor=black"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/nextjs-%2320232a.svg?style=for-the-badge&logo=nextdotjs&logoColor=white"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white"/></a>
 </p>
 
 <p align="center">
-  <a href="#">
-    <img
-      src="https://img.shields.io/badge/Node.js-339933.svg?style=for-the-badge&logo=node.js&logoColor=white"
-      alt="Node.js"
-    />
-  </a>
+  <a href="#"><img src="https://img.shields.io/badge/Node.js-339933.svg?style=for-the-badge&logo=node.js&logoColor=white"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Bun.js-febbd0.svg?style=for-the-badge&logo=bun&logoColor=f9f1e1"/></a>
 </p>
 
 <p align="center">
