@@ -202,7 +202,7 @@ function fromRecord(record: AniListAnimeRecord): AniListAnime {
   };
 }
 
-export async function getAniListAnime(
+export async function fetchAniListAnime(
   animeId: number,
   englishTitle: string,
   mainTitle: string,

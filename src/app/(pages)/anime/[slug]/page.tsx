@@ -3,8 +3,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
 import { AnimeInfo } from '@/features/anime';
-import { fetchAnime } from '@/features/anime/api/anime';
-import { fetchFranchise } from '@/features/anime/api/franchise';
+import { fetchAnime, fetchFranchise, fetchAniListAnime } from '@/features/anime/api';
 import { AnimePlayer } from '@/features/player/anime-player';
 import { getUserAnimeEntry } from '@/lib/db/queries';
 import { generateMetadata as buildMetadata } from '@/lib/utils/metadata';
@@ -55,14 +54,15 @@ export default async function AnimePage({ params }: PageProps) {
 
   if (!anime) return notFound();
 
-  const [franchise, rawDbEntry] = await Promise.all([
+  const [franchise, rawDbEntry, aniList] = await Promise.all([
     fetchFranchise(anime.id.toString()),
     getUserAnimeEntry(slug),
+    fetchAniListAnime(anime.id, anime.name.english, anime.name.main),
   ]);
 
   return (
     <>
-      <AnimeInfo anime={anime} franchise={franchise} animeEntry={rawDbEntry} />
+      <AnimeInfo anime={anime} franchise={franchise} animeEntry={rawDbEntry} aniList={aniList} />
       <AnimePlayer anime={anime} dbEntry={rawDbEntry} />
     </>
   );

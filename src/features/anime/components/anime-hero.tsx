@@ -6,13 +6,12 @@ interface Props {
 
 export function AnimeHero({ posterSrc }: Props) {
   return (
-    <div className="ad-hero__bg relative overflow-hidden">
+    <div className="ad-hero__bg overflow-hidden" aria-hidden="true">
       <Image
         fill
         preload
         src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
         alt=""
-        aria-hidden
         sizes="100vw"
         quality={75}
         className="pointer-events-none object-cover"

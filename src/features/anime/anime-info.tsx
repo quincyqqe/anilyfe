@@ -2,6 +2,7 @@ import Image from '@/components/ui/image';
 import { Backlight } from '@/components/ui/backlight';
 
 import type { Anime } from '@/shared/types/anime';
+import type { AniListAnime } from '@/shared/types/anilist';
 import type { FranchiseItem } from '@/shared/types/franchise';
 import type { UserAnimeListEntry } from '@/shared/types/user-anime-list';
 
@@ -13,20 +14,25 @@ import { AnimeHero } from './components/anime-hero';
 import { AnimeMetaChips } from './components/anime-meta-chips';
 import { AnimeStats } from './components/anime-stats';
 import { AnimeTeam } from './components/anime-team';
+import { AnimeExternalLinks } from './components/anime-external-links';
+import { AnimeRating } from './components/anime-rating';
+import { AnimeTrailer } from './components/anime-trailer';
+import { AnimeNextEpisode } from './components/anime-next-episode';
 
 interface Props {
   anime: Anime;
   franchise: FranchiseItem | null;
   animeEntry: UserAnimeListEntry | null;
+  aniList: AniListAnime | null;
 }
 
-export function AnimeInfo({ anime, franchise, animeEntry }: Props) {
+export function AnimeInfo({ anime, franchise, animeEntry, aniList }: Props) {
   const posterSrc = anime.poster.optimized.src;
-  
 
   return (
-    <main className="pt-10 md:pt-28">
+    <main className="pt-10 md:pt-36">
       <AnimeHero posterSrc={posterSrc} />
+      {aniList?.trailer?.id && <AnimeTrailer trailer={aniList.trailer.id} />}
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
@@ -43,6 +49,7 @@ export function AnimeInfo({ anime, franchise, animeEntry }: Props) {
                   className="relative z-10 aspect-[455/650] w-full rounded-sm border border-white/8 object-cover"
                 />
               </Backlight>
+              {aniList?.averageScore && <AnimeRating score={aniList.averageScore} />}
             </div>
 
             <AnimeCollectionButton anime={anime} animeEntry={animeEntry} />
@@ -56,9 +63,16 @@ export function AnimeInfo({ anime, franchise, animeEntry }: Props) {
                 <AnimeTeam members={anime.members} />
               </div>
             )}
+
+            {aniList?.nextAiringEpisode && (
+              <AnimeNextEpisode
+                episode={aniList.nextAiringEpisode.episode}
+                airingAt={aniList.nextAiringEpisode.airingAt}
+              />
+            )}
           </aside>
 
-          <section className="flex flex-col gap-5.5 pt-6">
+          <section className="flex flex-col gap-5.5 pt-8">
             <header className="flex flex-col gap-1.5">
               <h1
                 id="anime-title"
@@ -83,6 +97,8 @@ export function AnimeInfo({ anime, franchise, animeEntry }: Props) {
 
               <AnimeGenres genres={anime.genres} />
             </section>
+
+            {aniList?.externalLinks && <AnimeExternalLinks links={aniList.externalLinks} />}
 
             <AnimeDescription anime={anime} />
 
