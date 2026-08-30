@@ -1,7 +1,11 @@
 'use client';
+
 import { ProgressProvider } from '@bprogress/next/app';
 
-export function AppProgressProvider({ children }: { children: React.ReactNode }) {
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/toast';
+
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ProgressProvider
       height="2px"
@@ -13,7 +17,11 @@ export function AppProgressProvider({ children }: { children: React.ReactNode })
       }}
       shallowRouting
     >
-      {children}
+      <TooltipProvider delay={0}>
+        {children}
+      </TooltipProvider>
+
+      <Toaster />
     </ProgressProvider>
   );
 }
