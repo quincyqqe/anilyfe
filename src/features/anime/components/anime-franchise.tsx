@@ -11,9 +11,7 @@ interface Props {
 }
 
 export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
-  const sorted = [...franchise.franchise_releases].sort(
-    (a, b) => a.sort_order - b.sort_order,
-  );
+  const sorted = [...franchise.franchise_releases].sort((a, b) => a.sort_order - b.sort_order);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const currentItemRef = useRef<HTMLDivElement>(null);
@@ -42,18 +40,11 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="px-2 text-xl font-bold text-white md:text-2xl">
-          Порядок просмотра
-        </h2>
-        <p className="px-2 text-sm font-medium text-zinc-400">
-          {franchise.name}
-        </p>
+        <h2 className="px-2 text-xl font-bold text-white md:text-2xl">Порядок просмотра</h2>
+        <p className="px-2 text-sm font-medium text-zinc-400">{franchise.name}</p>
       </div>
 
-      <ScrollShadow
-        ref={containerRef}
-        className="max-h-[450px] overflow-y-auto pr-4 -mr-4"
-      >
+      <ScrollShadow ref={containerRef} className="max-h-[450px] overflow-y-auto pr-4 -mr-4">
         <div className="ml-6 flex flex-col gap-3 border-l-2 border-white/5 py-2">
           {sorted.map((item) => {
             const { release } = item;
@@ -62,17 +53,11 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
             const meta = [
               release.year && String(release.year),
               release.type?.description,
-              release.episodes_total > 0
-                ? `${release.episodes_total} эп.`
-                : null,
+              release.episodes_total > 0 ? `${release.episodes_total} эп.` : null,
             ].filter(Boolean);
 
             return (
-              <div
-                key={item.id}
-                ref={isCurrent ? currentItemRef : null}
-                className="relative pl-6"
-              >
+              <div key={item.id} ref={isCurrent ? currentItemRef : null} className="relative pl-6">
                 <div
                   className={`absolute top-6 -left-[5px] z-10 h-2 w-2 rounded-full ${
                     isCurrent ? 'bg-primary' : 'bg-zinc-700'
@@ -117,8 +102,8 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
                           </span>
 
                           {isCurrent && (
-                            <span className="shrink-0 rounded bg-primary px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-white">
-                              Вы здесь
+                            <span className="shrink-0 rounded border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-primary">
+                              Текущий
                             </span>
                           )}
                         </div>
@@ -132,10 +117,7 @@ export function AnimeFranchise({ franchise, currentReleaseId }: Props) {
 
                         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
                           {meta.map((value, index) => (
-                            <div
-                              key={`${item.id}-${value}`}
-                              className="flex items-center gap-2"
-                            >
+                            <div key={`${item.id}-${value}`} className="flex items-center gap-2">
                               <span>{value}</span>
 
                               {index < meta.length - 1 && (

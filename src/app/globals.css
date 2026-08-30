@@ -206,6 +206,10 @@
     @apply font-sans;
   }
 
+  html:has(:fullscreen) {
+    scrollbar-gutter: auto;
+  }
+
   body {
     min-height: 100vh;
     overflow-x: hidden;

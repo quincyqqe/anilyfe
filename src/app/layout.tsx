@@ -1,7 +1,7 @@
 import { Metadata, Viewport } from 'next';
 import { Nunito } from 'next/font/google';
 
-import { Providers } from '@/providers';
+import { Providers } from '@/providers/providers';
 import { generateMetadata } from '@/lib/utils/metadata';
 
 import './globals.css';

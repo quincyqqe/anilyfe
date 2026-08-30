@@ -1,12 +1,19 @@
 "use client"
 
 import * as React from "react"
+import {
+  AlertTriangle,
+  Check,
+  CircleCheck,
+  CircleX,
+  Info,
+  LoaderCircle,
+  X,
+} from "lucide-react"
 import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 
-import { cn } from "@/lib/utils/cn"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon, CheckmarkCircle02Icon, InformationCircleIcon, Alert02Icon, MultiplicationSignCircleIcon, Loading03Icon } from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/utils/cn"
 
 const toast = ToastPrimitive.createToastManager()
 
@@ -18,13 +25,16 @@ function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
   return <ToastPrimitive.Portal data-slot="toast-portal" {...props} />
 }
 
-function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
+function ToastViewport({
+  className,
+  ...props
+}: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
       className={cn(
         "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full",
-        className
+        className,
       )}
       {...props}
     />
@@ -51,20 +61,23 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
         "data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]",
         "data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]",
         "data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]",
-        className
+        className,
       )}
       {...props}
     />
   )
 }
 
-function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
+function ToastContent({
+  className,
+  ...props
+}: ToastPrimitive.Content.Props) {
   return (
     <ToastPrimitive.Content
       data-slot="toast-content"
       className={cn(
         "flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100",
-        className
+        className,
       )}
       {...props}
     />
@@ -122,60 +135,50 @@ function ToastClose({
       render={render}
       className={cn(
         "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
-        className
+        className,
       )}
       {...props}
     >
-      {children ?? (
-        <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} aria-hidden="true" />
-      )}
+      {children ?? <X strokeWidth={2} aria-hidden="true" />}
     </ToastPrimitive.Close>
   )
 }
 
+const toastIcons = {
+  success: CircleCheck,
+  info: Info,
+  warning: AlertTriangle,
+  error: CircleX,
+  loading: LoaderCircle,
+} as const
+
+const toastIconClasses = {
+  success: "text-emerald-500",
+  info: "text-sky-500",
+  warning: "text-amber-500",
+  error: "text-destructive",
+  loading: "animate-spin",
+} as const
+
+type ToastType = keyof typeof toastIcons
+
 function ToastIcon({ type }: { type: string | undefined }) {
-  let icon: React.ReactNode = null
-
-  if (type === "success") {
-    icon = (
-           <HugeiconsIcon icon={CheckmarkCircle02Icon} strokeWidth={2} className="text-emerald-500" aria-hidden="true" />
-    )
-  }
-
-  if (type === "info") {
-    icon = (
-         <HugeiconsIcon icon={InformationCircleIcon} strokeWidth={2} className="text-sky-500" aria-hidden="true" />
-    )
-  }
-
-  if (type === "warning") {
-    icon = (
-       <HugeiconsIcon icon={Alert02Icon} strokeWidth={2} className="text-amber-500" aria-hidden="true" />
-    )
-  }
-
-  if (type === "error") {
-    icon = (
-      <HugeiconsIcon icon={MultiplicationSignCircleIcon} strokeWidth={2} className="text-destructive" aria-hidden="true" />
-    )
-  }
-
-  if (type === "loading") {
-    icon = (
-      <HugeiconsIcon icon={Loading03Icon} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-    )
-  }
-
-  if (!icon) {
+  if (!type || !(type in toastIcons)) {
     return null
   }
+
+  const Icon = toastIcons[type as ToastType]
 
   return (
     <span
       data-slot="toast-icon"
       className="shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
     >
-      {icon}
+      <Icon
+        strokeWidth={2}
+        className={toastIconClasses[type as ToastType]}
+        aria-hidden="true"
+      />
     </span>
   )
 }
@@ -187,10 +190,12 @@ function ToastList() {
     <Toast key={toastItem.id} toast={toastItem}>
       <ToastContent>
         <ToastIcon type={toastItem.type} />
+
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <ToastTitle />
           <ToastDescription />
         </div>
+
         <ToastAction />
         <ToastClose />
       </ToastContent>
@@ -206,6 +211,7 @@ function Toaster({
   return (
     <ToastProvider toastManager={toastManager} {...props}>
       {children}
+
       <ToastPortal>
         <ToastViewport>
           <ToastList />
