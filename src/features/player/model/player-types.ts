@@ -62,7 +62,33 @@ export interface PlayerActions {
   retry: () => void;
 }
 
-export function buildQualities(episode: AnimeEpisode): QualityLevel[] {
+/**
+ * Для обычного AniLyfe:
+ *   hls_1080
+ *   hls_720
+ *   hls_480
+ *
+ * Для Hentai:
+ *   hls = master playlist
+ *
+ * HLS.js сам выберет качество из master playlist.
+ */
+export function buildQualities(
+  episode: AnimeEpisode,
+): QualityLevel[] {
+  const hentaiHls = (episode as AnimeEpisode & {
+    hls?: string;
+  }).hls;
+
+  if (hentaiHls?.trim()) {
+    return [
+      {
+        label: 'Auto',
+        url: hentaiHls,
+      },
+    ];
+  }
+
   const candidates = [
     ['1080p', episode.hls_1080],
     ['720p', episode.hls_720],
@@ -70,12 +96,21 @@ export function buildQualities(episode: AnimeEpisode): QualityLevel[] {
   ] as const;
 
   const qualities: QualityLevel[] = [];
+
   for (const [label, url] of candidates) {
-    if (url?.trim()) qualities.push({ label, url });
+    if (url?.trim()) {
+      qualities.push({
+        label,
+        url,
+      });
+    }
   }
+
   return qualities;
 }
 
-export function getBestUrl(episode: AnimeEpisode): string | null {
+export function getBestUrl(
+  episode: AnimeEpisode,
+): string | null {
   return buildQualities(episode)[0]?.url ?? null;
 }

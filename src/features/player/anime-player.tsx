@@ -2,13 +2,13 @@
 
 import type { Anime, AnimeEpisode } from '@/shared/types/anime';
 import { Clapperboard } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnilyfeHlsPlayer } from './components/anilyfe-hls-player';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { EpisodeList } from './components/episode-list/episode-list';
 import { usePlayerPersistence } from './hooks/use-player-persistence';
 import type { PlayerProgress } from './model/player-types';
-
 import { resolveThumb } from './lib/resolve-thumb';
+import { VideoPlayer } from './video-player';
 
 interface Props {
   anime: Anime;
@@ -16,10 +16,10 @@ interface Props {
 }
 
 export function AnimePlayer({ anime, dbEntry }: Props) {
-  const episodes = useMemo(() => anime.episodes ?? [], [anime.episodes]);
+  const episodes = anime.episodes ?? [];
 
   const initialIdx = dbEntry?.current_episode
-    ? Math.min(Math.max(0, dbEntry.current_episode - 1), Math.max(episodes.length - 1, 0))
+    ? Math.min(Math.max(dbEntry.current_episode - 1, 0), Math.max(episodes.length - 1, 0))
     : 0;
 
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
@@ -28,15 +28,12 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
     setCurrentIdx(initialIdx);
   }, [initialIdx]);
 
-  const lastEpisodeRef = useRef<number | null>(null);
   const saveProgress = usePlayerPersistence({
     animeSlug: anime.alias,
     enabled: Boolean(dbEntry),
   });
 
-  // Keep a stable ref of frequently changing values to keep callbacks completely stable
-  const stateRef = useRef({ anime, currentIdx, dbEntry });
-  stateRef.current = { anime, currentIdx, dbEntry };
+  const lastEpisodeRef = useRef<number | null>(null);
 
   useEffect(() => {
     lastEpisodeRef.current = null;
@@ -45,42 +42,35 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
   const handleEpisodeSelect = useCallback(
     (idx: number) => {
       if (idx < 0 || idx >= episodes.length) return;
-
-      setCurrentIdx(idx);
-
-      const { dbEntry: currentDbEntry, anime: currentAnime } = stateRef.current;
-      if (!currentDbEntry || !currentAnime.alias) return;
-
+      if (!dbEntry || !anime.alias) return;
       if (lastEpisodeRef.current === idx) return;
+
       lastEpisodeRef.current = idx;
 
+      setCurrentIdx(idx);
       saveProgress(idx + 1, 0, 0, true);
     },
-    [episodes.length, saveProgress],
+    [episodes.length, dbEntry, anime.alias, saveProgress],
   );
 
   const handleProgress = useCallback(
     (currentTime: number, duration: number) => {
-      const { anime: currentAnime, currentIdx: idx, dbEntry: currentDbEntry } = stateRef.current;
-      const episode = currentAnime.episodes?.[idx];
-      if (!episode) return;
+      if (!dbEntry || !anime.alias) return;
 
-      if (!currentDbEntry || !currentAnime.alias) return;
-
-      saveProgress(idx + 1, currentTime, duration);
+      saveProgress(currentIdx + 1, currentTime, duration);
     },
-    [saveProgress],
+    [currentIdx, dbEntry, anime.alias, saveProgress],
   );
-
   if (!episodes.length) {
     return (
-      <section className="container mx-auto relative z-10 flex flex-col gap-5 px-4 py-12">
+      <section className="container relative z-10 mx-auto flex flex-col gap-5 px-4 py-12">
         <SectionLabel>Смотреть онлайн</SectionLabel>
 
         <div className="glass overflow-hidden rounded-2xl">
           <div className="flex flex-col items-center justify-center gap-5 px-8 py-14 text-center">
             <div className="relative flex items-center justify-center">
               <span className="absolute inline-flex h-16 w-16 animate-ping rounded-full bg-primary/10 opacity-30" />
+
               <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
                 <Clapperboard size={24} className="text-zinc-400" />
               </div>
@@ -88,6 +78,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
             <div className="flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary shadow-[0_0_6px] shadow-primary/60" />
+
               <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary/80">
                 Ожидается выход
               </span>
@@ -95,6 +86,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
             <div className="flex flex-col gap-1.5">
               <p className="text-sm font-semibold text-zinc-200">Серии ещё не вышли</p>
+
               <p className="max-w-xs text-xs leading-relaxed text-zinc-500">
                 Премьера этого аниме ожидается в ближайшее время. Следите за обновлениями — серии
                 появятся здесь сразу после выхода.
@@ -106,31 +98,29 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
     );
   }
 
-  const episode = episodes[currentIdx] as AnimeEpisode | undefined;
-  const poster = episode ? resolveThumb(episode) : undefined;
+  const episode = episodes[currentIdx];
+
+  const videoSrc = getBestQuality(episode);
+  const poster = resolveThumb(episode);
 
   const initialTime =
     dbEntry?.current_episode === currentIdx + 1 ? (dbEntry.episode_progress ?? 0) : 0;
 
-  const episodeTitle = useMemo(() => {
-    if (!episode) return undefined;
-
-    return `Эпизод ${episode.ordinal ?? currentIdx + 1}${episode.name ? ` · ${episode.name}` : ''}`;
-  }, [episode, currentIdx]);
+  const episodeTitle = `Эпизод ${episode.ordinal ?? currentIdx + 1}${
+    episode.name ? ` · ${episode.name}` : ''
+  }`;
 
   return (
-    <section className="container mx-auto relative z-10 flex flex-col gap-5 px-4 py-12">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <SectionLabel>Смотреть онлайн</SectionLabel>
-      </div>
+    <section className="container relative z-10 mx-auto flex flex-col gap-5 px-4 py-12">
+      <SectionLabel>Смотреть онлайн</SectionLabel>
 
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
-          {episode && (
-            <AnilyfeHlsPlayer
-              episode={episode}
-              poster={poster}
+          {videoSrc && (
+            <VideoPlayer
+              src={videoSrc}
               animeTitle={anime.name.main}
+              poster={poster}
               initialTime={initialTime}
               title={episodeTitle}
               onProgress={handleProgress}
@@ -142,6 +132,10 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
       </div>
     </section>
   );
+}
+
+function getBestQuality(episode: AnimeEpisode): string | null {
+  return episode.hls_1080 ?? episode.hls_720 ?? episode.hls_480 ?? null;
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
