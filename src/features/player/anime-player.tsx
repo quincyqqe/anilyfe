@@ -42,13 +42,15 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
   const handleEpisodeSelect = useCallback(
     (idx: number) => {
       if (idx < 0 || idx >= episodes.length) return;
-      if (!dbEntry || !anime.alias) return;
       if (lastEpisodeRef.current === idx) return;
 
       lastEpisodeRef.current = idx;
 
       setCurrentIdx(idx);
-      saveProgress(idx + 1, 0, 0, true);
+
+      if (dbEntry && anime.alias) {
+        saveProgress(idx + 1, 0, 0, true);
+      }
     },
     [episodes.length, dbEntry, anime.alias, saveProgress],
   );
