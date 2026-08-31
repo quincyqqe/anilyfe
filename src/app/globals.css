@@ -263,64 +263,6 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
-   HLS Player
-   ────────────────────────────────────────────────────────────── */
-
-.anilyfe-hls-player {
-  --player-surface: var(--player-surface);
-  --player-surface-strong: var(--player-surface-strong);
-  --player-accent: var(--player-accent);
-  --player-hit-area: 44px;
-  --player-ease: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.anilyfe-hls-player:fullscreen {
-  width: 100vw;
-  height: 100dvh;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.anilyfe-hls-player:fullscreen video {
-  width: 100%;
-  height: 100%;
-}
-
-.anilyfe-hls-player::backdrop {
-  background: oklch(0.03 0.01 260);
-}
-
-.anilyfe-hls-player button {
-  touch-action: manipulation;
-}
-
-.anilyfe-hls-player [role='slider'] {
-  touch-action: none;
-}
-
-@supports (-webkit-touch-callout: none) {
-  .anilyfe-hls-player:fullscreen {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* ──────────────────────────────────────────────────────────────
-   Reduced motion
-   ────────────────────────────────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-  .anilyfe-hls-player *,
-  .anilyfe-hls-player *::before,
-  .anilyfe-hls-player *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ──────────────────────────────────────────────────────────────
    Player animations
    ────────────────────────────────────────────────────────────── */
 

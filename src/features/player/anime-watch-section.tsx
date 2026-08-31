@@ -5,22 +5,21 @@ import { Clapperboard } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { EpisodeList } from './components/episode-list/episode-list';
+import { HlsVideoPlayer } from './hls-video-player';
 import { usePlayerPersistence } from './hooks/use-player-persistence';
 import type { PlayerProgress } from './model/player-types';
+import { getEpisodeFragments, getEpisodeSource, getEpisodeTitle, clampEpisodeIndex } from './lib/player-domain';
 import { resolveThumb } from './lib/resolve-thumb';
-import { VideoPlayer } from './video-player';
 
-interface Props {
+export interface AnimeWatchSectionProps {
   anime: Anime;
   dbEntry: PlayerProgress | null;
 }
 
-export function AnimePlayer({ anime, dbEntry }: Props) {
+export function AnimeWatchSection({ anime, dbEntry }: AnimeWatchSectionProps) {
   const episodes = anime.episodes ?? [];
 
-  const initialIdx = dbEntry?.current_episode
-    ? Math.min(Math.max(dbEntry.current_episode - 1, 0), Math.max(episodes.length - 1, 0))
-    : 0;
+  const initialIdx = clampEpisodeIndex((dbEntry?.current_episode ?? 1) - 1, episodes.length);
 
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
 
@@ -102,36 +101,11 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
 
   const episode = episodes[currentIdx];
 
-  const videoSrc = getBestQuality(episode);
+  const videoSrc = getEpisodeSource(episode);
   const poster = resolveThumb(episode);
-
-  const initialTime =
-    dbEntry?.current_episode === currentIdx + 1 ? (dbEntry.episode_progress ?? 0) : 0;
-
-  const episodeTitle = `Эпизод ${episode.ordinal ?? currentIdx + 1}${
-    episode.name ? ` · ${episode.name}` : ''
-  }`;
-  const fragments: any = [
-    ...(episode.opening?.start != null && episode.opening?.stop != null
-      ? [
-          {
-            start: episode.opening.start,
-            stop: episode.opening.stop,
-            type: 'opening' as const,
-          },
-        ]
-      : []),
-
-    ...(episode.ending?.start != null && episode.ending?.stop != null
-      ? [
-          {
-            start: episode.ending.start,
-            stop: episode.ending.stop,
-            type: 'ending' as const,
-          },
-        ]
-      : []),
-  ];
+  const initialTime = dbEntry?.current_episode === currentIdx + 1 ? (dbEntry.episode_progress ?? 0) : 0;
+  const episodeTitle = getEpisodeTitle(episode, currentIdx);
+  const fragments = getEpisodeFragments(episode);
 
   return (
     <section className="container relative z-10 mx-auto flex flex-col gap-5 px-4 py-12">
@@ -140,7 +114,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
           {videoSrc && (
-            <VideoPlayer
+            <HlsVideoPlayer
               src={videoSrc}
               animeTitle={anime.name.main}
               poster={poster}

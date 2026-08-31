@@ -67,7 +67,7 @@ const TOP_STATUS_ACTIONS = [
 
 const CENTER_STATUS_ACTIONS = ['togglePaused'] as const;
 
-export interface VideoPlayerProps {
+export interface HlsVideoPlayerProps {
   src: string;
   poster?: string;
   animeTitle: string;
@@ -77,7 +77,7 @@ export interface VideoPlayerProps {
   fragments?: VideoFragment[];
 }
 
-export function VideoPlayer({
+export function HlsVideoPlayer({
   src,
   poster,
   animeTitle,
@@ -85,7 +85,7 @@ export function VideoPlayer({
   title,
   onProgress,
   fragments = [],
-}: VideoPlayerProps): ReactNode {
+}: HlsVideoPlayerProps): ReactNode {
   return (
     <I18nProvider locale="ru">
       <Player title={`${animeTitle} - ${title}`}>
