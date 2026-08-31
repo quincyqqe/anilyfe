@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 
 import { PlayerProgress } from './player-progress';
 import { FragmentMarkers, type VideoFragment } from './components/fragment-markers';
-import { SkipFragmentControls } from './components/skip-fragment-controls';
 
 import {
   CaptionsOffIcon,
@@ -185,9 +184,7 @@ export function HlsVideoPlayer({
                 <div className="media-time-controls">
                   <Time.Value type="current" className="media-time" />
 
-                  <div className="media-time-controls__timeline">
-                    <SkipFragmentControls fragments={fragments} />
-                    <TimeSlider.Root className="media-slider">
+                  <TimeSlider.Root className="media-slider">
                     <TimeSlider.Chapters
                       className="media-slider__chapters"
                       renderChapter={(props) => (
@@ -215,8 +212,7 @@ export function HlsVideoPlayer({
                         <TimeSlider.Value type="pointer" className="media-time" />
                       </div>
                     </TimeSlider.Preview>
-                    </TimeSlider.Root>
-                  </div>
+                  </TimeSlider.Root>
 
                   <Time.Value toggle type="remaining" className="media-time" />
                 </div>
