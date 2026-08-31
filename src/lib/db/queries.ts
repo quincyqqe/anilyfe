@@ -2,7 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import type { UserAnimeEntry } from '@/features/profile/types/profile';
 import { createClient } from '@/lib/supabase/server';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import type { User } from '@supabase/supabase-js';
 import type { Profile } from '@/features/profile/types/profile';
 import type { AniListAnimeRecord } from '@/shared/types/anilist';
@@ -84,6 +84,7 @@ export const getUserAnimeEntry = cache(async (slug: string): Promise<UserAnimeEn
 });
 
 export async function getAnimeAniList(animeId: number): Promise<AniListAnimeRecord | null> {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data, error } = await supabaseAdmin
     .from('anime_anilist')
     .select('*')
@@ -101,6 +102,7 @@ export async function getAnimeAniList(animeId: number): Promise<AniListAnimeReco
 export async function upsertAnimeAniList(
   data: Omit<AniListAnimeRecord, 'id' | 'created_at' | 'updated_at'>,
 ): Promise<AniListAnimeRecord | null> {
+  const supabaseAdmin = getSupabaseAdmin();
   const { data: row, error } = await supabaseAdmin
     .from('anime_anilist')
     .upsert(data, {

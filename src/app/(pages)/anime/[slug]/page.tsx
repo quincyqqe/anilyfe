@@ -4,7 +4,7 @@ import { cache } from 'react';
 
 import { AnimeInfo } from '@/features/anime';
 import { fetchAnime, fetchFranchise, fetchAniListAnime } from '@/features/anime/api';
-import { AnimePlayer } from '@/features/player/anime-player';
+import { AnimeWatchSection } from '@/features/player';
 import { getUserAnimeEntry } from '@/lib/db/queries';
 import { generateMetadata as buildMetadata } from '@/lib/utils/metadata';
 import type { Anime } from '@/shared/types/anime';
@@ -63,7 +63,7 @@ export default async function AnimePage({ params }: PageProps) {
   return (
     <>
       <AnimeInfo anime={anime} franchise={franchise} animeEntry={rawDbEntry} aniList={aniList} />
-      <AnimePlayer anime={anime} dbEntry={rawDbEntry} />
+      <AnimeWatchSection anime={anime} dbEntry={rawDbEntry} />
     </>
   );
 }
