@@ -111,6 +111,27 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
   const episodeTitle = `Эпизод ${episode.ordinal ?? currentIdx + 1}${
     episode.name ? ` · ${episode.name}` : ''
   }`;
+  const fragments: any = [
+    ...(episode.opening?.start != null && episode.opening?.stop != null
+      ? [
+          {
+            start: episode.opening.start,
+            stop: episode.opening.stop,
+            type: 'opening' as const,
+          },
+        ]
+      : []),
+
+    ...(episode.ending?.start != null && episode.ending?.stop != null
+      ? [
+          {
+            start: episode.ending.start,
+            stop: episode.ending.stop,
+            type: 'ending' as const,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <section className="container relative z-10 mx-auto flex flex-col gap-5 px-4 py-12">
@@ -126,6 +147,7 @@ export function AnimePlayer({ anime, dbEntry }: Props) {
               initialTime={initialTime}
               title={episodeTitle}
               onProgress={handleProgress}
+              fragments={fragments}
             />
           )}
         </div>

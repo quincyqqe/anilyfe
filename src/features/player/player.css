@@ -2004,14 +2004,6 @@
     }
   }
 
-  @media (pointer: fine) {
-    transition-property: filter, opacity, scale, translate;
-  }
-
-  @media (pointer: coarse) {
-    transition-property: opacity, scale, translate;
-  }
-
   @container media-root (width > 42rem) {
     --inset-factor: 3;
   }
@@ -2030,4 +2022,38 @@
 
 .media-default-skin--video .media-slider__track {
   background-color: oklch(1 0 0 / 0.2);
+}
+/* Markers */
+.media-default-skin .media-fragment-markers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: var(--track-border-radius);
+}
+
+.media-default-skin .media-fragment-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 2px;
+  pointer-events: none;
+  border-radius: var(--track-border-radius);
+}
+
+.media-default-skin .media-fragment-marker--opening {
+  background: oklch(0.75 0.18 240 / 0.5);
+}
+
+.media-default-skin .media-fragment-marker--ending {
+  background: oklch(0.75 0.18 330 / 0.5);
+}
+
+.media-default-skin .media-fragment-marker--default {
+  background: currentColor;
+}
+
+.media-default-skin .media-slider__fill {
+  z-index: 1;
 }
