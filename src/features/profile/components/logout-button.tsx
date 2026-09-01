@@ -1,14 +1,13 @@
-'use client';
+import { LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function LogoutButton() {
   return (
     <form action="/auth/signout" method="POST">
-      <button
-        type="submit"
-        className="text-sm px-4 h-9 rounded-lg border border-zinc-800 bg-zinc-900 text-red-400 hover:bg-zinc-800 hover:text-red-300 transition-colors inline-flex items-center"
-      >
+      <Button type="submit" variant="destructive" size="sm" className="h-9 rounded-xl px-3.5">
+        <LogOut />
         Выйти
-      </button>
+      </Button>
     </form>
   );
 }

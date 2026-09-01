@@ -23,6 +23,9 @@ export interface Profile {
   username: string;
   bio: string | null;
   avatar_url: string | null;
+  background_url: string | null;
+  is_admin: boolean;
   created_at: string;
-  user_anime_list: UserAnimeEntry[];
+
+  user_anime_list?: UserAnimeEntry[];
 }

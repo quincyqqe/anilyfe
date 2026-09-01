@@ -31,12 +31,12 @@ const UserProfilePage = async ({ params }: Props) => {
   const isOwner = user?.id === profile.id;
 
   return (
-    <div className="container mx-auto px-4 pt-28 md:pt-32">
+    <>
       <ProfileHeader profile={profile} isOwner={isOwner} />
-      <div className="pb-20">
+      <div>
         <AnimeList animeList={profile.user_anime_list ?? []} />
       </div>
-    </div>
+    </>
   );
 };
 
