@@ -1,7 +1,9 @@
-import { Profile } from '@/features/profile/types/profile';
 import Image from 'next/image';
-import { CalendarDays, Eye, Radio, Sparkles } from 'lucide-react';
+import { CalendarDays, Crown } from 'lucide-react';
+
+import { Profile } from '@/features/profile/types/profile';
 import { ProfileOwnerActions } from './profile-owner.action';
+import ShaderDemo_ATC from '@/components/effects/shader-atc';
 
 interface Props {
   profile: Profile;
@@ -9,85 +11,101 @@ interface Props {
 }
 
 export function ProfileHeader({ profile, isOwner }: Props) {
-  const list = profile.user_anime_list ?? [];
   const createdAt = new Date(profile.created_at).toLocaleDateString('ru-RU', {
     year: 'numeric',
     month: 'long',
   });
+
   const initials = profile.username.slice(0, 2).toUpperCase();
-  const watching = list.filter((item) => item.status === 'watching').length;
   const avatar = profile.avatar_url;
+  const background = profile.background_url;
 
   return (
-    <section className="group relative -mx-4 mb-12 min-h-[39rem] overflow-hidden md:-mx-8 md:min-h-[43rem]">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-background">
-        {avatar ? (
+    <section className="relative mb-12 min-h-[30rem] overflow-hidden md:min-h-[34rem]">
+      <div
+        className="absolute inset-0 -z-10 overflow-hidden bg-background"
+        style={{
+          maskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
+          WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
+        }}
+      >
+        {background ? (
           <Image
-            src={avatar}
+            src={background}
             alt=""
             fill
+            loading="eager"
             sizes="100vw"
-            className="scale-110 object-cover opacity-25 blur-sm saturate-75 transition-transform duration-[1600ms] group-hover:scale-[1.16]"
-            aria-hidden
+            className="object-cover object-center"
           />
-        ) : null}
-        {avatar ? (
-          <Image
-            src={avatar}
-            alt=""
-            fill
-            sizes="100vw"
-            className="scale-110 object-cover opacity-20 mix-blend-screen transition-transform duration-[1600ms] group-hover:scale-[1.16]"
-            aria-hidden
-          />
-        ) : null}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.08_0.02_260/.08)_0%,oklch(0.08_0.02_260/.14)_38%,oklch(0.08_0.02_260/.96)_82%,oklch(0.08_0.02_260)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_28%,oklch(0.72_0.14_55/.18),transparent_28%),radial-gradient(ellipse_at_78%_22%,oklch(0.65_0.12_195/.16),transparent_30%)]" />
-        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(oklch(1_0_0/.08)_1px,transparent_1px),linear-gradient(90deg,oklch(1_0_0/.08)_1px,transparent_1px)] [background-size:64px_64px]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+        ) : (
+          <ShaderDemo_ATC />
+        )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
       </div>
 
-      <div className="relative flex min-h-[39rem] flex-col justify-end px-4 pb-10 md:min-h-[43rem] md:px-8 md:pb-14">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3 rounded-full border border-white/10 bg-background/35 px-3 py-2 backdrop-blur-xl">
-            <Radio className="size-3.5 text-primary" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/80">personal space</span>
-          </div>
-          <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-background/35 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-xl sm:flex">
-            <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_12px_oklch(0.8_0.18_150)]" />
-            online now
-          </div>
-        </div>
+      <div className="flex min-h-[30rem] flex-col justify-end px-4 pb-8 md:min-h-[34rem] md:px-12 md:pb-12">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-end">
+            <div className="flex shrink-0 flex-col items-center gap-2 sm:items-start">
+              {profile.is_admin && (
+                <div className="flex h-7 w-24 items-center justify-center gap-1.5 rounded-full border border-primary/20 bg-background/40 px-3 shadow-lg shadow-black/10 sm:w-28 md:w-36">
+                  <Crown className="size-3 shrink-0 fill-primary text-primary" />
 
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-8">
-          <div className="flex min-w-0 flex-col gap-5 md:max-w-2xl md:flex-row md:items-end">
-            <div className="relative size-28 shrink-0 overflow-hidden rounded-[1.75rem] border-4 border-background/80 bg-muted shadow-2xl shadow-black/40 md:size-36">
-              {avatar ? (
-                <Image src={avatar} alt={profile.username} fill className="object-cover" sizes="144px" priority />
-              ) : (
-                <div className="flex size-full items-center justify-center bg-primary/15 text-3xl font-black text-primary">{initials}</div>
+                  <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.3em] text-primary">
+                    Creator
+                  </span>
+                </div>
               )}
-              <span aria-label="Активен" className="absolute bottom-2 right-2 size-3.5 rounded-full border-2 border-background bg-emerald-400" />
+
+              <div className="relative size-24 overflow-hidden rounded-[1.5rem] bg-muted shadow-xl shadow-white/10 sm:size-28 md:size-36 md:rounded-[1.75rem]">
+                {avatar ? (
+                  <Image
+                    src={avatar}
+                    alt={profile.username}
+                    fill
+                    priority
+                    sizes="(max-width: 639px) 96px, (max-width: 767px) 112px, 144px"
+                    className="object-cover"
+                    id='profile-avatar'
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center bg-primary/15 text-2xl font-black text-primary md:text-3xl">
+                    {initials}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="min-w-0 pb-1">
-              <p className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-                <Sparkles className="size-3.5" />
-                watcher profile
-              </p>
-              <h1 className="truncate text-4xl font-bold tracking-tight text-foreground md:text-6xl">{profile.username}</h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground md:text-base">
+
+            <div className="min-w-0 pb-1 text-center sm:text-left">
+              <h1 className="truncate text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl" id='profile-username'>
+                {profile.username}
+              </h1>
+
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:mx-0 md:text-base">
                 {profile.bio || 'Этот профиль ещё не написал свою историю.'}
               </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-                <span className="flex items-center gap-2"><CalendarDays className="size-3.5" />На сайте с {createdAt}</span>
-                <span className="flex items-center gap-2"><Eye className="size-3.5 text-primary" />{watching} сейчас смотрит</span>
+
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:justify-start">
+                <span className="inline-flex items-center gap-2">
+                  <CalendarDays className="size-3.5" />
+                  На сайте с {createdAt}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-col gap-3 md:items-end">
-            {isOwner && <ProfileOwnerActions username={profile.username} bio={profile.bio} avatarUrl={profile.avatar_url} />}
-          </div>
+          {isOwner && (
+            <div className="shrink-0 self-stretch md:self-auto">
+              <ProfileOwnerActions
+                username={profile.username}
+                bio={profile.bio}
+                avatarUrl={profile.avatar_url}
+                backgroundUrl={profile.background_url}
+              />
+            </div>
+          )}
         </div>
       </div>
     </section>
