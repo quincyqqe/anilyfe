@@ -5,27 +5,22 @@ import { BookmarkPlus } from 'lucide-react';
 import { EMPTY_STATE_MESSAGES } from '../../model/anime-list/constants';
 import type { FilterKey } from '../../model/anime-list/types';
 
-interface AnimeListEmptyStateProps {
-  filter: FilterKey;
-}
-
-export function AnimeListEmptyState({ filter }: AnimeListEmptyStateProps) {
+export function AnimeListEmptyState({ filter }: { filter: FilterKey }) {
   const message = EMPTY_STATE_MESSAGES[filter];
-
   return (
     <motion.div
       key="empty"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="col-span-full flex flex-col items-center justify-center gap-3 py-20 text-center"
+      className="col-span-full flex min-h-72 flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-white/[0.1] bg-white/[0.02] px-6 text-center"
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/8 bg-white/5">
-        <BookmarkPlus className="h-6 w-6 text-muted-foreground" strokeWidth={1.5} />
+      <div className="flex size-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+        <BookmarkPlus className="size-6" strokeWidth={1.5} />
       </div>
-      <div>
+      <div className="flex flex-col gap-1">
         <p className="font-semibold text-foreground">{message.title}</p>
-        <p className="mt-1 text-sm text-muted-foreground">{message.sub}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{message.sub}</p>
       </div>
     </motion.div>
   );

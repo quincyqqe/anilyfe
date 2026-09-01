@@ -7,49 +7,52 @@ import Image from '@/components/ui/image';
 import { cn } from '@/lib/utils/cn';
 import type { UserAnimeEntry } from '@/features/profile/types/profile';
 import { STATUS_LABEL, STATUS_PILL } from '../../model/anime-list/constants';
-import { formatUpdated, getAnimeHref, getAnimePosterSrc } from '../../model/anime-list/helpers';
+import {
+  formatUpdated,
+  getAnimeHref,
+  getAnimePosterSrc,
+  getAnimeProgress,
+} from '../../model/anime-list/helpers';
 
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL ?? '';
 
-interface AnimeListRowProps {
-  anime: UserAnimeEntry;
-}
-
-export function AnimeListRow({ anime }: AnimeListRowProps) {
+export function AnimeListRow({ anime }: { anime: UserAnimeEntry }) {
+  const progress = getAnimeProgress(anime);
   const hasScore = typeof anime.score === 'number' && anime.score > 0;
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      transition={{ duration: 0.2 }}
       className="group"
     >
       <Link
         href={getAnimeHref(anime)}
-        className={cn(
-          'flex items-center gap-3 rounded-xl px-3 py-2.5',
-          'transition-all duration-200',
-          'hover:bg-white/[0.04]',
-          'hover:shadow-[0_0_0_1px_rgba(255,255,255,0.04)]',
-        )}
+        className="flex min-h-20 items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 outline-none transition-all hover:border-white/[0.08] hover:bg-white/[0.045] focus-visible:ring-2 focus-visible:ring-primary/70 sm:gap-4"
       >
-        <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-lg bg-white/5">
+        <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-white/5 sm:size-16">
           <Image
             src={getAnimePosterSrc(anime, MEDIA_URL)}
-            alt={anime.anime_name || 'Anime poster'}
+            alt={anime.anime_name || 'Постер аниме'}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-            sizes="44px"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="64px"
           />
         </div>
-
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="line-clamp-1 text-[14px] font-medium text-white/90 transition-colors group-hover:text-white">
-            {anime.anime_name}
-          </span>
-
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="truncate text-sm font-semibold text-white/90 transition-colors group-hover:text-primary">
+              {anime.anime_name}
+            </span>
+            {anime.is_favourite && (
+              <Heart
+                aria-label="В избранном"
+                className="size-3.5 shrink-0 fill-rose-400 text-rose-400"
+              />
+            )}
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={cn(
@@ -59,24 +62,35 @@ export function AnimeListRow({ anime }: AnimeListRowProps) {
             >
               {STATUS_LABEL[anime.status]}
             </span>
-
             <span className="text-[11px] text-white/40">{formatUpdated(anime.updated_at)}</span>
           </div>
         </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          {anime.is_favourite && (
-            <Heart className="h-3.5 w-3.5 fill-rose-400 text-rose-400 opacity-90" />
-          )}
-
-          {hasScore && (
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star className="h-3.5 w-3.5 fill-amber-400" />
-              <span className="text-sm font-medium">{anime.score}</span>
+        <div className="hidden w-40 flex-col gap-1.5 sm:flex">
+          <div className="flex items-center justify-between text-[10px] text-white/40">
+            <span className="flex items-center gap-1">
+              <Play className="size-2.5 fill-current" /> Прогресс
+            </span>
+            <span className="font-mono">
+              {progress.currentEpisode}
+              {progress.totalEpisodes > 0 ? ` / ${progress.totalEpisodes}` : ''}
+            </span>
+          </div>
+          {progress.totalEpisodes > 0 && (
+            <div className="h-1 overflow-hidden rounded-full bg-white/[0.08]">
+              <div
+                className="h-full rounded-full bg-primary transition-[width]"
+                style={{ width: `${progress.seriesPercent}%` }}
+              />
             </div>
           )}
         </div>
+        {hasScore && (
+          <div className="flex shrink-0 items-center gap-1 rounded-lg bg-amber-400/10 px-2 py-1.5 text-amber-300">
+            <Star className="size-3 fill-current" />
+            <span className="font-mono text-xs font-bold">{anime.score}</span>
+          </div>
+        )}
       </Link>
-    </motion.div>
+    </motion.article>
   );
 }
