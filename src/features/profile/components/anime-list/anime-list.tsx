@@ -26,7 +26,7 @@ export function AnimeList({ animeList }: AnimeListProps) {
   );
 
   return (
-    <div>
+    <div className="container mx-auto">
       <AnimeListToolbar
         activeFilter={activeFilter}
         activeSort={activeSort}
