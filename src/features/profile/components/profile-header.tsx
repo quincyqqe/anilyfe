@@ -19,24 +19,35 @@ export function ProfileHeader({ profile, isOwner }: Props) {
   const avatar = profile.avatar_url;
 
   return (
-    <section className="group relative mb-10 min-h-[30rem] overflow-hidden rounded-[2rem] border border-white/10 bg-card shadow-2xl shadow-black/30 md:min-h-[34rem]">
-      <div className="absolute inset-0 bg-background">
+    <section className="group relative -mx-4 mb-12 min-h-[39rem] overflow-hidden md:-mx-8 md:min-h-[43rem]">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-background">
         {avatar ? (
           <Image
             src={avatar}
             alt=""
             fill
-            sizes="(max-width: 768px) 100vw, 1120px"
-            className="scale-110 object-cover opacity-35 blur-2xl transition-transform duration-1000 group-hover:scale-[1.14]"
+            sizes="100vw"
+            className="scale-110 object-cover opacity-25 blur-sm saturate-75 transition-transform duration-[1600ms] group-hover:scale-[1.16]"
             aria-hidden
           />
         ) : null}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,oklch(0.08_0.02_260/.28)_32%,oklch(0.08_0.02_260/.97)_88%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_22%,oklch(0.72_0.14_55/.22),transparent_32%),radial-gradient(ellipse_at_84%_30%,oklch(0.65_0.12_195/.16),transparent_30%)]" />
-        <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(oklch(1_0_0/.08)_1px,transparent_1px),linear-gradient(90deg,oklch(1_0_0/.08)_1px,transparent_1px)] [background-size:48px_48px]" />
+        {avatar ? (
+          <Image
+            src={avatar}
+            alt=""
+            fill
+            sizes="100vw"
+            className="scale-110 object-cover opacity-20 mix-blend-screen transition-transform duration-[1600ms] group-hover:scale-[1.16]"
+            aria-hidden
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.08_0.02_260/.08)_0%,oklch(0.08_0.02_260/.14)_38%,oklch(0.08_0.02_260/.96)_82%,oklch(0.08_0.02_260)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_28%,oklch(0.72_0.14_55/.18),transparent_28%),radial-gradient(ellipse_at_78%_22%,oklch(0.65_0.12_195/.16),transparent_30%)]" />
+        <div className="absolute inset-0 opacity-15 [background-image:linear-gradient(oklch(1_0_0/.08)_1px,transparent_1px),linear-gradient(90deg,oklch(1_0_0/.08)_1px,transparent_1px)] [background-size:64px_64px]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      <div className="relative flex min-h-[30rem] flex-col justify-between p-5 md:min-h-[34rem] md:p-8">
+      <div className="relative flex min-h-[39rem] flex-col justify-end px-4 pb-10 md:min-h-[43rem] md:px-8 md:pb-14">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 rounded-full border border-white/10 bg-background/35 px-3 py-2 backdrop-blur-xl">
             <Radio className="size-3.5 text-primary" />
