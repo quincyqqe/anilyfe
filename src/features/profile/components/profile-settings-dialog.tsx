@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogFooter, DialogTitle } from '@/components/u
 
 import { updateProfile } from '@/lib/db/actions/profile';
 import ShaderDemo_ATC from '@/components/effects/shader-atc';
-import Image from 'next/image';
+import Image from '@/components/ui/image';
 
 interface Props {
   username: string;

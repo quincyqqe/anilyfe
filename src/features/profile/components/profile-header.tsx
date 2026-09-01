@@ -68,7 +68,7 @@ export function ProfileHeader({ profile, isOwner }: Props) {
                     priority
                     sizes="(max-width: 639px) 96px, (max-width: 767px) 112px, 144px"
                     className="object-cover"
-                    id='profile-avatar'
+                    id="profile-avatar"
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center bg-primary/15 text-2xl font-black text-primary md:text-3xl">

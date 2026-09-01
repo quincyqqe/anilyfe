@@ -25,7 +25,6 @@ export function AnimeList({ animeList }: AnimeListProps) {
     [animeList, activeFilter, activeSort],
   );
 
-  console.log(animeList);
   return (
     <div>
       <AnimeListToolbar

@@ -15,9 +15,13 @@ export interface AnimeProgress {
 }
 
 export function formatUpdated(iso: string): string {
-  const d = new Date(iso);
+  const timestamp = Date.parse(iso);
 
-  return d.toLocaleDateString('ru-RU', {
+  if (Number.isNaN(timestamp)) {
+    return '—';
+  }
+
+  return new Date(timestamp).toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
     year: '2-digit',
@@ -25,7 +29,8 @@ export function formatUpdated(iso: string): string {
 }
 
 export function getAnimeHref(anime: UserAnimeEntry): string {
-  return anime.anime_slug ? `/anime/${anime.anime_slug}` : '#';
+  const slug = anime.anime_slug?.trim();
+  return slug ? `/anime/${encodeURIComponent(slug)}` : '/anime';
 }
 
 export function getAnimePosterSrc(anime: UserAnimeEntry, mediaUrl: string): string {

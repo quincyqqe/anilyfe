@@ -132,8 +132,8 @@ export async function updateProfile(input: UpdateProfileInput) {
     };
   }
 
-  revalidatePath(`/profile/${currentProfile.username}`);
-  revalidatePath(`/profile/${username}`);
+  revalidatePath(`/user/${currentProfile.username}`);
+  revalidatePath(`/user/${username}`);
 
   return {
     success: true,
