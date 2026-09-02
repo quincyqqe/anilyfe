@@ -24,7 +24,6 @@ export function FragmentMarkers({ fragments = [] }: FragmentMarkersProps): React
     return null;
   }
 
-  console.log(fragments);
 
   return (
     <div className="media-fragment-markers" aria-hidden="true">

@@ -13,7 +13,7 @@ interface UsePlayerPersistenceOptions {
   enabled: boolean;
 }
 
-const SAVE_INTERVAL_MS = 10_000;
+const SAVE_INTERVAL_MS = 20_000;
 
 export function usePlayerPersistence({ animeSlug, enabled }: UsePlayerPersistenceOptions) {
   const latestRef = useRef<ProgressPayload | null>(null);

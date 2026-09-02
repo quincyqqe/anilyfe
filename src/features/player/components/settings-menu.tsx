@@ -16,8 +16,10 @@ import {
   CheckIcon,
   GearIcon,
   QualityIcon,
+  SeekIcon,
   SpeechIcon,
   SpeedIcon,
+  SwitchesIcon,
 } from '@videojs/react/icons';
 
 import {
@@ -36,9 +38,11 @@ import {
 
 import { Button } from './button';
 import { MenuChevron } from './menu-chevron';
+import { usePlayerPreferences } from '../player-preferences';
 
 export function SettingsMenu(): ReactNode {
   const t = useTranslator();
+  const { skipOpening, skipEnding, setPreferences } = usePlayerPreferences();
 
   const playbackRate = usePlaybackRateOptions();
   const quality = useQualityOptions();
@@ -52,8 +56,9 @@ export function SettingsMenu(): ReactNode {
   const hasAudioTrack = audioTrack?.state.availability === 'available';
 
   const hasCaptions = captions?.state.availability === 'available';
+  const hasFragments = true;
 
-  if (!hasPlaybackRate && !hasQuality && !hasAudioTrack && !hasCaptions) {
+  if (!hasPlaybackRate && !hasQuality && !hasAudioTrack && !hasCaptions && !hasFragments) {
     return null;
   }
 
@@ -79,6 +84,61 @@ export function SettingsMenu(): ReactNode {
 
       <Menu.Content className="media-surface media-popover media-menu media-menu--settings">
         <div className="media-menu__group">
+          <Menu.Root>
+            <Menu.Trigger
+              className="media-menu__item media-menu__item--submenu"
+              render={(props) => (
+                <div {...props}>
+                  <SwitchesIcon className="media-icon" />
+
+                  <span>Фрагменты</span>
+
+                  <span className="media-menu__hint">
+                    <MenuChevron />
+                  </span>
+                </div>
+              )}
+            />
+
+            <Menu.Content className="media-menu__panel">
+              <Menu.Item className="media-menu__back">
+                <MenuChevron flipped />
+                Фрагменты
+              </Menu.Item>
+
+              <Menu.Separator className="media-menu__separator" />
+
+              <Menu.CheckboxItem
+                checked={skipOpening}
+                onCheckedChange={(checked) => setPreferences({ skipOpening: checked })}
+                className="media-menu__item"
+              >
+                Пропускать опенинг
+                <Menu.ItemIndicator
+                  checked={skipOpening}
+                  forceMount
+                  className="media-menu__indicator"
+                >
+                  <CheckIcon className="media-icon" />
+                </Menu.ItemIndicator>
+              </Menu.CheckboxItem>
+
+              <Menu.CheckboxItem
+                checked={skipEnding}
+                onCheckedChange={(checked) => setPreferences({ skipEnding: checked })}
+                className="media-menu__item"
+              >
+                Пропускать эндинг
+                <Menu.ItemIndicator
+                  checked={skipEnding}
+                  forceMount
+                  className="media-menu__indicator"
+                >
+                  <CheckIcon className="media-icon" />
+                </Menu.ItemIndicator>
+              </Menu.CheckboxItem>
+            </Menu.Content>
+          </Menu.Root>
           {hasQuality ? (
             <Menu.Root>
               <Menu.Trigger

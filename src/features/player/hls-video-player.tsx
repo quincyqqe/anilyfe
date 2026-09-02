@@ -1,10 +1,25 @@
 'use client';
 
-import { type ReactNode } from 'react';
-
-import { PlayerProgress } from './player-progress';
-import { FragmentMarkers, type VideoFragment } from './components/fragment-markers';
-
+import {
+  BufferingIndicator,
+  CaptionsButton,
+  Container,
+  Controls,
+  ErrorDialog,
+  Gesture,
+  Hotkey,
+  PlayButton,
+  SeekIndicator,
+  StatusAnnouncer,
+  StatusIndicator,
+  Time,
+  TimeSlider,
+  Tooltip,
+  VolumeIndicator,
+} from '@videojs/react';
+import { HlsJsVideo } from '@videojs/react/media/hlsjs-video';
+import { GoogleCast } from '@videojs/react/media/google-cast';
+import { I18nProvider } from '@videojs/react/i18n';
 import {
   CaptionsOffIcon,
   CaptionsOnIcon,
@@ -22,38 +37,19 @@ import {
   VolumeOffIcon,
 } from '@videojs/react/icons';
 
-import {
-  BufferingIndicator,
-  CaptionsButton,
-  Container,
-  Controls,
-  ErrorDialog,
-  Gesture,
-  Hotkey,
-  SeekIndicator,
-  StatusAnnouncer,
-  StatusIndicator,
-  Time,
-  TimeSlider,
-  Tooltip,
-  VolumeIndicator,
-  PlayButton,
-} from '@videojs/react';
-
-import { HlsJsVideo } from '@videojs/react/media/hlsjs-video';
-
-import { Player } from './player';
-import { GoogleCast } from '@videojs/react/media/google-cast';
-
-import { I18nProvider } from '@videojs/react/i18n';
-
+import { FragmentMarkers, type VideoFragment } from './components/fragment-markers';
+import { FragmentSkipper } from './components/fragment-skipper';
+import { MediaSessionMetadata } from './components/media-session-metadata';
 import { Button } from './components/button';
-import { SettingsMenu } from './components/settings-menu';
-import { VolumePopover } from './components/volume-popover';
 import { CastControl } from './components/cast-control';
 import { AirPlayControl } from './components/airplay-control';
-import { PiPControl } from './components/pip-control';
 import { FullscreenControl } from './components/fullscreen-control';
+import { PiPControl } from './components/pip-control';
+import { SettingsMenu } from './components/settings-menu';
+import { VolumePopover } from './components/volume-popover';
+import { PlayerProgress } from './player-progress';
+import { PlayerPreferencesPersistence } from './player-preferences';
+import { Player } from './player';
 
 import './player.css';
 
@@ -66,6 +62,27 @@ const TOP_STATUS_ACTIONS = [
 ] as const;
 
 const CENTER_STATUS_ACTIONS = ['togglePaused'] as const;
+
+const HLS_ENGINE_OPTIONS = {
+  hlsJs: {
+    enableWorker: true,
+    useMediaCapabilities: true,
+    enableWebVTT: false,
+
+    maxBufferLength: 30,
+    maxMaxBufferLength: 30,
+    maxBufferSize: 30 * 1000 * 1000,
+    backBufferLength: 15,
+
+    startFragPrefetch: false,
+
+    startLevel: -1,
+    capLevelToPlayerSize: false,
+
+    maxBufferHole: 0.1,
+    maxFragLookUpTolerance: 0.25,
+  },
+};
 
 export interface HlsVideoPlayerProps {
   src: string;
@@ -85,43 +102,33 @@ export function HlsVideoPlayer({
   title,
   onProgress,
   fragments = [],
-}: HlsVideoPlayerProps): ReactNode {
+}: HlsVideoPlayerProps) {
   return (
     <I18nProvider locale="ru">
       <Player title={`${animeTitle} - ${title}`}>
+        <PlayerPreferencesPersistence />
+
+        <MediaSessionMetadata
+          animeTitle={animeTitle}
+          episodeTitle={title}
+          poster={poster}
+        />
+
         <Container className="media-default-skin media-default-skin--video aspect-video">
           <HlsJsVideo
             source={{
               src,
               type: 'application/vnd.apple.mpegurl',
-
-              engine: {
-                hlsJs: {
-                  enableWorker: true,
-                  useMediaCapabilities: true,
-                  enableWebVTT: false,
-
-                  maxBufferLength: 30,
-                  maxMaxBufferLength: 30,
-                  maxBufferSize: 30 * 1000 * 1000,
-                  backBufferLength: 15,
-
-                  startFragPrefetch: false,
-
-                  startLevel: -1,
-                  capLevelToPlayerSize: false,
-
-                  maxBufferHole: 0.1,
-                  maxFragLookUpTolerance: 0.25,
-                },
-              },
+              engine: HLS_ENGINE_OPTIONS,
             }}
             poster={poster}
             playsInline
           />
+
           <GoogleCast />
 
           <PlayerProgress initialTime={initialTime} onProgress={onProgress} />
+          <FragmentSkipper fragments={fragments} />
 
           {/* Buffering */}
 
@@ -188,11 +195,15 @@ export function HlsVideoPlayer({
                     <TimeSlider.Chapters
                       className="media-slider__chapters"
                       renderChapter={(props) => (
-                        <div {...props} className={`${props.className} media-slider__chapter`}>
+                        <div
+                          {...props}
+                          className={`${props.className} media-slider__chapter`}
+                        >
                           <TimeSlider.Track className="media-slider__track media-slider__chapter-track">
                             <TimeSlider.Buffer className="media-slider__buffer" />
 
                             <TimeSlider.Fill className="media-slider__fill" />
+
                             <FragmentMarkers fragments={fragments} />
                           </TimeSlider.Track>
                         </div>
@@ -201,7 +212,10 @@ export function HlsVideoPlayer({
 
                     <TimeSlider.Thumb className="media-slider__thumb" />
 
-                    <TimeSlider.Preview overflow="visible" className="media-slider__preview">
+                    <TimeSlider.Preview
+                      overflow="visible"
+                      className="media-slider__preview"
+                    >
                       <div className="media-surface media-thumbnail media-slider__thumbnail">
                         <SpinnerIcon className="media-thumbnail__spinner media-icon" />
                       </div>
@@ -209,7 +223,10 @@ export function HlsVideoPlayer({
                       <div className="media-slider__value">
                         <TimeSlider.ChapterTitle className="media-slider__chapter-title" />
 
-                        <TimeSlider.Value type="pointer" className="media-time" />
+                        <TimeSlider.Value
+                          type="pointer"
+                          className="media-time"
+                        />
                       </div>
                     </TimeSlider.Preview>
                   </TimeSlider.Root>
@@ -223,7 +240,10 @@ export function HlsVideoPlayer({
                   <Tooltip.Root side="top">
                     <Tooltip.Trigger
                       render={
-                        <CaptionsButton className="media-button--captions" render={<Button />}>
+                        <CaptionsButton
+                          className="media-button--captions"
+                          render={<Button />}
+                        >
                           <CaptionsOffIcon className="media-icon media-icon--captions-off" />
                           <CaptionsOnIcon className="media-icon media-icon--captions-on" />
                         </CaptionsButton>
@@ -265,21 +285,16 @@ export function HlsVideoPlayer({
           <Hotkey keys="i" action="togglePictureInPicture" />
 
           <Hotkey keys="ArrowRight" action="seekStep" value={SEEK_TIME / 2} />
-
           <Hotkey keys="ArrowLeft" action="seekStep" value={-(SEEK_TIME / 2)} />
 
           <Hotkey keys="l" action="seekStep" value={SEEK_TIME} />
-
           <Hotkey keys="j" action="seekStep" value={-SEEK_TIME} />
 
           <Hotkey keys="ArrowUp" action="volumeStep" value={0.05} />
-
           <Hotkey keys="ArrowDown" action="volumeStep" value={-0.05} />
 
           <Hotkey keys="0-9" action="seekToPercent" />
-
           <Hotkey keys="Home" action="seekToPercent" value={0} />
-
           <Hotkey keys="End" action="seekToPercent" value={100} />
 
           <Hotkey keys=">" action="speedUp" />
@@ -287,15 +302,38 @@ export function HlsVideoPlayer({
 
           {/* Gestures */}
 
-          <Gesture type="tap" action="togglePaused" pointer="mouse" region="center" />
+          <Gesture
+            type="tap"
+            action="togglePaused"
+            pointer="mouse"
+            region="center"
+          />
 
-          <Gesture type="tap" action="toggleControls" pointer="touch" />
+          <Gesture
+            type="tap"
+            action="toggleControls"
+            pointer="touch"
+          />
 
-          <Gesture type="doubletap" action="seekStep" value={-SEEK_TIME} region="left" />
+          <Gesture
+            type="doubletap"
+            action="seekStep"
+            value={-SEEK_TIME}
+            region="left"
+          />
 
-          <Gesture type="doubletap" action="toggleFullscreen" region="center" />
+          <Gesture
+            type="doubletap"
+            action="toggleFullscreen"
+            region="center"
+          />
 
-          <Gesture type="doubletap" action="seekStep" value={SEEK_TIME} region="right" />
+          <Gesture
+            type="doubletap"
+            action="seekStep"
+            value={SEEK_TIME}
+            region="right"
+          />
 
           {/* Accessibility */}
 
