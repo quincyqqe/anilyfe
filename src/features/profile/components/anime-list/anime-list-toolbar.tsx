@@ -1,7 +1,6 @@
 'use client';
 
-import { LayoutGrid, List, ChevronDown } from 'lucide-react';
-
+import { ChevronDown, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,16 +10,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils/cn';
-
 import { FILTER_TABS, SORT_OPTIONS } from '../../model/anime-list/constants';
 import type { FilterKey, SortKey, ViewMode } from '../../model/anime-list/types';
 
-interface AnimeListToolbarProps {
+interface Props {
   activeFilter: FilterKey;
   activeSort: SortKey;
   counts: Record<FilterKey, number>;
   viewMode: ViewMode;
-
   onFilterChange: (filter: FilterKey) => void;
   onSortChange: (sort: SortKey) => void;
   onViewModeChange: (mode: ViewMode) => void;
@@ -34,167 +31,103 @@ export function AnimeListToolbar({
   onFilterChange,
   onSortChange,
   onViewModeChange,
-}: AnimeListToolbarProps) {
-  const sortLabel =
-    SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
-
+}: Props) {
+  const sortLabel = SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
   return (
-    <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="scrollbar-none flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-        <div className="flex w-max items-center gap-1 rounded-2xl border border-white/[0.04] bg-zinc-950/35 p-1">
+    <div className="mb-6 flex flex-col gap-4 border-b border-border/60 pb-4 lg:flex-row lg:items-center lg:justify-between">
+      <div
+        className="scrollbar-none -mx-1 flex min-w-0 overflow-x-auto px-1"
+        role="tablist"
+        aria-label="Фильтр списка"
+      >
+        <div className="flex min-w-max items-center gap-1">
           {FILTER_TABS.map((tab) => {
-            const count = counts[tab.key];
-
-            if (count === 0 && tab.key !== 'all') return null;
-
+            if (tab.key !== 'all' && counts[tab.key] === 0) return null;
             const Icon = tab.icon;
-
+            const selected = activeFilter === tab.key;
             return (
               <button
                 key={tab.key}
                 type="button"
+                role="tab"
+                aria-selected={selected}
                 onClick={() => onFilterChange(tab.key)}
                 className={cn(
-                  'flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors',
-                  activeFilter === tab.key
-                    ? tab.activeClass
-                    : 'text-muted-foreground hover:text-foreground',
+                  'flex min-h-10 items-center gap-2 rounded-lg px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  selected
+                    ? 'bg-muted text-foreground'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
                 )}
               >
                 <Icon
-                  className={cn(
-                    'size-3.5',
-                    activeFilter === tab.key
-                      ? tab.color
-                      : 'text-muted-foreground',
-                  )}
+                  className={cn('size-3.5', selected ? tab.color : 'text-muted-foreground')}
+                  aria-hidden="true"
                 />
-
-                <span>{tab.label}</span>
-
-                <span className="rounded-md border border-white/[0.02] bg-white/[0.02] px-1.5 py-0.5 font-mono text-[9px] tabular-nums">
-                  {count}
+                {tab.label}
+                <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+                  {counts[tab.key]}
                 </span>
               </button>
             );
           })}
         </div>
       </div>
-
-      <div className="flex shrink-0 items-center justify-between gap-3 md:justify-end">
-        <SortDropdown
-          activeSort={activeSort}
-          label={sortLabel}
-          onSortChange={onSortChange}
-        />
-
-        <ViewModeToggle
-          viewMode={viewMode}
-          onViewModeChange={onViewModeChange}
-        />
+      <div className="flex items-center justify-between gap-3 lg:justify-end">
+        <span className="text-xs text-muted-foreground">
+          <span className="font-mono tabular-nums text-foreground">{counts.all}</span> тайтлов
+        </span>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-2 rounded-lg border-border/70 text-xs"
+              />
+            }
+          >
+            <span className="max-w-36 truncate">{sortLabel}</span>
+            <ChevronDown className="size-3.5" aria-hidden="true" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-48">
+            <DropdownMenuRadioGroup
+              value={activeSort}
+              onValueChange={(value) => onSortChange(value as SortKey)}
+            >
+              {SORT_OPTIONS.map((option) => (
+                <DropdownMenuRadioItem key={option.key} value={option.key}>
+                  {option.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div
+          className="flex items-center gap-1 rounded-lg border border-border/70 p-1"
+          aria-label="Режим отображения"
+        >
+          {(
+            [
+              ['grid', LayoutGrid, 'Сетка'],
+              ['list', List, 'Список'],
+            ] as const
+          ).map(([mode, Icon, label]) => (
+            <button
+              key={mode}
+              type="button"
+              aria-label={label}
+              aria-pressed={viewMode === mode}
+              onClick={() => onViewModeChange(mode)}
+              className={cn(
+                'flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                viewMode === mode && 'bg-muted text-foreground',
+              )}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
-  );
-}
-
-interface SortDropdownProps {
-  activeSort: SortKey;
-  label: string;
-  onSortChange: (sort: SortKey) => void;
-}
-
-function SortDropdown({
-  activeSort,
-  label,
-  onSortChange,
-}: SortDropdownProps) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            className="h-9 rounded-xl border border-white/[0.04] glass px-3 text-xs font-semibold text-muted-foreground"
-          />
-        }
-      >
-        <span className="max-w-36 truncate">{label}</span>
-        <ChevronDown className="size-3.5 opacity-60" />
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        sideOffset={6}
-        className="min-w-44 rounded-xl p-1.5"
-      >
-        <DropdownMenuRadioGroup
-          value={activeSort}
-          onValueChange={(value) => onSortChange(value as SortKey)}
-        >
-          {SORT_OPTIONS.map((option) => (
-            <DropdownMenuRadioItem
-              key={option.key}
-              value={option.key}
-              closeOnClick
-              className="cursor-pointer rounded-lg px-3 py-2 text-xs"
-            >
-              {option.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
-interface ViewModeToggleProps {
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
-}
-
-function ViewModeToggle({
-  viewMode,
-  onViewModeChange,
-}: ViewModeToggleProps) {
-  return (
-    <div className="flex items-center gap-0.5 rounded-xl border border-white/[0.04] bg-zinc-950/35 p-1">
-      <ViewModeButton
-        active={viewMode === 'grid'}
-        onClick={() => onViewModeChange('grid')}
-      >
-        <LayoutGrid className="size-3.5" />
-      </ViewModeButton>
-
-      <ViewModeButton
-        active={viewMode === 'list'}
-        onClick={() => onViewModeChange('list')}
-      >
-        <List className="size-3.5" />
-      </ViewModeButton>
-    </div>
-  );
-}
-
-function ViewModeButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex size-7 items-center justify-center rounded-lg transition-colors',
-        active
-          ? 'bg-white/12 text-white shadow-sm'
-          : 'text-muted-foreground hover:text-foreground',
-      )}
-    >
-      {children}
-    </button>
   );
 }

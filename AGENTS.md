@@ -108,6 +108,7 @@ Create new files near the feature that owns the behavior. Promote code to `src/s
 ## 11. Commands and Verification
 
 **Project scripts:**
+
 - `npm run dev`: Start Next.js dev server with Turbopack (default `--turbopack` flag in `package.json`).
 - `npm run build`: Production build with Turbopack.
 - `npm start`: Start production server.
@@ -116,6 +117,7 @@ Create new files near the feature that owns the behavior. Promote code to `src/s
 - `npm run knip`: Check for unused files and exports.
 
 **Verification workflow**: After code changes, run the narrowest useful verification first:
+
 1. Single file/component changes: `npm run lint` (fast ESLint check).
 2. Shared or routing changes: `npm run lint && npm run build` (ESLint + full build to catch cross-file issues).
 3. Before committing: `npm run format` to auto-format code.
@@ -124,6 +126,7 @@ Create new files near the feature that owns the behavior. Promote code to `src/s
 ## 12. Player Architecture Notes
 
 The anime watch interface is built around **AnimeWatchSection** (`src/features/player/anime-watch-section.tsx`):
+
 - Manages episode selection, player persistence (progress tracking), and episode lifecycle.
 - Uses **HlsVideoPlayer** (`src/features/player/hls-video-player.tsx`) for actual video playback with VideoJS.
 - Player controls use VideoJS React components (`Button`, `VolumeSlider`, `FullscreenButton`, `PipControl`, `CastControl`, `AirplayControl`, `SettingsMenu`).

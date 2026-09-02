@@ -1,14 +1,8 @@
 'use client';
 
-import {
-  PiPButton,
-  Tooltip,
-} from '@videojs/react';
+import { PiPButton, Tooltip } from '@videojs/react';
 
-import {
-  PipEnterIcon,
-  PipExitIcon,
-} from '@videojs/react/icons';
+import { PipEnterIcon, PipExitIcon } from '@videojs/react/icons';
 
 import { Button } from './button';
 
@@ -17,10 +11,7 @@ export function PiPControl() {
     <Tooltip.Root side="top">
       <Tooltip.Trigger
         render={
-          <PiPButton
-            className="media-button--pip"
-            render={<Button />}
-          >
+          <PiPButton className="media-button--pip" render={<Button />}>
             <PipEnterIcon className="media-icon media-icon--pip-enter" />
             <PipExitIcon className="media-icon media-icon--pip-exit" />
           </PiPButton>

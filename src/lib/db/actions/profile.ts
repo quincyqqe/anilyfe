@@ -7,20 +7,17 @@ import { createClient } from '@/lib/supabase/server';
 const imageUrlSchema = z
   .string()
   .trim()
-  .refine(
-    (value) => {
-      if (!value) return true;
+  .refine((value) => {
+    if (!value) return true;
 
-      try {
-        const url = new URL(value);
+    try {
+      const url = new URL(value);
 
-        return url.protocol === 'https:' || url.protocol === 'http:';
-      } catch {
-        return false;
-      }
-    },
-    'Некорректный URL изображения',
-  );
+      return url.protocol === 'https:' || url.protocol === 'http:';
+    } catch {
+      return false;
+    }
+  }, 'Некорректный URL изображения');
 
 const profileSchema = z.object({
   username: z
@@ -28,15 +25,9 @@ const profileSchema = z.object({
     .trim()
     .min(3, 'Никнейм должен содержать минимум 3 символа')
     .max(32, 'Никнейм не может быть длиннее 32 символов')
-    .regex(
-      /^[a-zA-Z0-9_-]+$/,
-      'Никнейм может содержать только латинские буквы, цифры, _ и -',
-    ),
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Никнейм может содержать только латинские буквы, цифры, _ и -'),
 
-  bio: z
-    .string()
-    .trim()
-    .max(160, 'Bio не может быть длиннее 160 символов'),
+  bio: z.string().trim().max(160, 'Bio не может быть длиннее 160 символов'),
 
   avatarUrl: imageUrlSchema,
   backgroundUrl: imageUrlSchema,

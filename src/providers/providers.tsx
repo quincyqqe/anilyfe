@@ -17,9 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }}
       shallowRouting
     >
-      <TooltipProvider delay={0}>
-        {children}
-      </TooltipProvider>
+      <TooltipProvider delay={0}>{children}</TooltipProvider>
 
       <Toaster />
     </ProgressProvider>

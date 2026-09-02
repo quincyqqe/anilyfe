@@ -7,14 +7,10 @@ interface MenuChevronProps {
   flipped?: boolean;
 }
 
-export function MenuChevron({
-  flipped = false,
-}: MenuChevronProps): ReactNode {
+export function MenuChevron({ flipped = false }: MenuChevronProps): ReactNode {
   return (
     <ChevronIcon
-      className={`media-icon media-menu__chevron ${
-        flipped ? 'media-icon--flipped' : ''
-      }`}
+      className={`media-icon media-menu__chevron ${flipped ? 'media-icon--flipped' : ''}`}
     />
   );
 }

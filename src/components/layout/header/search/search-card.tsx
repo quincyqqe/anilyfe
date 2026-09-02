@@ -68,11 +68,11 @@ export function SearchCard({ anime, onClick }: SearchCardProps) {
               </h3>
 
               {popularity && PopularityIcon && (
-                  <div
-                    className={`flex items-center ${popularity.color} bg-white/5 p-1.5 rounded-full border border-white/10`}
-                  >
-                    <PopularityIcon size={14} />
-                  </div>
+                <div
+                  className={`flex items-center ${popularity.color} bg-white/5 p-1.5 rounded-full border border-white/10`}
+                >
+                  <PopularityIcon size={14} />
+                </div>
               )}
             </div>
 
@@ -138,4 +138,4 @@ export function SearchCard({ anime, onClick }: SearchCardProps) {
       </Link>
     </li>
   );
-};
+}

@@ -4,14 +4,7 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils/cn';
 
-export type ScrollShadowVisibility =
-  | 'auto'
-  | 'both'
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'none';
+export type ScrollShadowVisibility = 'auto' | 'both' | 'top' | 'bottom' | 'left' | 'right' | 'none';
 
 export interface ScrollShadowProps extends Omit<React.ComponentProps<'div'>, 'size'> {
   size?: number;
@@ -146,7 +139,7 @@ export function ScrollShadow({
         'scroll-shadow',
         orientation === 'vertical' ? 'scroll-shadow--vertical' : 'scroll-shadow--horizontal',
         hideScrollBar && 'scroll-shadow--hide-scrollbar',
-        className
+        className,
       )}
       {...props}
     >

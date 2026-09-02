@@ -79,7 +79,10 @@ export function ProfileHeader({ profile, isOwner }: Props) {
             </div>
 
             <div className="min-w-0 pb-1 text-center sm:text-left">
-              <h1 className="truncate text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl" id='profile-username'>
+              <h1
+                className="truncate text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl"
+                id="profile-username"
+              >
                 {profile.username}
               </h1>
 

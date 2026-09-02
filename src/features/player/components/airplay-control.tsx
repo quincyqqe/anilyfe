@@ -1,14 +1,8 @@
 'use client';
 
-import {
-  AirPlayButton,
-  Tooltip,
-} from '@videojs/react';
+import { AirPlayButton, Tooltip } from '@videojs/react';
 
-import {
-  AirPlayEnterIcon,
-  AirPlayExitIcon,
-} from '@videojs/react/icons';
+import { AirPlayEnterIcon, AirPlayExitIcon } from '@videojs/react/icons';
 
 import { Button } from './button';
 
@@ -17,10 +11,7 @@ export function AirPlayControl() {
     <Tooltip.Root side="top">
       <Tooltip.Trigger
         render={
-          <AirPlayButton
-            className="media-button--airplay"
-            render={<Button />}
-          >
+          <AirPlayButton className="media-button--airplay" render={<Button />}>
             <AirPlayEnterIcon className="media-icon media-icon--airplay-enter" />
             <AirPlayExitIcon className="media-icon media-icon--airplay-exit" />
           </AirPlayButton>

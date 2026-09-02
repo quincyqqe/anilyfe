@@ -8,7 +8,12 @@ import { EpisodeList } from './components/episode-list/episode-list';
 import { HlsVideoPlayer } from './hls-video-player';
 import { usePlayerPersistence } from './hooks/use-player-persistence';
 import type { PlayerProgress } from './model/player-types';
-import { getEpisodeFragments, getEpisodeSource, getEpisodeTitle, clampEpisodeIndex } from './lib/player-domain';
+import {
+  getEpisodeFragments,
+  getEpisodeSource,
+  getEpisodeTitle,
+  clampEpisodeIndex,
+} from './lib/player-domain';
 import { resolveThumb } from './lib/resolve-thumb';
 
 export interface AnimeWatchSectionProps {
@@ -103,7 +108,8 @@ export function AnimeWatchSection({ anime, dbEntry }: AnimeWatchSectionProps) {
 
   const videoSrc = getEpisodeSource(episode);
   const poster = resolveThumb(episode);
-  const initialTime = dbEntry?.current_episode === currentIdx + 1 ? (dbEntry.episode_progress ?? 0) : 0;
+  const initialTime =
+    dbEntry?.current_episode === currentIdx + 1 ? (dbEntry.episode_progress ?? 0) : 0;
   const episodeTitle = getEpisodeTitle(episode, currentIdx);
   const fragments = getEpisodeFragments(episode);
 

@@ -1,32 +1,31 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import { BookmarkPlus } from 'lucide-react';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { EMPTY_STATE_MESSAGES } from '../../model/anime-list/constants';
 import type { FilterKey } from '../../model/anime-list/types';
 
-interface AnimeListEmptyStateProps {
-  filter: FilterKey;
-}
-
-export function AnimeListEmptyState({ filter }: AnimeListEmptyStateProps) {
+export function AnimeListEmptyState({ filter }: { filter: FilterKey }) {
   const message = EMPTY_STATE_MESSAGES[filter];
-
   return (
-    <motion.div
-      key="empty"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="col-span-full flex flex-col items-center justify-center gap-3 py-20 text-center"
-    >
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/8 bg-white/5">
-        <BookmarkPlus className="h-6 w-6 text-muted-foreground" strokeWidth={1.5} />
-      </div>
-      <div>
-        <p className="font-semibold text-foreground">{message.title}</p>
-        <p className="mt-1 text-sm text-muted-foreground">{message.sub}</p>
-      </div>
-    </motion.div>
+    <Empty className="min-h-72 rounded-xl border border-dashed border-border/70 bg-card/20 px-6 py-16">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <BookmarkPlus className="size-5" aria-hidden="true" />
+        </EmptyMedia>
+        <EmptyTitle>{message.title}</EmptyTitle>
+        <EmptyDescription>{message.sub}</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <p className="text-xs text-muted-foreground">
+          Добавьте первый тайтл в свою библиотеку, чтобы начать.
+        </p>
+      </EmptyContent>
+    </Empty>
   );
 }
