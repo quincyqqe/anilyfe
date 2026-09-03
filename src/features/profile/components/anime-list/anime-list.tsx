@@ -17,7 +17,7 @@ export function AnimeList({ animeList }: AnimeListProps) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
   const [activeSort, setActiveSort] = useState<SortKey>('updated');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [cardVariant, setCardVariant] = useState<CardVariant>('cinema');
+  const [cardVariant, setCardVariant] = useState<CardVariant>('hud');
 
   const counts = useMemo(() => getStatusCounts(animeList), [animeList]);
   const visibleAnime = useMemo(
@@ -61,7 +61,7 @@ export function AnimeList({ animeList }: AnimeListProps) {
             </div>
           </div>
           <div
-            className={`grid gap-x-3 gap-y-8 sm:gap-x-4 ${cardVariant === 'compact' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'}`}
+            className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-4 lg:grid-cols-4 xl:grid-cols-5"
           >
             {visibleAnime.map((anime, index) => (
               <ProfileAnimeCard
