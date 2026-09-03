@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Play, Star } from 'lucide-react';
+import { Archive, Heart, Play, Star } from 'lucide-react';
 import Link from 'next/link';
 import Image from '@/components/ui/image';
 import { cn } from '@/lib/utils/cn';
@@ -13,11 +13,11 @@ const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL ?? '';
 export type CardVariant = 'cinema' | 'editorial' | 'hud' | 'compact' | 'dossier';
 
 export const CARD_VARIANTS: { key: CardVariant; label: string; description: string }[] = [
-  { key: 'cinema', label: 'Cinema', description: 'Постер как главный герой' },
-  { key: 'editorial', label: 'Editorial', description: 'Спокойная журнальная подача' },
+  { key: 'cinema', label: 'Ticket', description: 'Билет в киноархив' },
+  { key: 'editorial', label: 'Magazine', description: 'Обложка журнала' },
   { key: 'hud', label: 'HUD', description: 'Технический медиа-интерфейс' },
-  { key: 'compact', label: 'Compact', description: 'Максимум информации в минимуме места' },
-  { key: 'dossier', label: 'Dossier', description: 'Премиальная карточка-досье' },
+  { key: 'compact', label: 'Stack', description: 'Стопка коллекционных карточек' },
+  { key: 'dossier', label: 'Archive', description: 'Архивная карточка-досье' },
 ];
 
 const STATUS_DOT: Record<WatchStatus, string> = {
@@ -59,12 +59,10 @@ function Poster({
 
 function Meta({ anime, light = false }: { anime: UserAnimeEntry; light?: boolean }) {
   const progress = getAnimeProgress(anime);
-  const hasScore = typeof anime.score === 'number' && anime.score > 0;
   const episode =
     progress.totalEpisodes > 0
       ? `${progress.currentEpisode}/${progress.totalEpisodes}`
       : `Серия ${progress.currentEpisode}`;
-
   return (
     <div
       className={cn(
@@ -76,7 +74,7 @@ function Meta({ anime, light = false }: { anime: UserAnimeEntry; light?: boolean
         <Play className="size-3 fill-current" aria-hidden="true" />
         {episode}
       </span>
-      {hasScore && (
+      {typeof anime.score === 'number' && anime.score > 0 && (
         <span className="flex items-center gap-1 text-amber-300">
           <Star className="size-3 fill-current" aria-hidden="true" />
           {anime.score}
@@ -87,16 +85,16 @@ function Meta({ anime, light = false }: { anime: UserAnimeEntry; light?: boolean
 }
 
 function Progress({ anime, className }: { anime: UserAnimeEntry; className?: string }) {
-  const progress = getAnimeProgress(anime);
-  if (progress.totalEpisodes <= 0) return null;
+  const percent = getAnimeProgress(anime);
+  if (percent.totalEpisodes <= 0) return null;
   return (
     <div
       className={cn('h-1 overflow-hidden rounded-full bg-muted', className)}
-      aria-label={`Прогресс ${Math.round(progress.seriesPercent)}%`}
+      aria-label={`Прогресс ${Math.round(percent.seriesPercent)}%`}
     >
       <div
         className="h-full rounded-full bg-primary transition-[width] duration-300"
-        style={{ width: `${progress.seriesPercent}%` }}
+        style={{ width: `${percent.seriesPercent}%` }}
       />
     </div>
   );
@@ -108,35 +106,42 @@ function Favourite({ anime }: { anime: UserAnimeEntry }) {
   ) : null;
 }
 
+const linkClass =
+  'block outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background';
+const posterSizes = '(min-width:1280px) 190px, (min-width:768px) 22vw, 44vw';
+
 function CinemaCard({ anime, priority = false }: Props) {
+  const progress = getAnimeProgress(anime);
   return (
     <article className="group min-w-0">
-      <Link
-        href={getAnimeHref(anime)}
-        className="block outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-      >
-        <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-muted">
+      <Link href={getAnimeHref(anime)} className={linkClass}>
+        <div className="relative aspect-[2/3] overflow-hidden rounded-[2px] border border-border bg-muted shadow-[6px_6px_0_hsl(var(--muted))]">
           <Poster
             anime={anime}
             priority={priority}
-            sizes="(min-width:1280px) 190px, (min-width:768px) 22vw, 44vw"
-            className="transition-transform duration-300 ease-out group-hover:scale-[1.04]"
+            sizes={posterSizes}
+            className="transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/65 to-transparent px-3 pb-3 pt-16">
-            <div className="flex items-center gap-2 text-xs">
-              <span className={cn('size-1.5 rounded-full', STATUS_DOT[anime.status])} />
-              <span className="truncate text-foreground/80">{STATUS_LABEL[anime.status]}</span>
-              <Favourite anime={anime} />
+          <div className="absolute left-0 top-0 bg-primary px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-primary-foreground">
+            ADMIT ONE
+          </div>
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between border-t border-border bg-background/90 p-3">
+            <div>
+              <p className="font-mono text-[10px] uppercase text-muted-foreground">
+                {STATUS_LABEL[anime.status]}
+              </p>
+              <h3 className="mt-1 line-clamp-2 text-sm font-bold">{anime.anime_name}</h3>
             </div>
+            <span className="font-mono text-xs text-primary">
+              {String(progress.currentEpisode).padStart(2, '0')}
+            </span>
           </div>
         </div>
-        <div className="flex flex-col gap-2 pt-3">
-          <h3 className="truncate text-sm font-semibold transition-colors group-hover:text-primary">
-            {anime.anime_name}
-          </h3>
+        <div className="flex items-center justify-between pt-3">
           <Meta anime={anime} />
-          <Progress anime={anime} />
+          <Favourite anime={anime} />
         </div>
+        <Progress anime={anime} className="mt-2" />
       </Link>
     </article>
   );
@@ -145,33 +150,33 @@ function CinemaCard({ anime, priority = false }: Props) {
 function EditorialCard({ anime, priority = false }: Props) {
   return (
     <article className="group min-w-0">
-      <Link
-        href={getAnimeHref(anime)}
-        className="block outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-      >
-        <div className="relative aspect-[4/5] overflow-hidden rounded-md bg-muted">
+      <Link href={getAnimeHref(anime)} className={linkClass}>
+        <div className="relative aspect-[3/4] overflow-hidden bg-muted">
           <Poster
             anime={anime}
             priority={priority}
-            sizes="(min-width:1280px) 190px, (min-width:768px) 22vw, 44vw"
-            className="transition-transform duration-300 group-hover:scale-[1.025]"
+            sizes={posterSizes}
+            className="grayscale transition-[filter,transform] duration-500 group-hover:scale-105 group-hover:grayscale-0"
           />
+          <div className="absolute left-3 top-3 bg-background px-2 py-1 font-mono text-[10px] uppercase tracking-widest">
+            № {String(anime.current_episode).padStart(2, '0')}
+          </div>
         </div>
-        <div className="border-b border-border/70 py-3">
-          <div className="mb-2 flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className={cn('size-1.5 rounded-full', STATUS_DOT[anime.status])} />
-              {STATUS_LABEL[anime.status]}
-            </span>
+        <div className="border-b-2 border-foreground py-3">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span>{STATUS_LABEL[anime.status]}</span>
             <Favourite anime={anime} />
           </div>
-          <h3 className="line-clamp-2 min-h-10 text-sm font-semibold leading-5 group-hover:text-primary">
+          <h3 className="mt-2 line-clamp-2 min-h-10 font-serif text-lg leading-5 group-hover:text-primary">
             {anime.anime_name}
           </h3>
-          <div className="mt-2">
+          <div className="mt-3 flex justify-between">
             <Meta anime={anime} />
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Anime weekly
+            </span>
           </div>
-          <Progress anime={anime} className="mt-2" />
+          <Progress anime={anime} className="mt-3" />
         </div>
       </Link>
     </article>
@@ -190,7 +195,7 @@ function HudCard({ anime, priority = false }: Props) {
           <Poster
             anime={anime}
             priority={priority}
-            sizes="(min-width:1280px) 190px, (min-width:768px) 22vw, 44vw"
+            sizes={posterSizes}
             className="transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute left-2 top-2 flex items-center gap-1.5 bg-background/85 px-2 py-1 font-mono text-[10px] text-foreground">
@@ -224,71 +229,89 @@ function HudCard({ anime, priority = false }: Props) {
 }
 
 function CompactCard({ anime, priority = false }: Props) {
+  const progress = getAnimeProgress(anime);
   return (
     <article className="group min-w-0">
       <Link
         href={getAnimeHref(anime)}
-        className="flex gap-3 rounded-lg border border-border/60 bg-card/35 p-2 outline-none transition-colors hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary"
+        className={cn(
+          linkClass,
+          'relative flex gap-4 border-b border-border bg-card/20 py-3 pl-3 pr-2 hover:bg-muted/40',
+        )}
       >
-        <div className="relative aspect-[2/3] w-20 shrink-0 overflow-hidden rounded-md bg-muted">
+        <div className="relative size-20 shrink-0 overflow-hidden bg-muted">
           <Poster anime={anime} priority={priority} sizes="80px" />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
-          <div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <span className={cn('size-1.5 rounded-full', STATUS_DOT[anime.status])} />
-                {STATUS_LABEL[anime.status]}
-              </span>
-              <Favourite anime={anime} />
-            </div>
-            <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-5 group-hover:text-primary">
-              {anime.anime_name}
-            </h3>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+              {String(progress.currentEpisode).padStart(2, '0')} / {progress.totalEpisodes || '∞'}
+            </span>
+            <Favourite anime={anime} />
           </div>
-          <div className="flex flex-col gap-2">
+          <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-5 group-hover:text-primary">
+            {anime.anime_name}
+          </h3>
+          <div className="mt-2 flex items-center justify-between">
             <Meta anime={anime} />
-            <Progress anime={anime} />
+            <span
+              className={cn('size-2 rounded-full', STATUS_DOT[anime.status])}
+              title={STATUS_LABEL[anime.status]}
+            />
           </div>
+          <Progress anime={anime} className="mt-2" />
         </div>
+        <span className="absolute bottom-0 left-0 top-0 w-0.5 bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
       </Link>
     </article>
   );
 }
 
 function DossierCard({ anime, priority = false }: Props) {
+  const progress = getAnimeProgress(anime);
   return (
     <article className="group min-w-0">
       <Link
         href={getAnimeHref(anime)}
-        className="block overflow-hidden rounded-2xl border border-border/60 bg-card/45 outline-none transition-colors hover:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary"
+        className={cn(
+          linkClass,
+          'border border-dashed border-border p-3 transition-colors hover:border-primary',
+        )}
       >
-        <div className="relative aspect-[2/3] overflow-hidden bg-muted">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              FILE / {anime.anime_slug}
+            </p>
+            <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-5 group-hover:text-primary">
+              {anime.anime_name}
+            </h3>
+          </div>
+          <Archive className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        </div>
+        <div className="relative aspect-[5/3] overflow-hidden bg-muted">
           <Poster
             anime={anime}
             priority={priority}
-            sizes="(min-width:1280px) 190px, (min-width:768px) 22vw, 44vw"
-            className="transition-transform duration-500 group-hover:scale-105"
+            sizes={posterSizes}
+            className="transition-transform duration-500 group-hover:scale-[1.03]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/10" />
-          <div className="absolute inset-x-0 bottom-0 p-4">
-            <div className="mb-2 flex items-center justify-between">
-              <span
-                className={cn(
-                  'rounded-full border border-border/70 bg-background/65 px-2 py-1 text-[10px] text-foreground/80',
-                )}
-              >
-                {STATUS_LABEL[anime.status]}
-              </span>
-              <Favourite anime={anime} />
-            </div>
-            <h3 className="line-clamp-2 text-base font-semibold leading-5">{anime.anime_name}</h3>
-          </div>
         </div>
-        <div className="flex items-center justify-between gap-3 p-3">
-          <Meta anime={anime} light />
-          <Progress anime={anime} className="max-w-16 flex-1" />
+        <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 border-t border-border pt-3 font-mono text-[10px] uppercase text-muted-foreground">
+          <span>
+            Status <b className="text-foreground">{STATUS_LABEL[anime.status]}</b>
+          </span>
+          <span>
+            Episode <b className="text-foreground">{progress.currentEpisode}</b>
+          </span>
+          <span>
+            Score <b className="text-foreground">{anime.score || '—'}</b>
+          </span>
+          <span className="flex justify-end">
+            <Favourite anime={anime} />
+          </span>
         </div>
+        <Progress anime={anime} className="mt-3" />
       </Link>
     </article>
   );
