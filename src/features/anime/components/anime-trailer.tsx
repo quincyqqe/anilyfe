@@ -10,7 +10,7 @@ interface Props {
   trailer: string;
 }
 
-const YOUTUBE_NOCOOKIE_ORIGIN = 'https://www.youtube-nocookie.com';
+const YOUTUBE_ORIGIN = 'https://www.youtube.com';
 const DEFAULT_VOLUME = 60;
 
 const BUTTON_CLASS_NAME =
@@ -57,9 +57,10 @@ export function AnimeTrailer({ trailer }: Props) {
       rel: '0',
       cc_load_policy: '0',
       enablejsapi: '1',
+      origin: typeof window === 'undefined' ? '' : window.location.origin,
     });
 
-    return `${YOUTUBE_NOCOOKIE_ORIGIN}/embed/${encodeURIComponent(trailer)}?${params}`;
+    return `${YOUTUBE_ORIGIN}/embed/${encodeURIComponent(trailer)}?${params}`;
   }, [trailer]);
 
   const sendCommand = useCallback(
@@ -74,18 +75,16 @@ export function AnimeTrailer({ trailer }: Props) {
           func: command,
           args,
         }),
-        YOUTUBE_NOCOOKIE_ORIGIN,
+        YOUTUBE_ORIGIN,
       );
     },
     [],
   );
 
   useEffect(() => {
-    if (!isPlayerReady) return;
-
     const handleMessage = (event: MessageEvent<string>) => {
       if (
-        event.origin !== YOUTUBE_NOCOOKIE_ORIGIN ||
+        event.origin !== YOUTUBE_ORIGIN ||
         event.source !== iframeRef.current?.contentWindow
       ) {
         return;
@@ -122,7 +121,11 @@ export function AnimeTrailer({ trailer }: Props) {
     };
 
     window.addEventListener('message', handleMessage);
-    sendCommand('addEventListener', ['onStateChange']);
+
+    if (isPlayerReady) {
+      sendCommand('addEventListener', ['onStateChange']);
+      sendCommand('playVideo');
+    }
 
     return () => window.removeEventListener('message', handleMessage);
   }, [isPlayerReady, sendCommand]);
@@ -204,7 +207,7 @@ export function AnimeTrailer({ trailer }: Props) {
           [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_75%,transparent_100%)]
           motion-reduce:hidden
           transition-opacity duration-700 ease-in-out
-          ${hasStarted && !isPaused ? 'opacity-100' : 'opacity-0'}
+          ${isPlayerReady && !isPaused ? 'opacity-100' : 'opacity-0'}
         `}
       >
         <iframe
