@@ -16,7 +16,10 @@ const DEFAULT_VOLUME = 60;
 const BUTTON_CLASS_NAME =
   'size-9 rounded-full bg-black/50 text-white/80 shadow-lg hover:bg-black/70 hover:text-white';
 
-type YouTubeCommand = 'mute' | 'unMute' | 'setVolume' | 'playVideo' | 'pauseVideo';
+type YouTubeCommand =
+  'addEventListener' | 'mute' | 'unMute' | 'setVolume' | 'playVideo' | 'pauseVideo' | 'seekTo';
+
+type YouTubePlayerState = -1 | 0 | 1 | 2 | 3 | 5;
 
 export function AnimeTrailer({ trailer }: Props) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -24,16 +27,22 @@ export function AnimeTrailer({ trailer }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const userPausedRef = useRef(false);
+  const endedRef = useRef(false);
 
   const [muted, setMuted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
     setMuted(true);
     setIsPaused(false);
     setIsPlayerReady(false);
+    setIsBuffering(true);
+    setHasStarted(false);
     userPausedRef.current = false;
+    endedRef.current = false;
   }, [trailer]);
 
   const trailerSrc = useMemo(() => {
@@ -53,20 +62,70 @@ export function AnimeTrailer({ trailer }: Props) {
     return `${YOUTUBE_NOCOOKIE_ORIGIN}/embed/${encodeURIComponent(trailer)}?${params}`;
   }, [trailer]);
 
-  const sendCommand = useCallback((command: YouTubeCommand, args: (string | number)[] = []) => {
-    const playerWindow = iframeRef.current?.contentWindow;
+  const sendCommand = useCallback(
+    (command: YouTubeCommand, args: (string | number | boolean)[] = []) => {
+      const playerWindow = iframeRef.current?.contentWindow;
 
-    if (!playerWindow) return;
+      if (!playerWindow) return;
 
-    playerWindow.postMessage(
-      JSON.stringify({
-        event: 'command',
-        func: command,
-        args,
-      }),
-      YOUTUBE_NOCOOKIE_ORIGIN,
-    );
-  }, []);
+      playerWindow.postMessage(
+        JSON.stringify({
+          event: 'command',
+          func: command,
+          args,
+        }),
+        YOUTUBE_NOCOOKIE_ORIGIN,
+      );
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!isPlayerReady) return;
+
+    const handleMessage = (event: MessageEvent<string>) => {
+      if (
+        event.origin !== YOUTUBE_NOCOOKIE_ORIGIN ||
+        event.source !== iframeRef.current?.contentWindow
+      ) {
+        return;
+      }
+
+      let payload: { event?: string; info?: YouTubePlayerState };
+      try {
+        payload = JSON.parse(event.data) as { event?: string; info?: YouTubePlayerState };
+      } catch {
+        return;
+      }
+
+      if (payload.event !== 'onStateChange') return;
+
+      const state = payload.info;
+      if (state === 0) {
+        endedRef.current = true;
+        setIsPaused(true);
+        setIsBuffering(false);
+        return;
+      }
+
+      if (state === 1) {
+        endedRef.current = false;
+        setHasStarted(true);
+        setIsPaused(false);
+        setIsBuffering(false);
+      } else if (state === 2) {
+        setIsPaused(true);
+        setIsBuffering(false);
+      } else if (state === 3) {
+        setIsBuffering(true);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    sendCommand('addEventListener', ['onStateChange']);
+
+    return () => window.removeEventListener('message', handleMessage);
+  }, [isPlayerReady, sendCommand]);
 
   useEffect(() => {
     if (!containerRef.current || !isPlayerReady || !isDesktop) return;
@@ -111,6 +170,16 @@ export function AnimeTrailer({ trailer }: Props) {
   const handlePlayToggle = useCallback(() => {
     if (!isPlayerReady) return;
 
+    if (endedRef.current) {
+      endedRef.current = false;
+      userPausedRef.current = false;
+      setIsPaused(false);
+      setIsBuffering(true);
+      sendCommand('seekTo', [0, true]);
+      sendCommand('playVideo');
+      return;
+    }
+
     setIsPaused((currentPaused) => {
       const nextPaused = !currentPaused;
 
@@ -128,13 +197,14 @@ export function AnimeTrailer({ trailer }: Props) {
       <div
         ref={containerRef}
         aria-hidden="true"
+        aria-busy={isBuffering}
         className={`
           pointer-events-none absolute inset-x-0 top-0 z-10 h-96 overflow-hidden
           [mask-image:linear-gradient(to_bottom,black_0%,black_75%,transparent_100%)]
           [-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_75%,transparent_100%)]
           motion-reduce:hidden
           transition-opacity duration-700 ease-in-out
-          ${isPaused ? 'opacity-0' : 'opacity-100'}
+          ${hasStarted && !isPaused ? 'opacity-100' : 'opacity-0'}
         `}
       >
         <iframe
@@ -152,6 +222,7 @@ export function AnimeTrailer({ trailer }: Props) {
             scale-[1.15]
             border-0
             brightness-75 saturate-125
+            transition-opacity duration-500 ease-out
           "
         />
       </div>
