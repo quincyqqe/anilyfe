@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "nextjs-seo": {
+      "source": "laguagu/claude-code-nextjs-skills",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs-seo/SKILL.md",
+      "computedHash": "0070936c9514458924cc29e7c6615c2790bb50d284ab498650192e63863513fe"
+    },
     "videojs": {
       "source": "videojs/skills",
       "sourceType": "github",
