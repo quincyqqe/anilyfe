@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.aniliberty.top',
       },
+      {
+        protocol: 'https',
+        hostname: 'nekos.best',
+      },
     ],
   },
 
