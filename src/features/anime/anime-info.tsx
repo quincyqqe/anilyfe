@@ -17,6 +17,7 @@ import { AnimeExternalLinks } from './components/anime-external-links';
 import { AnimeRating } from './components/anime-rating';
 import { AnimeTrailer } from './components/anime-trailer';
 import { AnimeNextEpisode } from './components/anime-next-episode';
+import { AnimeCommunityRatings } from './components/anime-community-ratings';
 
 interface Props {
   anime: Anime;
@@ -61,6 +62,9 @@ export function AnimeInfo({ anime, franchise, animeEntry, aniList }: Props) {
             </div>
 
             <AnimeCollectionButton anime={anime} animeEntry={animeEntry} />
+
+            <AnimeCommunityRatings mal={anime.mal} shikimori={anime.shikimori} />
+
 
             <div className="glass p-4">
               <AnimeStats anime={anime} />
