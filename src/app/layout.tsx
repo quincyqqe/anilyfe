@@ -17,6 +17,10 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   ...buildMetadata(),
   metadataBase: new URL(SITE_URL),
+
+  verification: {
+    google: 'GJR6boNc1yhVxvrihq4o9MIUA-k3s7kiEkAlsm7XovI'
+  }
 };
 export const viewport: Viewport = {
   colorScheme: 'dark',
