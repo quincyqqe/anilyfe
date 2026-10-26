@@ -20,8 +20,8 @@ const AnimeCard = ({ anime }: Props) => {
   return (
     <HoverCard>
       <HoverCardTrigger
-        delay={150}
-        closeDelay={150}
+        delay={320}
+        closeDelay={100}
         render={<Link href={`/anime/${anime.alias}`} />}
       >
         <div className="group relative flex flex-col">
