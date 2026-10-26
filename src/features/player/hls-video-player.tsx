@@ -18,7 +18,7 @@ import {
   VolumeIndicator,
 } from '@videojs/react';
 import { HlsJsVideo } from '@videojs/react/media/hlsjs-video';
-import { GoogleCast } from '@videojs/react/media/google-cast';
+import { GoogleCast } from '@videojs/react/extensions/google-cast';
 import { I18nProvider } from '@videojs/react/i18n';
 import {
   CaptionsOffIcon,
@@ -156,104 +156,106 @@ export function HlsVideoPlayer({
 
           {/* Controls */}
 
-          <Controls.Root className="media-surface media-controls media-controls--root">
+          <Controls.Root>
             <Tooltip.Provider>
-              <div className="media-surface media-controls media-controls--primary">
-                {/* Left */}
+              <Controls.Content className="media-surface media-controls media-controls--root">
+                <div className="media-surface media-controls media-controls--primary">
+                  {/* Left */}
 
-                <div className="media-button-group">
-                  <Tooltip.Root side="top">
-                    <Tooltip.Trigger
-                      render={
-                        <PlayButton className="media-button--play" render={<Button />}>
-                          <RestartIcon className="media-icon media-icon--restart" />
-                          <PlayIcon className="media-icon media-icon--play" />
-                          <PauseIcon className="media-icon media-icon--pause" />
-                        </PlayButton>
-                      }
-                    />
+                  <div className="media-button-group">
+                    <Tooltip.Root side="top">
+                      <Tooltip.Trigger
+                        render={
+                          <PlayButton className="media-button--play" render={<Button />}>
+                            <RestartIcon className="media-icon media-icon--restart" />
+                            <PlayIcon className="media-icon media-icon--play" />
+                            <PauseIcon className="media-icon media-icon--pause" />
+                          </PlayButton>
+                        }
+                      />
 
-                    <Tooltip.Popup className="media-surface media-tooltip">
-                      <Tooltip.Label />
-                      <Tooltip.Shortcut className="media-tooltip__kbd" />
-                    </Tooltip.Popup>
-                  </Tooltip.Root>
+                      <Tooltip.Popup className="media-surface media-tooltip">
+                        <Tooltip.Label />
+                        <Tooltip.Shortcut className="media-tooltip__kbd" />
+                      </Tooltip.Popup>
+                    </Tooltip.Root>
 
-                  <VolumePopover />
-                </div>
+                    <VolumePopover />
+                  </div>
 
-                {/* Timeline */}
+                  {/* Timeline */}
 
-                <div className="media-time-controls">
-                  <Time.Value type="current" className="media-time" />
+                  <div className="media-time-controls">
+                    <Time.Value type="current" className="media-time" />
 
-                  <TimeSlider.Root className="media-slider">
-                    <TimeSlider.Chapters
-                      className="media-slider__chapters"
-                      renderChapter={(props) => (
-                        <div {...props} className={`${props.className} media-slider__chapter`}>
-                          <TimeSlider.Track className="media-slider__track media-slider__chapter-track">
-                            <TimeSlider.Buffer className="media-slider__buffer" />
+                    <TimeSlider.Root className="media-slider">
+                      <TimeSlider.Chapters
+                        className="media-slider__chapters"
+                        renderChapter={(props) => (
+                          <div {...props} className={`${props.className} media-slider__chapter`}>
+                            <TimeSlider.Track className="media-slider__track media-slider__chapter-track">
+                              <TimeSlider.Buffer className="media-slider__buffer" />
 
-                            <TimeSlider.Fill className="media-slider__fill" />
+                              <TimeSlider.Fill className="media-slider__fill" />
 
-                            <FragmentMarkers fragments={fragments} />
-                          </TimeSlider.Track>
+                              <FragmentMarkers fragments={fragments} />
+                            </TimeSlider.Track>
+                          </div>
+                        )}
+                      />
+
+                      <TimeSlider.Thumb className="media-slider__thumb" />
+
+                      <TimeSlider.Preview overflow="visible" className="media-slider__preview">
+                        <div className="media-surface media-thumbnail media-slider__thumbnail">
+                          <SpinnerIcon className="media-thumbnail__spinner media-icon" />
                         </div>
-                      )}
-                    />
 
-                    <TimeSlider.Thumb className="media-slider__thumb" />
+                        <div className="media-slider__value">
+                          <TimeSlider.ChapterTitle className="media-slider__chapter-title" />
 
-                    <TimeSlider.Preview overflow="visible" className="media-slider__preview">
-                      <div className="media-surface media-thumbnail media-slider__thumbnail">
-                        <SpinnerIcon className="media-thumbnail__spinner media-icon" />
-                      </div>
+                          <TimeSlider.Value type="pointer" className="media-time" />
+                        </div>
+                      </TimeSlider.Preview>
+                    </TimeSlider.Root>
 
-                      <div className="media-slider__value">
-                        <TimeSlider.ChapterTitle className="media-slider__chapter-title" />
+                    <Time.Value toggle type="remaining" className="media-time" />
+                  </div>
 
-                        <TimeSlider.Value type="pointer" className="media-time" />
-                      </div>
-                    </TimeSlider.Preview>
-                  </TimeSlider.Root>
+                  {/* Right */}
 
-                  <Time.Value toggle type="remaining" className="media-time" />
+                  <div className="media-button-group">
+                    <Tooltip.Root side="top">
+                      <Tooltip.Trigger
+                        render={
+                          <CaptionsButton className="media-button--captions" render={<Button />}>
+                            <CaptionsOffIcon className="media-icon media-icon--captions-off" />
+                            <CaptionsOnIcon className="media-icon media-icon--captions-on" />
+                          </CaptionsButton>
+                        }
+                      />
+
+                      <Tooltip.Popup className="media-surface media-tooltip">
+                        <Tooltip.Label />
+                        <Tooltip.Shortcut className="media-tooltip__kbd" />
+                      </Tooltip.Popup>
+                    </Tooltip.Root>
+
+                    <SettingsMenu />
+                  </div>
                 </div>
 
-                {/* Right */}
+                {/* Secondary controls */}
 
-                <div className="media-button-group">
-                  <Tooltip.Root side="top">
-                    <Tooltip.Trigger
-                      render={
-                        <CaptionsButton className="media-button--captions" render={<Button />}>
-                          <CaptionsOffIcon className="media-icon media-icon--captions-off" />
-                          <CaptionsOnIcon className="media-icon media-icon--captions-on" />
-                        </CaptionsButton>
-                      }
-                    />
-
-                    <Tooltip.Popup className="media-surface media-tooltip">
-                      <Tooltip.Label />
-                      <Tooltip.Shortcut className="media-tooltip__kbd" />
-                    </Tooltip.Popup>
-                  </Tooltip.Root>
-
-                  <SettingsMenu />
+                <div className="media-surface media-controls media-controls--secondary">
+                  <div className="media-button-group">
+                    <CastControl />
+                    <AirPlayControl />
+                    <PiPControl />
+                    <FullscreenControl />
+                  </div>
                 </div>
-              </div>
-
-              {/* Secondary controls */}
-
-              <div className="media-surface media-controls media-controls--secondary">
-                <div className="media-button-group">
-                  <CastControl />
-                  <AirPlayControl />
-                  <PiPControl />
-                  <FullscreenControl />
-                </div>
-              </div>
+              </Controls.Content>
             </Tooltip.Provider>
           </Controls.Root>
 

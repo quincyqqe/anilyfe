@@ -1150,13 +1150,31 @@
     var(--media-popover-available-height, var(--menu-max-height)),
     var(--menu-max-height)
   );
-  padding: var(--menu-padding);
-  overflow: auto;
-  overscroll-behavior: none;
+  overflow: hidden;
   border-radius: var(--menu-border-radius);
 
   @media (prefers-reduced-motion: reduce) {
     --menu-transition-duration: 0ms;
+  }
+
+  & > .media-menu__content {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    gap: calc(var(--spacing) * 0.5);
+    padding: var(--menu-padding);
+    overflow: auto;
+    overscroll-behavior: none;
+    outline: none;
+    translate: 0 0;
+    transition-timing-function: ease-out;
+    transition-duration: var(--menu-transition-duration);
+    transition-property: translate, filter;
+
+    &[data-child-open] {
+      filter: blur(8px);
+      translate: -100% 0;
+    }
   }
 
   & > .media-menu__panel {

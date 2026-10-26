@@ -82,270 +82,280 @@ export function SettingsMenu(): ReactNode {
         </Tooltip.Popup>
       </Tooltip.Root>
 
-      <Menu.Content className="media-surface media-popover media-menu media-menu--settings">
-        <div className="media-menu__group">
-          <Menu.Root>
-            <Menu.Trigger
-              className="media-menu__item media-menu__item--submenu"
-              render={(props) => (
-                <div {...props}>
-                  <SwitchesIcon className="media-icon" />
+      <Menu.Popup className="media-surface media-popover media-menu media-menu--settings">
+        <Menu.Content className="media-menu__content">
+          <div className="media-menu__group">
+            <Menu.Root>
+              <Menu.Trigger
+                className="media-menu__item media-menu__item--submenu"
+                render={(props) => (
+                  <div {...props}>
+                    <SwitchesIcon className="media-icon" />
 
-                  <span>Фрагменты</span>
+                    <span>Фрагменты</span>
 
-                  <span className="media-menu__hint">
-                    <MenuChevron />
-                  </span>
-                </div>
-              )}
-            />
+                    <span className="media-menu__hint">
+                      <MenuChevron />
+                    </span>
+                  </div>
+                )}
+              />
 
-            <Menu.Content className="media-menu__panel">
-              <Menu.Item className="media-menu__back">
-                <MenuChevron flipped />
-                Фрагменты
-              </Menu.Item>
+              <Menu.Content className="media-menu__panel">
+                <Menu.Item className="media-menu__back">
+                  <MenuChevron flipped />
+                  Фрагменты
+                </Menu.Item>
 
-              <Menu.Separator className="media-menu__separator" />
+                <Menu.Separator className="media-menu__separator" />
 
-              <Menu.CheckboxItem
-                checked={skipOpening}
-                onCheckedChange={(checked) => setPreferences({ skipOpening: checked })}
-                className="media-menu__item"
-              >
-                Пропускать опенинг
-                <Menu.ItemIndicator
+                <Menu.CheckboxItem
                   checked={skipOpening}
-                  forceMount
-                  className="media-menu__indicator"
+                  onCheckedChange={(checked) => setPreferences({ skipOpening: checked })}
+                  className="media-menu__item"
                 >
-                  <CheckIcon className="media-icon" />
-                </Menu.ItemIndicator>
-              </Menu.CheckboxItem>
+                  Пропускать опенинг
+                  <Menu.ItemIndicator
+                    checked={skipOpening}
+                    forceMount
+                    className="media-menu__indicator"
+                  >
+                    <CheckIcon className="media-icon" />
+                  </Menu.ItemIndicator>
+                </Menu.CheckboxItem>
 
-              <Menu.CheckboxItem
-                checked={skipEnding}
-                onCheckedChange={(checked) => setPreferences({ skipEnding: checked })}
-                className="media-menu__item"
-              >
-                Пропускать эндинг
-                <Menu.ItemIndicator
+                <Menu.CheckboxItem
                   checked={skipEnding}
-                  forceMount
-                  className="media-menu__indicator"
+                  onCheckedChange={(checked) => setPreferences({ skipEnding: checked })}
+                  className="media-menu__item"
                 >
-                  <CheckIcon className="media-icon" />
-                </Menu.ItemIndicator>
-              </Menu.CheckboxItem>
-            </Menu.Content>
-          </Menu.Root>
-          {hasQuality ? (
-            <Menu.Root>
-              <Menu.Trigger
-                className="media-menu__item media-menu__item--submenu"
-                render={(props) => (
-                  <div {...props}>
-                    <QualityIcon className="media-icon" />
-
-                    <span>{t(qualityText)}</span>
-
-                    <span className="media-menu__hint">
-                      <bdi dir="auto" className="media-menu__hint-label">
-                        {quality.selectedLabel}
-                      </bdi>
-
-                      <MenuChevron />
-                    </span>
-                  </div>
-                )}
-              />
-
-              <Menu.Content className="media-menu__panel">
-                <Menu.Item className="media-menu__back">
-                  <MenuChevron flipped />
-                  {t(qualityText)}
-                </Menu.Item>
-
-                <Menu.Separator className="media-menu__separator" />
-
-                <QualityRadioGroup
-                  className="media-menu__group"
-                  aria-label={t(qualityText)}
-                  renderItem={(props, item) => (
-                    <Menu.RadioItem {...props} className="media-menu__item">
-                      <bdi dir="auto">
-                        {item.label}
-
-                        {item.tier ? <sup className="media-menu__tier">{item.tier}</sup> : null}
-                      </bdi>
-
-                      {item.badge ? <span className="media-badge">{item.badge}</span> : null}
-
-                      <Menu.ItemIndicator
-                        checked={item.checked}
-                        forceMount
-                        className="media-menu__indicator"
-                      >
-                        <CheckIcon className="media-icon" />
-                      </Menu.ItemIndicator>
-                    </Menu.RadioItem>
-                  )}
-                />
+                  Пропускать эндинг
+                  <Menu.ItemIndicator
+                    checked={skipEnding}
+                    forceMount
+                    className="media-menu__indicator"
+                  >
+                    <CheckIcon className="media-icon" />
+                  </Menu.ItemIndicator>
+                </Menu.CheckboxItem>
               </Menu.Content>
             </Menu.Root>
-          ) : null}
+            {hasQuality ? (
+              <Menu.Root>
+                <QualityRadioGroup.Root>
+                  <Menu.Trigger
+                    className="media-menu__item media-menu__item--submenu"
+                    render={(props) => (
+                      <div {...props}>
+                        <QualityIcon className="media-icon" />
 
-          {hasAudioTrack ? (
-            <Menu.Root>
-              <Menu.Trigger
-                className="media-menu__item media-menu__item--submenu"
-                render={(props) => (
-                  <div {...props}>
-                    <SpeechIcon className="media-icon" />
+                        <span>{t(qualityText)}</span>
 
-                    <span>{t(audioText)}</span>
+                        <span className="media-menu__hint">
+                          <bdi dir="auto" className="media-menu__hint-label">
+                            {quality.selectedLabel}
+                          </bdi>
 
-                    <span className="media-menu__hint">
-                      <bdi dir="auto" className="media-menu__hint-label">
-                        {audioTrack.selectedLabel}
-                      </bdi>
+                          <MenuChevron />
+                        </span>
+                      </div>
+                    )}
+                  />
 
-                      <MenuChevron />
-                    </span>
-                  </div>
-                )}
-              />
+                  <Menu.Content className="media-menu__panel">
+                    <Menu.Item className="media-menu__back">
+                      <MenuChevron flipped />
+                      {t(qualityText)}
+                    </Menu.Item>
 
-              <Menu.Content className="media-menu__panel">
-                <Menu.Item className="media-menu__back">
-                  <MenuChevron flipped />
-                  {t(audioText)}
-                </Menu.Item>
+                    <Menu.Separator className="media-menu__separator" />
 
-                <Menu.Separator className="media-menu__separator" />
+                    <QualityRadioGroup.Options
+                      className="media-menu__group"
+                      aria-label={t(qualityText)}
+                      renderItem={(props, item) => (
+                        <Menu.RadioItem {...props} className="media-menu__item">
+                          <bdi dir="auto">
+                            {item.label}
 
-                <AudioTrackRadioGroup
-                  className="media-menu__group"
-                  aria-label={t(audioText)}
-                  renderItem={(props, item) => (
-                    <Menu.RadioItem {...props} className="media-menu__item">
-                      <bdi dir="auto">{item.label}</bdi>
+                            {item.tier ? <sup className="media-menu__tier">{item.tier}</sup> : null}
+                          </bdi>
 
-                      <Menu.ItemIndicator
-                        checked={item.checked}
-                        forceMount
-                        className="media-menu__indicator"
-                      >
-                        <CheckIcon className="media-icon" />
-                      </Menu.ItemIndicator>
-                    </Menu.RadioItem>
-                  )}
-                />
-              </Menu.Content>
-            </Menu.Root>
-          ) : null}
+                          {item.badge ? <span className="media-badge">{item.badge}</span> : null}
 
-          {hasPlaybackRate ? (
-            <Menu.Root>
-              <Menu.Trigger
-                className="media-menu__item media-menu__item--submenu"
-                render={(props) => (
-                  <div {...props}>
-                    <SpeedIcon className="media-icon" />
+                          <Menu.ItemIndicator
+                            checked={item.checked}
+                            forceMount
+                            className="media-menu__indicator"
+                          >
+                            <CheckIcon className="media-icon" />
+                          </Menu.ItemIndicator>
+                        </Menu.RadioItem>
+                      )}
+                    />
+                  </Menu.Content>
+                </QualityRadioGroup.Root>
+              </Menu.Root>
+            ) : null}
 
-                    <span>{t(speedText)}</span>
+            {hasAudioTrack ? (
+              <Menu.Root>
+                <AudioTrackRadioGroup.Root>
+                  <Menu.Trigger
+                    className="media-menu__item media-menu__item--submenu"
+                    render={(props) => (
+                      <div {...props}>
+                        <SpeechIcon className="media-icon" />
 
-                    <span className="media-menu__hint">
-                      <bdi dir="auto" className="media-menu__hint-label">
-                        {playbackRate.selectedLabel}
-                      </bdi>
+                        <span>{t(audioText)}</span>
 
-                      <MenuChevron />
-                    </span>
-                  </div>
-                )}
-              />
+                        <span className="media-menu__hint">
+                          <bdi dir="auto" className="media-menu__hint-label">
+                            {audioTrack.selectedLabel}
+                          </bdi>
 
-              <Menu.Content className="media-menu__panel">
-                <Menu.Item className="media-menu__back">
-                  <MenuChevron flipped />
-                  {t(speedText)}
-                </Menu.Item>
+                          <MenuChevron />
+                        </span>
+                      </div>
+                    )}
+                  />
 
-                <Menu.Separator className="media-menu__separator" />
+                  <Menu.Content className="media-menu__panel">
+                    <Menu.Item className="media-menu__back">
+                      <MenuChevron flipped />
+                      {t(audioText)}
+                    </Menu.Item>
 
-                <PlaybackRateRadioGroup
-                  className="media-menu__group"
-                  aria-label={t(playbackRateText)}
-                  renderItem={(props, item) => (
-                    <Menu.RadioItem {...props} className="media-menu__item">
-                      <bdi dir="auto">{item.label}</bdi>
+                    <Menu.Separator className="media-menu__separator" />
 
-                      <Menu.ItemIndicator
-                        checked={item.checked}
-                        forceMount
-                        className="media-menu__indicator"
-                      >
-                        <CheckIcon className="media-icon" />
-                      </Menu.ItemIndicator>
-                    </Menu.RadioItem>
-                  )}
-                />
-              </Menu.Content>
-            </Menu.Root>
-          ) : null}
+                    <AudioTrackRadioGroup.Options
+                      className="media-menu__group"
+                      aria-label={t(audioText)}
+                      renderItem={(props, item) => (
+                        <Menu.RadioItem {...props} className="media-menu__item">
+                          <bdi dir="auto">{item.label}</bdi>
 
-          {hasCaptions ? (
-            <Menu.Root>
-              <Menu.Trigger
-                className="media-menu__item media-menu__item--submenu"
-                render={(props) => (
-                  <div {...props}>
-                    <CaptionsOffIcon className="media-icon" />
+                          <Menu.ItemIndicator
+                            checked={item.checked}
+                            forceMount
+                            className="media-menu__indicator"
+                          >
+                            <CheckIcon className="media-icon" />
+                          </Menu.ItemIndicator>
+                        </Menu.RadioItem>
+                      )}
+                    />
+                  </Menu.Content>
+                </AudioTrackRadioGroup.Root>
+              </Menu.Root>
+            ) : null}
 
-                    <span>{t(captionsText)}</span>
+            {hasPlaybackRate ? (
+              <Menu.Root>
+                <PlaybackRateRadioGroup.Root>
+                  <Menu.Trigger
+                    className="media-menu__item media-menu__item--submenu"
+                    render={(props) => (
+                      <div {...props}>
+                        <SpeedIcon className="media-icon" />
 
-                    <span className="media-menu__hint">
-                      <bdi dir="auto" className="media-menu__hint-label">
-                        {captions.selectedLabel}
-                      </bdi>
+                        <span>{t(speedText)}</span>
 
-                      <MenuChevron />
-                    </span>
-                  </div>
-                )}
-              />
+                        <span className="media-menu__hint">
+                          <bdi dir="auto" className="media-menu__hint-label">
+                            {playbackRate.selectedLabel}
+                          </bdi>
 
-              <Menu.Content className="media-menu__panel">
-                <Menu.Item className="media-menu__back">
-                  <MenuChevron flipped />
-                  {t(captionsText)}
-                </Menu.Item>
+                          <MenuChevron />
+                        </span>
+                      </div>
+                    )}
+                  />
 
-                <Menu.Separator className="media-menu__separator" />
+                  <Menu.Content className="media-menu__panel">
+                    <Menu.Item className="media-menu__back">
+                      <MenuChevron flipped />
+                      {t(speedText)}
+                    </Menu.Item>
 
-                <CaptionsRadioGroup
-                  className="media-menu__group"
-                  aria-label={t(captionsText)}
-                  renderItem={(props, item) => (
-                    <Menu.RadioItem {...props} className="media-menu__item">
-                      <bdi dir="auto">{item.label}</bdi>
+                    <Menu.Separator className="media-menu__separator" />
 
-                      <Menu.ItemIndicator
-                        checked={item.checked}
-                        forceMount
-                        className="media-menu__indicator"
-                      >
-                        <CheckIcon className="media-icon" />
-                      </Menu.ItemIndicator>
-                    </Menu.RadioItem>
-                  )}
-                />
-              </Menu.Content>
-            </Menu.Root>
-          ) : null}
-        </div>
-      </Menu.Content>
+                    <PlaybackRateRadioGroup.Options
+                      className="media-menu__group"
+                      aria-label={t(playbackRateText)}
+                      renderItem={(props, item) => (
+                        <Menu.RadioItem {...props} className="media-menu__item">
+                          <bdi dir="auto">{item.label}</bdi>
+
+                          <Menu.ItemIndicator
+                            checked={item.checked}
+                            forceMount
+                            className="media-menu__indicator"
+                          >
+                            <CheckIcon className="media-icon" />
+                          </Menu.ItemIndicator>
+                        </Menu.RadioItem>
+                      )}
+                    />
+                  </Menu.Content>
+                </PlaybackRateRadioGroup.Root>
+              </Menu.Root>
+            ) : null}
+
+            {hasCaptions ? (
+              <Menu.Root>
+                <CaptionsRadioGroup.Root>
+                  <Menu.Trigger
+                    className="media-menu__item media-menu__item--submenu"
+                    render={(props) => (
+                      <div {...props}>
+                        <CaptionsOffIcon className="media-icon" />
+
+                        <span>{t(captionsText)}</span>
+
+                        <span className="media-menu__hint">
+                          <bdi dir="auto" className="media-menu__hint-label">
+                            {captions.selectedLabel}
+                          </bdi>
+
+                          <MenuChevron />
+                        </span>
+                      </div>
+                    )}
+                  />
+
+                  <Menu.Content className="media-menu__panel">
+                    <Menu.Item className="media-menu__back">
+                      <MenuChevron flipped />
+                      {t(captionsText)}
+                    </Menu.Item>
+
+                    <Menu.Separator className="media-menu__separator" />
+
+                    <CaptionsRadioGroup.Options
+                      className="media-menu__group"
+                      aria-label={t(captionsText)}
+                      renderItem={(props, item) => (
+                        <Menu.RadioItem {...props} className="media-menu__item">
+                          <bdi dir="auto">{item.label}</bdi>
+
+                          <Menu.ItemIndicator
+                            checked={item.checked}
+                            forceMount
+                            className="media-menu__indicator"
+                          >
+                            <CheckIcon className="media-icon" />
+                          </Menu.ItemIndicator>
+                        </Menu.RadioItem>
+                      )}
+                    />
+                  </Menu.Content>
+                </CaptionsRadioGroup.Root>
+              </Menu.Root>
+            ) : null}
+          </div>
+        </Menu.Content>
+      </Menu.Popup>
     </Menu.Root>
   );
 }

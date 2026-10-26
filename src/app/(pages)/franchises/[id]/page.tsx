@@ -6,7 +6,7 @@ import Link from 'next/link';
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL!;
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function FranchisePage({ params }: Props) {
