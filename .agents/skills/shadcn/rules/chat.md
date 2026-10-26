@@ -55,9 +55,9 @@ track visibility, and jump to it. `MessageScrollerButton` sits inside
           <MessageScrollerItem
             key={message.id}
             messageId={message.id}
-            scrollAnchor={message.role === "user"}
+            scrollAnchor={message.role === 'user'}
           >
-            <Message align={message.role === "user" ? "end" : "start"}>
+            <Message align={message.role === 'user' ? 'end' : 'start'}>
               {/* ...message content... */}
             </Message>
           </MessageScrollerItem>
@@ -114,9 +114,7 @@ with absolutely-positioned `Badge`s.
 **Incorrect:**
 
 ```tsx
-<div className="w-fit rounded-2xl bg-primary px-3 py-2 text-primary-foreground">
-  {text}
-</div>
+<div className="w-fit rounded-2xl bg-primary px-3 py-2 text-primary-foreground">{text}</div>
 ```
 
 **Correct:**

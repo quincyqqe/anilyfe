@@ -12,15 +12,7 @@ export interface QualityLevel {
 }
 
 type PlayerStatus =
-  | 'idle'
-  | 'loading'
-  | 'ready'
-  | 'playing'
-  | 'paused'
-  | 'buffering'
-  | 'seeking'
-  | 'ended'
-  | 'error';
+  'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'buffering' | 'seeking' | 'ended' | 'error';
 
 export interface PlayerError {
   kind: 'network' | 'media' | 'unsupported' | 'unknown';
@@ -73,12 +65,12 @@ export interface PlayerActions {
  *
  * HLS.js сам выберет качество из master playlist.
  */
-export function buildQualities(
-  episode: AnimeEpisode,
-): QualityLevel[] {
-  const hentaiHls = (episode as AnimeEpisode & {
-    hls?: string;
-  }).hls;
+export function buildQualities(episode: AnimeEpisode): QualityLevel[] {
+  const hentaiHls = (
+    episode as AnimeEpisode & {
+      hls?: string;
+    }
+  ).hls;
 
   if (hentaiHls?.trim()) {
     return [
@@ -109,8 +101,6 @@ export function buildQualities(
   return qualities;
 }
 
-export function getBestUrl(
-  episode: AnimeEpisode,
-): string | null {
+export function getBestUrl(episode: AnimeEpisode): string | null {
   return buildQualities(episode)[0]?.url ?? null;
 }

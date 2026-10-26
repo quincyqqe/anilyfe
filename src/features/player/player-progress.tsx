@@ -9,10 +9,7 @@ export interface PlayerProgressProps {
   onProgress?: (currentTime: number, duration: number) => void;
 }
 
-export function PlayerProgress({
-  initialTime,
-  onProgress,
-}: PlayerProgressProps): ReactNode {
+export function PlayerProgress({ initialTime, onProgress }: PlayerProgressProps): ReactNode {
   const media = useMedia();
 
   useEffect(() => {
@@ -21,11 +18,7 @@ export function PlayerProgress({
     const element = media as unknown as HTMLMediaElement;
 
     const handleLoadedMetadata = () => {
-      if (
-        initialTime > 0 &&
-        Number.isFinite(element.duration) &&
-        initialTime < element.duration
-      ) {
+      if (initialTime > 0 && Number.isFinite(element.duration) && initialTime < element.duration) {
         element.currentTime = initialTime;
       }
     };

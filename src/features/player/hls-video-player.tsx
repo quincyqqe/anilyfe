@@ -108,11 +108,7 @@ export function HlsVideoPlayer({
       <Player title={`${animeTitle} - ${title}`}>
         <PlayerPreferencesPersistence />
 
-        <MediaSessionMetadata
-          animeTitle={animeTitle}
-          episodeTitle={title}
-          poster={poster}
-        />
+        <MediaSessionMetadata animeTitle={animeTitle} episodeTitle={title} poster={poster} />
 
         <Container className="media-default-skin media-default-skin--video aspect-video">
           <HlsJsVideo
@@ -195,10 +191,7 @@ export function HlsVideoPlayer({
                     <TimeSlider.Chapters
                       className="media-slider__chapters"
                       renderChapter={(props) => (
-                        <div
-                          {...props}
-                          className={`${props.className} media-slider__chapter`}
-                        >
+                        <div {...props} className={`${props.className} media-slider__chapter`}>
                           <TimeSlider.Track className="media-slider__track media-slider__chapter-track">
                             <TimeSlider.Buffer className="media-slider__buffer" />
 
@@ -212,10 +205,7 @@ export function HlsVideoPlayer({
 
                     <TimeSlider.Thumb className="media-slider__thumb" />
 
-                    <TimeSlider.Preview
-                      overflow="visible"
-                      className="media-slider__preview"
-                    >
+                    <TimeSlider.Preview overflow="visible" className="media-slider__preview">
                       <div className="media-surface media-thumbnail media-slider__thumbnail">
                         <SpinnerIcon className="media-thumbnail__spinner media-icon" />
                       </div>
@@ -223,10 +213,7 @@ export function HlsVideoPlayer({
                       <div className="media-slider__value">
                         <TimeSlider.ChapterTitle className="media-slider__chapter-title" />
 
-                        <TimeSlider.Value
-                          type="pointer"
-                          className="media-time"
-                        />
+                        <TimeSlider.Value type="pointer" className="media-time" />
                       </div>
                     </TimeSlider.Preview>
                   </TimeSlider.Root>
@@ -240,10 +227,7 @@ export function HlsVideoPlayer({
                   <Tooltip.Root side="top">
                     <Tooltip.Trigger
                       render={
-                        <CaptionsButton
-                          className="media-button--captions"
-                          render={<Button />}
-                        >
+                        <CaptionsButton className="media-button--captions" render={<Button />}>
                           <CaptionsOffIcon className="media-icon media-icon--captions-off" />
                           <CaptionsOnIcon className="media-icon media-icon--captions-on" />
                         </CaptionsButton>
@@ -302,38 +286,15 @@ export function HlsVideoPlayer({
 
           {/* Gestures */}
 
-          <Gesture
-            type="tap"
-            action="togglePaused"
-            pointer="mouse"
-            region="center"
-          />
+          <Gesture type="tap" action="togglePaused" pointer="mouse" region="center" />
 
-          <Gesture
-            type="tap"
-            action="toggleControls"
-            pointer="touch"
-          />
+          <Gesture type="tap" action="toggleControls" pointer="touch" />
 
-          <Gesture
-            type="doubletap"
-            action="seekStep"
-            value={-SEEK_TIME}
-            region="left"
-          />
+          <Gesture type="doubletap" action="seekStep" value={-SEEK_TIME} region="left" />
 
-          <Gesture
-            type="doubletap"
-            action="toggleFullscreen"
-            region="center"
-          />
+          <Gesture type="doubletap" action="toggleFullscreen" region="center" />
 
-          <Gesture
-            type="doubletap"
-            action="seekStep"
-            value={SEEK_TIME}
-            region="right"
-          />
+          <Gesture type="doubletap" action="seekStep" value={SEEK_TIME} region="right" />
 
           {/* Accessibility */}
 

@@ -37,8 +37,7 @@ type FilterOption = {
 };
 
 export function CatalogFilters() {
-  const { filters, activeCount, hasActiveFilters, isPending, reset, update } =
-    useCatalogFilters();
+  const { filters, activeCount, hasActiveFilters, isPending, reset, update } = useCatalogFilters();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(filters.search);
@@ -65,17 +64,12 @@ export function CatalogFilters() {
           <span className="flex items-center gap-2">
             <SlidersHorizontal data-icon="inline-start" />
             Настроить выдачу
-            {hasActiveFilters && (
-              <Badge variant="secondary">{activeCount}</Badge>
-            )}
+            {hasActiveFilters && <Badge variant="secondary">{activeCount}</Badge>}
           </span>
 
           <ChevronDown
             data-icon="inline-end"
-            className={cn(
-              'transition-transform duration-200',
-              isMobileOpen && 'rotate-180',
-            )}
+            className={cn('transition-transform duration-200', isMobileOpen && 'rotate-180')}
           />
         </Button>
 
@@ -147,14 +141,10 @@ function FilterWorkspace({
           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
             Навигация
           </p>
-          <h2 className="mt-1 text-sm font-semibold text-foreground">
-            Параметры поиска
-          </h2>
+          <h2 className="mt-1 text-sm font-semibold text-foreground">Параметры поиска</h2>
         </div>
 
-        {hasActiveFilters && (
-          <Badge variant="secondary">{activeCount}</Badge>
-        )}
+        {hasActiveFilters && <Badge variant="secondary">{activeCount}</Badge>}
       </div>
 
       <form
@@ -164,10 +154,7 @@ function FilterWorkspace({
           onSearchSubmit();
         }}
       >
-        <label
-          htmlFor={searchId}
-          className="text-xs font-medium text-muted-foreground"
-        >
+        <label htmlFor={searchId} className="text-xs font-medium text-muted-foreground">
           Найти аниме
         </label>
 
@@ -286,9 +273,7 @@ function FilterWorkspace({
             label: status.description,
           }))}
           values={filters.publishStatuses}
-          onChange={(value) =>
-            update('publishStatuses', value as string[])
-          }
+          onChange={(value) => update('publishStatuses', value as string[])}
         />
 
         <MultiSelectMenu
@@ -298,9 +283,7 @@ function FilterWorkspace({
             label: status.description,
           }))}
           values={filters.productionStatuses}
-          onChange={(value) =>
-            update('productionStatuses', value as string[])
-          }
+          onChange={(value) => update('productionStatuses', value as string[])}
         />
       </FilterGroup>
 
@@ -316,25 +299,14 @@ function FilterWorkspace({
         </Button>
       )}
 
-      <p
-        className="px-1 text-[10px] text-muted-foreground"
-        aria-live="polite"
-      >
-        {isPending
-          ? 'Обновляем выдачу…'
-          : 'Фильтры сохраняются в ссылке.'}
+      <p className="px-1 text-[10px] text-muted-foreground" aria-live="polite">
+        {isPending ? 'Обновляем выдачу…' : 'Фильтры сохраняются в ссылке.'}
       </p>
     </div>
   );
 }
 
-function FilterGroup({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-2 border-t border-white/[0.07] pt-4">
       <legend className="pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -368,8 +340,7 @@ function MultiSelectMenu({
             variant="outline"
             className={cn(
               'h-11 w-full justify-between rounded-xl bg-transparent px-3 text-left text-xs font-medium',
-              selectedCount > 0 &&
-                'border-foreground/25 bg-muted/50 text-foreground',
+              selectedCount > 0 && 'border-foreground/25 bg-muted/50 text-foreground',
             )}
           />
         }
@@ -377,9 +348,7 @@ function MultiSelectMenu({
         <span className="truncate">{label}</span>
 
         <span className="flex shrink-0 items-center gap-2 text-muted-foreground">
-          {selectedCount > 0 && (
-            <Badge variant="secondary">{selectedCount}</Badge>
-          )}
+          {selectedCount > 0 && <Badge variant="secondary">{selectedCount}</Badge>}
           <ChevronDown data-icon="inline-end" />
         </span>
       </DropdownMenuTrigger>
@@ -405,9 +374,7 @@ function MultiSelectMenu({
                   onChange(
                     checked
                       ? [...values, option.value]
-                      : values.filter(
-                          (value) => value !== option.value,
-                        ),
+                      : values.filter((value) => value !== option.value),
                   )
                 }
                 className="min-h-9 cursor-pointer py-2 text-xs"
@@ -433,9 +400,7 @@ function SingleSelectMenu({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const activeLabel = options.find(
-    (option) => String(option.value) === value,
-  )?.label;
+  const activeLabel = options.find((option) => String(option.value) === value)?.label;
 
   return (
     <DropdownMenu>
@@ -446,28 +411,21 @@ function SingleSelectMenu({
             variant="outline"
             className={cn(
               'h-11 w-full justify-between rounded-xl bg-transparent px-3 text-left text-xs font-medium',
-              value &&
-                'border-foreground/25 bg-muted/50 text-foreground',
+              value && 'border-foreground/25 bg-muted/50 text-foreground',
             )}
           />
         }
       >
         <span className="truncate">{activeLabel ?? label}</span>
 
-        <ChevronDown
-          data-icon="inline-end"
-          className="text-muted-foreground"
-        />
+        <ChevronDown data-icon="inline-end" className="text-muted-foreground" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
         sideOffset={6}
         className="max-h-[min(60dvh,32rem)] w-72 rounded-2xl p-1.5"
       >
-        <DropdownMenuRadioGroup
-          value={value}
-          onValueChange={onChange}
-        >
+        <DropdownMenuRadioGroup value={value} onValueChange={onChange}>
           <DropdownMenuLabel>{label}</DropdownMenuLabel>
 
           <DropdownMenuSeparator />

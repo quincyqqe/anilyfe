@@ -1,14 +1,8 @@
 'use client';
 
-import {
-  CastButton,
-  Tooltip,
-} from '@videojs/react';
+import { CastButton, Tooltip } from '@videojs/react';
 
-import {
-  CastEnterIcon,
-  CastExitIcon,
-} from '@videojs/react/icons';
+import { CastEnterIcon, CastExitIcon } from '@videojs/react/icons';
 
 import { Button } from './button';
 
@@ -17,10 +11,7 @@ export function CastControl() {
     <Tooltip.Root side="top">
       <Tooltip.Trigger
         render={
-          <CastButton
-            className="media-button--cast"
-            render={<Button />}
-          >
+          <CastButton className="media-button--cast" render={<Button />}>
             <CastEnterIcon className="media-icon media-icon--cast-enter" />
             <CastExitIcon className="media-icon media-icon--cast-exit" />
           </CastButton>

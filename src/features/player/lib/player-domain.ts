@@ -9,7 +9,13 @@ export function clampEpisodeIndex(index: number, episodeCount: number): number {
 
 export function getEpisodeSource(episode: AnimeEpisode): string | null {
   const hentaiSource = (episode as AnimeEpisode & { hls?: string }).hls?.trim();
-  return hentaiSource || episode.hls_1080?.trim() || episode.hls_720?.trim() || episode.hls_480?.trim() || null;
+  return (
+    hentaiSource ||
+    episode.hls_1080?.trim() ||
+    episode.hls_720?.trim() ||
+    episode.hls_480?.trim() ||
+    null
+  );
 }
 
 export function getEpisodeTitle(episode: AnimeEpisode, index: number): string {

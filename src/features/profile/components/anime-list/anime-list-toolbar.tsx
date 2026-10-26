@@ -35,8 +35,7 @@ export function AnimeListToolbar({
   onSortChange,
   onViewModeChange,
 }: AnimeListToolbarProps) {
-  const sortLabel =
-    SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
+  const sortLabel = SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
 
   return (
     <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -64,9 +63,7 @@ export function AnimeListToolbar({
                 <Icon
                   className={cn(
                     'size-3.5',
-                    activeFilter === tab.key
-                      ? tab.color
-                      : 'text-muted-foreground',
+                    activeFilter === tab.key ? tab.color : 'text-muted-foreground',
                   )}
                 />
 
@@ -82,16 +79,9 @@ export function AnimeListToolbar({
       </div>
 
       <div className="flex shrink-0 items-center justify-between gap-3 md:justify-end">
-        <SortDropdown
-          activeSort={activeSort}
-          label={sortLabel}
-          onSortChange={onSortChange}
-        />
+        <SortDropdown activeSort={activeSort} label={sortLabel} onSortChange={onSortChange} />
 
-        <ViewModeToggle
-          viewMode={viewMode}
-          onViewModeChange={onViewModeChange}
-        />
+        <ViewModeToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
       </div>
     </div>
   );
@@ -103,11 +93,7 @@ interface SortDropdownProps {
   onSortChange: (sort: SortKey) => void;
 }
 
-function SortDropdown({
-  activeSort,
-  label,
-  onSortChange,
-}: SortDropdownProps) {
+function SortDropdown({ activeSort, label, onSortChange }: SortDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -122,10 +108,7 @@ function SortDropdown({
         <ChevronDown className="size-3.5 opacity-60" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        sideOffset={6}
-        className="min-w-44 rounded-xl p-1.5"
-      >
+      <DropdownMenuContent sideOffset={6} className="min-w-44 rounded-xl p-1.5">
         <DropdownMenuRadioGroup
           value={activeSort}
           onValueChange={(value) => onSortChange(value as SortKey)}
@@ -151,23 +134,14 @@ interface ViewModeToggleProps {
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-function ViewModeToggle({
-  viewMode,
-  onViewModeChange,
-}: ViewModeToggleProps) {
+function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeToggleProps) {
   return (
     <div className="flex items-center gap-0.5 rounded-xl border border-white/[0.04] bg-zinc-950/35 p-1">
-      <ViewModeButton
-        active={viewMode === 'grid'}
-        onClick={() => onViewModeChange('grid')}
-      >
+      <ViewModeButton active={viewMode === 'grid'} onClick={() => onViewModeChange('grid')}>
         <LayoutGrid className="size-3.5" />
       </ViewModeButton>
 
-      <ViewModeButton
-        active={viewMode === 'list'}
-        onClick={() => onViewModeChange('list')}
-      >
+      <ViewModeButton active={viewMode === 'list'} onClick={() => onViewModeChange('list')}>
         <List className="size-3.5" />
       </ViewModeButton>
     </div>
@@ -189,9 +163,7 @@ function ViewModeButton({
       onClick={onClick}
       className={cn(
         'flex size-7 items-center justify-center rounded-lg transition-colors',
-        active
-          ? 'bg-white/12 text-white shadow-sm'
-          : 'text-muted-foreground hover:text-foreground',
+        active ? 'bg-white/12 text-white shadow-sm' : 'text-muted-foreground hover:text-foreground',
       )}
     >
       {children}

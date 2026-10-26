@@ -14,15 +14,10 @@ const Footer = () => {
     <footer className="border-t border-white/10 mt-24 relative">
       <div className="container mx-auto px-6 pt-16 pb-24 md:pb-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">
-              {brand.name}
-            </span>
-            <p className="text-sm text-zinc-600 leading-relaxed">
-              {brand.description}
-            </p>
+            <span className="text-xs tracking-[0.14em] uppercase text-zinc-400">{brand.name}</span>
+            <p className="text-sm text-zinc-600 leading-relaxed">{brand.description}</p>
           </div>
 
           {/* Navigation */}
@@ -109,7 +104,6 @@ const Footer = () => {
               })}
             </div>
           </div>
-
         </div>
       </div>
     </footer>

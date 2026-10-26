@@ -38,8 +38,6 @@ export default function AuthPage() {
               <p className="mt-5 max-w-xl text-sm leading-6 text-white/55">
                 Сохраняй прогресс, собирай свою библиотеку и продолжай просмотр с любого устройства.
               </p>
-
-             
             </blockquote>
           </div>
         </div>
