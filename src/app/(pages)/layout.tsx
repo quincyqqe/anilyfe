@@ -10,7 +10,7 @@ const PagesLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Header user={user} />
-      <main>{children}</main>
+      {children}
       <Footer />
     </>
   );

@@ -1,7 +1,11 @@
 import Image from '@/components/ui/image';
 import { fetchFranchiseDetails } from '@/shared/api/franchises';
+import { buildMetadata } from '@/lib/utils/metadata';
+import type { FranchiseDetails } from '@/shared/types/franchise';
+import { notFound } from 'next/navigation';
 import { CalendarRange, Clock3, Play, Star } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 const MEDIA_URL = process.env.NEXT_PUBLIC_MEDIA_URL!;
 
@@ -9,22 +13,48 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const franchise = await fetchFranchiseDetails(id);
+
+  if (!franchise) {
+    return buildMetadata({
+      title: 'Франшиза не найдена',
+      path: `/franchises/${id}`,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    });
+  }
+
+  return buildMetadata({
+    title: franchise.name,
+    description: buildFranchiseDescription(franchise),
+    path: `/franchises/${id}`,
+    images: franchise.image?.preview
+      ? [
+          {
+            url: `${MEDIA_URL}${franchise.image.preview}`,
+            alt: franchise.name,
+          },
+        ]
+      : undefined,
+  });
+}
+
 export default async function FranchisePage({ params }: Props) {
   const { id } = await params;
   const franchise = await fetchFranchiseDetails(id);
 
   if (!franchise) {
-    return (
-      <div className="flex h-screen items-center justify-center text-white/30 text-sm tracking-widest uppercase">
-        Франшиза не найдена
-      </div>
-    );
+    notFound();
   }
 
   const releases = franchise.franchise_releases ?? [];
 
   return (
-    <div className="min-h-screen text-white">
+    <main className="min-h-screen text-white">
       <div className="relative h-[30vh] overflow-hidden sm:h-[50vh]">
         <Image
           src={`${MEDIA_URL}${franchise.image?.preview}`}
@@ -179,8 +209,27 @@ export default async function FranchisePage({ params }: Props) {
           })}
         </div>
       </div>
-    </div>
+    </main>
   );
+}
+
+function buildFranchiseDescription(franchise: FranchiseDetails): string {
+  const years = franchise.first_year
+    ? franchise.last_year && franchise.last_year !== franchise.first_year
+      ? `${franchise.first_year}—${franchise.last_year}`
+      : String(franchise.first_year)
+    : null;
+  const facts = [
+    `${franchise.total_releases} ${pluralizeReleases(franchise.total_releases)}`,
+    franchise.total_episodes
+      ? `${franchise.total_episodes} ${pluralizeEpisodes(franchise.total_episodes)}`
+      : null,
+    years,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  return `Франшиза «${franchise.name}»: ${facts}. Все части в порядке просмотра — смотрите онлайн на AniLyfe.`;
 }
 
 function StatBar({ label, value }: { label: string; value: string | number }) {
@@ -196,4 +245,10 @@ function pluralizeReleases(n: number): string {
   if (n % 10 === 1 && n % 100 !== 11) return 'релиз';
   if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'релиза';
   return 'релизов';
+}
+
+function pluralizeEpisodes(n: number): string {
+  if (n % 10 === 1 && n % 100 !== 11) return 'эпизод';
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'эпизода';
+  return 'эпизодов';
 }

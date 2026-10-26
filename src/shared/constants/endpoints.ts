@@ -28,6 +28,9 @@ export const ENDPOINTS = {
 
   franchisesRandom: `${BASE_API_URL}/anime/franchises/random?limit=9`,
 
+  franchisesList: (limit: number) =>
+    `${BASE_API_URL}/anime/franchises?${createSearchParams({ limit: String(limit) })}`,
+
   latest: `${BASE_API_URL}/anime/catalog/releases?${createSearchParams({
     limit: '14',
     sort: 'fresh_at',

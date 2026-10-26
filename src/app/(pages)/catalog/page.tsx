@@ -9,7 +9,16 @@ import {
 } from '@/components/ui/empty';
 import { CatalogFilters, CatalogPagination, parseSearchParams } from '@/features/catalog';
 import { fetchCatalog } from '@/features/catalog/api/catalog';
+import { buildMetadata } from '@/lib/utils/metadata';
 import { Compass, Sparkles } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = buildMetadata({
+  title: 'Каталог аниме',
+  description:
+    'Полный каталог аниме на AniLyfe: фильтры по жанрам, годам, сезонам и типам, актуальные эпизоды и удобный поиск по релизам.',
+  path: '/catalog',
+});
 
 type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -54,6 +63,7 @@ export default async function CatalogPage({ searchParams }: Props) {
         <CatalogFilters />
 
         <section aria-label="Результаты каталога" className="min-w-0">
+          <h2 className="sr-only">Результаты каталога</h2>
           <div className="mb-6 flex items-center justify-between gap-4">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
               Страница {page} из {meta.pagination?.total_pages ?? 1}

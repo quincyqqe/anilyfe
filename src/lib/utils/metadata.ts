@@ -1,104 +1,83 @@
-import { Metadata } from 'next';
-import {
-  DeprecatedMetadataFields,
-  TemplateString,
-} from 'next/dist/lib/metadata/types/metadata-types';
+import type { Metadata } from 'next';
 
-/**
- * Default metadata values for the Hikka application
- */
-const DEFAULTS = {
-  siteName: 'AniLyfe',
-  images: '/preview.jpg',
-  title: {
-    default: 'AniLyfe — смотреть аниме онлайн с озвучкой',
-    template: '%s / AniLyfe',
-  },
-  description:
-    'Смотри аниме онлайн с качественной озвучкой. Открывай новые тайтлы, изучай жанры и следи за выходом серий на AniLyfe.',
+import { siteConfig } from '@/config/site.config';
+
+const SITE_NAME = siteConfig.footer.brand.name;
+const SITE_URL = siteConfig.url;
+
+const DEFAULT_TITLE = `${SITE_NAME} — смотреть аниме онлайн с озвучкой`;
+const DEFAULT_DESCRIPTION =
+  'Смотри аниме онлайн с качественной озвучкой. Открывай новые тайтлы, изучай жанры и следи за выходом серий на AniLyfe.';
+
+const DEFAULT_SOCIAL_IMAGE = {
+  url: '/preview.jpeg',
+  width: 1200,
+  height: 630,
+  type: 'image/jpeg',
+  alt: `${SITE_NAME} — смотреть аниме онлайн`,
 };
 
-/**
- * Defines the structure for Open Graph image metadata
- */
-type OGImageDescriptor = {
-  url: string | URL;
-  secureUrl?: string | URL;
-  alt?: string;
-  type?: string;
-  width?: string | number;
-  height?: string | number;
-};
+type SocialImages = NonNullable<Metadata['openGraph']>['images'];
 
-/**
- * Types that Open Graph images can take
- */
-type OGImage = string | OGImageDescriptor | URL;
-
-/**
- * Extended metadata properties interface
- */
-interface MetadataProps extends Metadata {
-  title?: string | TemplateString | null | undefined;
-  description?: string | null | undefined;
-  images?: OGImage | OGImage[] | undefined;
-  siteName?: string;
-  other?: {
-    [name: string]: string | number | (string | number)[];
-  } & DeprecatedMetadataFields;
+interface BuildMetadataProps {
+  /** Document title without the site suffix; " / AniLyfe" is added by the root template. */
+  title?: string;
+  description?: string;
+  /** Path starting with "/" used for the canonical URL and og:url. Defaults to "/". */
+  path?: string;
+  /** Social preview images; falls back to the branded /preview.jpeg. */
+  images?: SocialImages;
+  openGraph?: Metadata['openGraph'];
+  twitter?: Metadata['twitter'];
+  robots?: Metadata['robots'];
 }
 
 /**
- * Generates complete metadata for the application by combining provided values with defaults
- *
- * @param props - Metadata properties to be used, with any missing values falling back to defaults
- * @returns Complete Metadata object ready for Next.js
+ * Builds a complete, self-contained Metadata object: canonical, Open Graph,
+ * and Twitter Card fields are always filled so child segments never inherit
+ * a stale canonical from the root layout.
  */
-const generateMetadata = ({
+const buildMetadata = ({
   title,
   description,
+  path,
   images,
-  siteName,
-  other,
   openGraph,
   twitter,
-  ...restProps
-}: MetadataProps = {}): Metadata => {
-  // Determine values, falling back to defaults when needed
-  const resolvedSiteName = siteName || DEFAULTS.siteName;
-  const resolvedTitle = title || DEFAULTS.title;
-  const resolvedDescription = description || DEFAULTS.description;
-  const resolvedImages = images || DEFAULTS.images;
+  robots,
+}: BuildMetadataProps = {}): Metadata => {
+  const canonical = path ?? '/';
+  const resolvedTitle = title ?? DEFAULT_TITLE;
+  // Social titles bypass the root title template, so append the site name here.
+  const socialTitle = title ? `${title} / ${SITE_NAME}` : DEFAULT_TITLE;
+  const resolvedDescription = description ?? DEFAULT_DESCRIPTION;
+  const resolvedImages = images ?? [DEFAULT_SOCIAL_IMAGE];
 
   return {
-    // Base metadata
-    title: resolvedTitle,
+    title: title ? title : { default: DEFAULT_TITLE, template: `%s / ${SITE_NAME}` },
     description: resolvedDescription,
-
-    // Open Graph metadata
+    alternates: {
+      canonical,
+    },
     openGraph: {
-      siteName: resolvedSiteName,
-      title: resolvedTitle,
+      type: 'website',
+      siteName: SITE_NAME,
+      locale: 'ru_RU',
+      url: canonical,
+      title: socialTitle,
       description: resolvedDescription,
       images: resolvedImages,
-      ...openGraph, // Allow overriding default OG properties
+      ...openGraph,
     },
-
-    // Twitter metadata
     twitter: {
-      site: resolvedSiteName,
-      title: resolvedTitle,
+      card: 'summary_large_image',
+      title: socialTitle,
       description: resolvedDescription,
       images: resolvedImages,
-      ...twitter, // Allow overriding default Twitter properties
+      ...twitter,
     },
-
-    // Other custom metadata
-    other,
-
-    // Any additional properties passed
-    ...restProps,
+    robots,
   };
 };
 
-export { generateMetadata };
+export { buildMetadata, SITE_URL };

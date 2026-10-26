@@ -19,7 +19,7 @@ export default function NotFound() {
           <EmptyTitle className="text-9xl font-extrabold tracking-tighter">404</EmptyTitle>
 
           <EmptyDescription className="max-w-md text-balance">
-            The page you're looking for might have been moved or doesn't exist.
+            Возможно, страница была перемещена или не существует.
           </EmptyDescription>
         </EmptyHeader>
 

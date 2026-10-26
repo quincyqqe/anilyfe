@@ -2,14 +2,16 @@ import type { Metadata } from 'next';
 import { ShieldCheck, Database, UserCheck, Lock } from 'lucide-react';
 import { LegalDocumentPage, type LegalPillar } from '../_components/legal-document-page';
 import { fetchRandomAnimeArt, FALLBACK_ANIME_ARTS } from '../_components/anime-art';
+import { buildMetadata } from '@/lib/utils/metadata';
 import type { DetailedLegalSection } from '../_components/legal-sections-explorer';
 import type { FAQItem } from '../_components/legal-faq';
 
-export const metadata: Metadata = {
-  title: 'Политика конфиденциальности | AniLyfe',
+export const metadata: Metadata = buildMetadata({
+  title: 'Политика конфиденциальности',
   description:
     'Как AniLyfe защищает данные пользователей: авторизация через Supabase, синхронизация списков и прогресса серий, отсутствие рекламы и трекеров.',
-};
+  path: '/privacy',
+});
 
 const pillars: LegalPillar[] = [
   {
@@ -88,15 +90,13 @@ const sections: DetailedLegalSection[] = [
     body: (
       <>
         <p>
-          Вся собираемая информация применяется исключительно внутри платформы AniLyfe для
-          следующих целей:
+          Вся собираемая информация применяется исключительно внутри платформы AniLyfe для следующих
+          целей:
         </p>
         <ul className="list-disc space-y-2 pl-5 text-zinc-300">
           <li>Отображение персональной страницы пользователя и пользовательских закладок.</li>
           <li>Синхронизация прогресса воспроизведения видео между вашими сессиями.</li>
-          <li>
-            Предотвращение злоупотреблений, DDoS-атак и попыток несанкционированного доступа.
-          </li>
+          <li>Предотвращение злоупотреблений, DDoS-атак и попыток несанкционированного доступа.</li>
           <li>
             Диагностика технической стабильности плеера и интерфейса при обращении пользователя.
           </li>
@@ -120,13 +120,14 @@ const sections: DetailedLegalSection[] = [
           <strong className="text-white">Supabase</strong> на базе PostgreSQL.
         </p>
         <p>
-          Безопасность обеспечивается на архитектурном уровне: в базе настроены правила, гарантирующие, что пользователь имеет доступ только к собственным данным
-          (спискам, избранному, прогрессу).
+          Безопасность обеспечивается на архитектурном уровне: в базе настроены правила,
+          гарантирующие, что пользователь имеет доступ только к собственным данным (спискам,
+          избранному, прогрессу).
         </p>
         <p>
           Клиентский код в браузере оперирует исключительно публичными переменными окружения. Все
-          служебные операции верифицируются на сервер; токены сессий передаются
-          по защищённому протоколу HTTPS с флагами безопасности.
+          служебные операции верифицируются на сервер; токены сессий передаются по защищённому
+          протоколу HTTPS с флагами безопасности.
         </p>
       </>
     ),

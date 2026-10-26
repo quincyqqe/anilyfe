@@ -2,14 +2,16 @@ import type { Metadata } from 'next';
 import { Tv, ShieldCheck, Globe, Sparkles } from 'lucide-react';
 import { LegalDocumentPage, type LegalPillar } from '../_components/legal-document-page';
 import { fetchRandomAnimeArt, FALLBACK_ANIME_ARTS } from '../_components/anime-art';
+import { buildMetadata } from '@/lib/utils/metadata';
 import type { DetailedLegalSection } from '../_components/legal-sections-explorer';
 import type { FAQItem } from '../_components/legal-faq';
 
-export const metadata: Metadata = {
-  title: 'Условия использования | AniLyfe',
+export const metadata: Metadata = buildMetadata({
+  title: 'Условия использования',
   description:
     'Правила пользования платформой AniLyfe: каталог аниме, HLS-плеер, аккаунты, сторонние API, запрет агрессивного парсинга и ответственность.',
-};
+  path: '/terms',
+});
 
 const pillars: LegalPillar[] = [
   {
@@ -55,9 +57,9 @@ const sections: DetailedLegalSection[] = [
     body: (
       <>
         <p>
-          Настоящие Условия использования регулируют доступ к веб-приложению AniLyfe и его
-          сервисам. Открывая сайт, регистрируясь или запуская видеоплеер, вы подтверждаете своё
-          полное и безоговорочное согласие с данными правилами.
+          Настоящие Условия использования регулируют доступ к веб-приложению AniLyfe и его сервисам.
+          Открывая сайт, регистрируясь или запуская видеоплеер, вы подтверждаете своё полное и
+          безоговорочное согласие с данными правилами.
         </p>
         <p>
           Если вы не согласны с каким-либо из пунктов соглашения, пожалуйста, прекратите
@@ -80,9 +82,7 @@ const sections: DetailedLegalSection[] = [
         <ul className="list-disc space-y-2 pl-5 text-zinc-300">
           <li>Поиск и фильтрация релизов по жанрам, сезонам, годам и типам (TV, Фильм, OVA).</li>
           <li>Актуальное расписание выхода новых серий по дням недели.</li>
-          <li>
-            Адаптивный HLS-видеоплеер с поддержкой Picture-in-Picture, AirPlay и Google Cast.
-          </li>
+          <li>Адаптивный HLS-видеоплеер с поддержкой Picture-in-Picture, AirPlay и Google Cast.</li>
           <li>
             Личный кабинет с закладками (&laquo;Смотрю&raquo;, &laquo;В планах&raquo;,
             &laquo;Просмотрено&raquo;) и синхронизацией таймкода эпизодов.
@@ -163,8 +163,8 @@ const sections: DetailedLegalSection[] = [
       <>
         <p>
           Все товарные знаки, оригинальные названия, персонажи, кадры, постеры и видеоматериалы
-          принадлежат их законным авторам, студиям и правообладателям (Shueisha, TOHO, Aniplex, MAPPA
-          и др.).
+          принадлежат их законным авторам, студиям и правообладателям (Shueisha, TOHO, Aniplex,
+          MAPPA и др.).
         </p>
         <p>
           AniLyfe не хранит видеофайлы на собственных выделенных серверах — воспроизведение
@@ -211,8 +211,8 @@ const sections: DetailedLegalSection[] = [
       <>
         <p>
           Развитие функционала AniLyfe (новые фичи плеера, расширение профиля, интеграции) может
-          требовать обновления настоящих правил. Изменения вступают в силу с момента их публикации на
-          сайте.
+          требовать обновления настоящих правил. Изменения вступают в силу с момента их публикации
+          на сайте.
         </p>
         <p>
           Продолжение использования платформы после публикации изменений означает согласие с новой
@@ -238,8 +238,7 @@ const sections: DetailedLegalSection[] = [
 const faq: FAQItem[] = [
   {
     question: 'Платный ли просмотр аниме на AniLyfe?',
-    answer:
-      'Нет. AniLyfe полностью бесплатен для личного некоммерческого использования.',
+    answer: 'Нет. AniLyfe полностью бесплатен для личного некоммерческого использования.',
   },
   {
     question: 'Откуда берутся серии и русские озвучки?',

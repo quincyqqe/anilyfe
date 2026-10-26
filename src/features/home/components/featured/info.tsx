@@ -13,9 +13,9 @@ function Info({ release, description }: Props) {
   return (
     <div className="flex min-w-0 flex-1 flex-col items-center gap-4 md:items-start md:gap-5">
       <div className="min-w-0">
-        <h1 className="text-xl lg:text-4xl font-bold text-zinc-50 leading-tight text-balance line-clamp-2">
+        <h2 className="text-xl lg:text-4xl font-bold text-zinc-50 leading-tight text-balance line-clamp-2">
           {release.name.main}
-        </h1>
+        </h2>
 
         {release.name.english && (
           <p className="mt-1.5 line-clamp-1 text-sm font-medium text-white/40 sm:text-base">

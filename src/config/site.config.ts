@@ -4,7 +4,7 @@ export const siteConfig = {
     'Смотрите аниме онлайн бесплатно на AniLyfe. Большой каталог аниме, актуальное расписание выхода серий, информация о сезонах. Премиальная платформа для просмотра аниме с профессиональной озвучкой, без рекламы и в максимальном качестве',
   theme: 'dark',
   language: 'ru',
-  url: 'https://anilyfe.vercel.app/',
+  url: 'https://anilyfe.vercel.app',
   navItems: [
     { href: '/', label: 'Главная' },
     { href: '/catalog', label: 'Аниме' },

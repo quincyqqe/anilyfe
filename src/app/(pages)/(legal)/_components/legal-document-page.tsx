@@ -40,7 +40,7 @@ export function LegalDocumentPage({
   closingText = 'Если нужно удалить аккаунт, прояснить правила или предложить улучшение сервиса — напиши создателю проекта в Telegram.',
 }: LegalDocumentPageProps) {
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-x-hidden pt-28 pb-32 sm:pt-36">
+    <main className="relative min-h-[100dvh] w-full overflow-x-hidden pt-28 pb-32 sm:pt-36">
       <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-primary/10 blur-[140px]" />
       <div className="pointer-events-none absolute top-96 right-0 -z-10 h-[400px] w-[500px] rounded-full bg-indigo-500/5 blur-[120px]" />
 
@@ -177,6 +177,6 @@ export function LegalDocumentPage({
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 }

@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 
+import { JsonLd } from '@/components/json-ld';
 import { AnimeInfo } from '@/features/anime';
 import { fetchAniListAnime, fetchAnime, fetchFranchise } from '@/features/anime/api';
 import { AnimeWatchSection } from '@/features/player';
 import { getUserAnimeEntry } from '@/lib/db/queries';
-import { generateMetadata as buildMetadata } from '@/lib/utils/metadata';
+import { buildMetadata } from '@/lib/utils/metadata';
 import type { Anime } from '@/shared/types/anime';
 
 const getAnime = cache((slug: string) => fetchAnime(slug));
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!anime) {
     return buildMetadata({
       title: 'Аниме не найдено',
+      path: `/anime/${slug}`,
       robots: {
         index: false,
         follow: false,
@@ -38,30 +40,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildMetadata({
     title: anime.name.main,
     description: buildDescription(anime),
+    path: `/anime/${slug}`,
     images: [
       {
         url: `${MEDIA_BASE}${anime.poster.src}`,
         alt: anime.name.main,
       },
     ],
-    alternates: {
-      canonical: `/anime/${slug}`,
-    },
     openGraph: {
-      url: `/anime/${slug}`,
-      type: 'website',
+      type: getOpenGraphType(anime.type.value),
     },
-    twitter: {
-      card: 'summary_large_image',
-    },
-    keywords: [
-      anime.name.main,
-      anime.name.english,
-      anime.name.alternative,
-      anime.type.description,
-      String(anime.year),
-      ...anime.genres.map((genre) => genre.name),
-    ].filter(isNonEmpty),
   });
 }
 
@@ -79,25 +67,51 @@ export default async function AnimePage({ params }: PageProps) {
     fetchAniListAnime(anime.id, anime.name.english, anime.name.main),
   ]);
 
-
-  console.log(anime)
-
   return (
     <>
-      <AnimeInfo anime={anime} franchise={franchise} animeEntry={dbEntry} aniList={aniList} />{' '}
+      <JsonLd data={buildAnimeSchema(anime)} />
+      <AnimeInfo anime={anime} franchise={franchise} animeEntry={dbEntry} aniList={aniList} />
       <AnimeWatchSection anime={anime} dbEntry={dbEntry} />
     </>
   );
 }
 
 function buildDescription(anime: Anime): string {
-  const summary = anime.description?.replace(/\s+/g, ' ').trim() ?? '';
+  const summary = stripMarkup(anime.description);
   const extra = [anime.type.description, String(anime.year)].filter(Boolean).join(' | ');
   const description = [summary, extra].filter(Boolean).join(' ');
 
   return description.length <= 200 ? description : `${description.slice(0, 197).trimEnd()}...`;
 }
 
-function isNonEmpty(value: string | null | undefined): value is string {
-  return Boolean(value);
+function getOpenGraphType(typeValue: string): 'video.movie' | 'video.tv_show' | 'website' {
+  if (typeValue === 'MOVIE') return 'video.movie';
+  if (typeValue === 'TV') return 'video.tv_show';
+  return 'website';
+}
+
+function buildAnimeSchema(anime: Anime): Record<string, unknown> {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': anime.type.value === 'MOVIE' ? 'Movie' : 'TVSeries',
+    name: anime.name.main,
+    image: `${MEDIA_BASE}${anime.poster.src}`,
+  };
+
+  if (anime.name.english) schema.alternateName = anime.name.english;
+
+  const description = stripMarkup(anime.description);
+  if (description) schema.description = description;
+  if (anime.genres.length > 0) schema.genre = anime.genres.map((genre) => genre.name);
+
+  return schema;
+}
+
+function stripMarkup(value: string | null | undefined): string {
+  return (
+    value
+      ?.replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim() ?? ''
+  );
 }
