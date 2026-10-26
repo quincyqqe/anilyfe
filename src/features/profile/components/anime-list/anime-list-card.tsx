@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Heart, Play } from 'lucide-react';
 import Image from '@/components/ui/image';
 import Link from 'next/link';
@@ -59,14 +58,7 @@ export function ProfileAnimeCard({ anime }: Props) {
   const progress = getAnimeProgress(anime);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-      layout
-      layoutId={`anime-card-${anime.id}`}
-    >
+    <div className="animate-fade-in">
       <Link
         href={getAnimeHref(anime)}
         className={cn(
@@ -171,6 +163,6 @@ export function ProfileAnimeCard({ anime }: Props) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

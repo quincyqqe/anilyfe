@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import type { UserAnimeEntry } from '@/features/profile/types/profile';
 import { getStatusCounts, getVisibleAnimeList } from '../../model/anime-list/helpers';
 import type { FilterKey, SortKey, ViewMode } from '../../model/anime-list/types';
@@ -25,6 +24,17 @@ export function AnimeList({ animeList }: AnimeListProps) {
     [animeList, activeFilter, activeSort],
   );
 
+  const items =
+    visibleAnime.length === 0 ? (
+      <AnimeListEmptyState filter={activeFilter} />
+    ) : viewMode === 'grid' ? (
+      visibleAnime.map((anime) => <ProfileAnimeCard key={anime.id} anime={anime} />)
+    ) : (
+      visibleAnime.map((anime) => <AnimeListRow key={anime.id} anime={anime} />)
+    );
+
+  // The key includes the filter so changing it remounts the container and
+  // replays the fade-in.
   return (
     <div className="container mx-auto">
       <AnimeListToolbar
@@ -37,43 +47,21 @@ export function AnimeList({ animeList }: AnimeListProps) {
         onViewModeChange={setViewMode}
       />
 
-      <AnimatePresence mode="wait">
-        {viewMode === 'grid' ? (
-          <motion.div
-            key={`grid-${activeFilter}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            <AnimatePresence>
-              {visibleAnime.length === 0 ? (
-                <AnimeListEmptyState filter={activeFilter} />
-              ) : (
-                visibleAnime.map((anime) => <ProfileAnimeCard key={anime.id} anime={anime} />)
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <motion.div
-            key={`list-${activeFilter}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex flex-col divide-y divide-white/[0.05]"
-          >
-            <AnimatePresence>
-              {visibleAnime.length === 0 ? (
-                <AnimeListEmptyState filter={activeFilter} />
-              ) : (
-                visibleAnime.map((anime) => <AnimeListRow key={anime.id} anime={anime} />)
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {viewMode === 'grid' ? (
+        <div
+          key={`grid-${activeFilter}`}
+          className="animate-fade-in grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {items}
+        </div>
+      ) : (
+        <div
+          key={`list-${activeFilter}`}
+          className="animate-fade-in flex flex-col divide-y divide-white/[0.05]"
+        >
+          {items}
+        </div>
+      )}
     </div>
   );
 }

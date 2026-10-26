@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Heart, Play, Star } from 'lucide-react';
 import Link from 'next/link';
 import Image from '@/components/ui/image';
@@ -19,13 +18,7 @@ export function AnimeListRow({ anime }: AnimeListRowProps) {
   const hasScore = typeof anime.score === 'number' && anime.score > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="group"
-    >
+    <div className="animate-fade-in group">
       <Link
         href={getAnimeHref(anime)}
         className={cn(
@@ -77,6 +70,6 @@ export function AnimeListRow({ anime }: AnimeListRowProps) {
           )}
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }
