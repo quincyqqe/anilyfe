@@ -63,27 +63,6 @@ const TOP_STATUS_ACTIONS = [
 
 const CENTER_STATUS_ACTIONS = ['togglePaused'] as const;
 
-const HLS_ENGINE_OPTIONS = {
-  hlsJs: {
-    enableWorker: true,
-    useMediaCapabilities: true,
-    enableWebVTT: false,
-
-    maxBufferLength: 30,
-    maxMaxBufferLength: 30,
-    maxBufferSize: 30 * 1000 * 1000,
-    backBufferLength: 15,
-
-    startFragPrefetch: false,
-
-    startLevel: -1,
-    capLevelToPlayerSize: false,
-
-    maxBufferHole: 0.1,
-    maxFragLookUpTolerance: 0.25,
-  },
-};
-
 export interface HlsVideoPlayerProps {
   src: string;
   poster?: string;
@@ -105,7 +84,7 @@ export function HlsVideoPlayer({
 }: HlsVideoPlayerProps) {
   return (
     <I18nProvider locale="ru">
-      <Player title={`${animeTitle} - ${title}`}>
+      <Player>
         <PlayerPreferencesPersistence />
 
         <MediaSessionMetadata animeTitle={animeTitle} episodeTitle={title} poster={poster} />
@@ -115,10 +94,8 @@ export function HlsVideoPlayer({
             source={{
               src,
               type: 'application/vnd.apple.mpegurl',
-              engine: HLS_ENGINE_OPTIONS,
             }}
             poster={poster}
-            playsInline
           />
 
           <GoogleCast />

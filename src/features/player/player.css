@@ -1158,21 +1158,10 @@
   }
 
   & > .media-menu__content {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    gap: calc(var(--spacing) * 0.5);
     padding: var(--menu-padding);
-    overflow: auto;
-    overscroll-behavior: none;
-    outline: none;
-    translate: 0 0;
-    transition-timing-function: ease-out;
-    transition-duration: var(--menu-transition-duration);
-    transition-property: translate, filter;
 
     &[data-child-open] {
-      filter: blur(8px);
+      filter: blur(16px);
       translate: -100% 0;
     }
   }
