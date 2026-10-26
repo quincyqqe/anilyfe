@@ -1,8 +1,6 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  poweredByHeader: false,
-
   images: {
     unoptimized: true,
     qualities: [75, 85],
@@ -53,7 +51,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            value: 'no-referrer',
           },
         ],
       },
