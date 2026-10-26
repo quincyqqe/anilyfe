@@ -1,5 +1,4 @@
 import Image from '@/components/ui/image';
-import { Backlight } from '@/components/ui/backlight';
 
 import type { Anime } from '@/shared/types/anime';
 import type { AniListAnime } from '@/shared/types/anilist';
@@ -38,17 +37,26 @@ export function AnimeInfo({ anime, franchise, animeEntry, aniList }: Props) {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
           <aside className="flex flex-col gap-5">
             <div className="relative mx-auto w-55 shrink-0 lg:w-full">
-              <Backlight>
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
-                  alt={anime.name.main}
-                  preload
-                  width={455}
-                  height={650}
-                  sizes="(max-width: 1023px) 220px, 260px"
-                  className="relative z-10 aspect-[455/650] w-full rounded-sm border border-white/8 object-cover"
-                />
-              </Backlight>
+              {/*(Ambilight) */}
+              <Image
+                src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
+                alt=""
+                aria-hidden="true"
+                width={64}
+                height={96}
+                className="pointer-events-none absolute inset-0 -z-10 h-full w-full scale-105 rounded-sm object-cover opacity-65 blur-xl saturate-200 transform-gpu select-none"
+              />
+
+              <Image
+                src={`${process.env.NEXT_PUBLIC_MEDIA_URL}${posterSrc}`}
+                alt={anime.name.main}
+                preload
+                width={455}
+                height={650}
+                sizes="(max-width: 1023px) 220px, 260px"
+                className="relative z-10 aspect-[455/650] w-full rounded-sm border border-white/8 object-cover"
+              />
+
               {aniList?.averageScore && <AnimeRating score={aniList.averageScore} />}
             </div>
 
