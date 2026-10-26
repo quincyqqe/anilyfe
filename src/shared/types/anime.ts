@@ -74,6 +74,20 @@ export interface Anime {
       description: string;
     };
   }[];
+
+  mal: {
+    id: number;
+    url: string;
+    votes: number;
+    rating: number;
+  } | null;
+
+  shikimori: {
+    id: number;
+    url: string;
+    votes: number;
+    rating: number;
+  } | null;
 }
 
 export interface Release {
