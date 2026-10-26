@@ -79,6 +79,9 @@ export default async function AnimePage({ params }: PageProps) {
     fetchAniListAnime(anime.id, anime.name.english, anime.name.main),
   ]);
 
+
+  console.log(anime)
+
   return (
     <>
       <AnimeInfo anime={anime} franchise={franchise} animeEntry={dbEntry} aniList={aniList} />{' '}

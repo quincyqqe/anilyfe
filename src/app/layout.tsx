@@ -40,6 +40,9 @@ export const metadata: Metadata = {
     'культура аниме',
   ],
   metadataBase: new URL('https://anilyfe.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
 };
 export const viewport: Viewport = {
   colorScheme: 'dark',
