@@ -1,33 +1,73 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-export const useHeaderScroll = (threshold = 50) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const DELTA_THRESHOLD = 4;
+const HEADER_HEIGHT = 80;
 
-  useEffect(() => {
-    let ticking = false;
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+interface HeaderScrollState {
+  isScrolled: boolean;
+  isHidden: boolean;
+}
+
+export function useHeaderScroll(threshold = 50): HeaderScrollState {
+  const [state, setState] = useState<HeaderScrollState>({
+    isScrolled: false,
+    isHidden: false,
+  });
+
+  const lastY = useRef<number | null>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    let rafId: number | null = null;
 
     const updateScrollState = () => {
-      const next = window.scrollY > threshold;
+      rafId = null;
+      const y = Math.max(0, window.scrollY);
+      const prevY = lastY.current;
 
-      setIsScrolled((prev) => (prev === next ? prev : next));
-      ticking = false;
+      setState((prev) => {
+        const isScrolled = y > threshold;
+        let isHidden = prev.isHidden;
+
+        if (prevY !== null) {
+          const delta = y - prevY;
+
+          if (delta > DELTA_THRESHOLD && y > HEADER_HEIGHT) {
+            isHidden = true;
+          } else if (delta < -DELTA_THRESHOLD || y <= HEADER_HEIGHT) {
+            isHidden = false;
+          }
+        }
+
+        if (prev.isScrolled === isScrolled && prev.isHidden === isHidden) {
+          return prev;
+        }
+
+        return { isScrolled, isHidden };
+      });
+
+      lastY.current = y;
     };
 
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScrollState);
-        ticking = true;
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(updateScrollState);
       }
     };
 
     updateScrollState();
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', onScroll);
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
     };
   }, [threshold]);
 
-  return isScrolled;
-};
+  return state;
+}
