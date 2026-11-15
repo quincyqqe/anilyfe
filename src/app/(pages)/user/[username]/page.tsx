@@ -39,7 +39,7 @@ const UserProfilePage = async ({ params }: Props) => {
   return (
     <main>
       <ProfileHeader profile={profile} isOwner={isOwner} />
-      <AnimeList animeList={profile.user_anime_list ?? []} />
+      <AnimeList animeList={profile.user_anime_list ?? []} isOwner={isOwner} />
     </main>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { LayoutGrid, List, ChevronDown } from 'lucide-react';
+import { LayoutGrid, List, ChevronDown, ArrowUpDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,82 +10,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils/cn';
 
-import { FILTER_TABS, SORT_OPTIONS } from '../../model/anime-list/constants';
-import type { FilterKey, SortKey, ViewMode } from '../../model/anime-list/types';
-
-interface AnimeListToolbarProps {
-  activeFilter: FilterKey;
-  activeSort: SortKey;
-  counts: Record<FilterKey, number>;
-  viewMode: ViewMode;
-
-  onFilterChange: (filter: FilterKey) => void;
-  onSortChange: (sort: SortKey) => void;
-  onViewModeChange: (mode: ViewMode) => void;
-}
-
-export function AnimeListToolbar({
-  activeFilter,
-  activeSort,
-  counts,
-  viewMode,
-  onFilterChange,
-  onSortChange,
-  onViewModeChange,
-}: AnimeListToolbarProps) {
-  const sortLabel = SORT_OPTIONS.find((option) => option.key === activeSort)?.label ?? '';
-
-  return (
-    <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="scrollbar-none flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-        <div className="flex w-max items-center gap-1 rounded-2xl border border-white/[0.04] bg-zinc-950/35 p-1">
-          {FILTER_TABS.map((tab) => {
-            const count = counts[tab.key];
-
-            if (count === 0 && tab.key !== 'all') return null;
-
-            const Icon = tab.icon;
-
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => onFilterChange(tab.key)}
-                className={cn(
-                  'flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-colors',
-                  activeFilter === tab.key
-                    ? tab.activeClass
-                    : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                <Icon
-                  className={cn(
-                    'size-3.5',
-                    activeFilter === tab.key ? tab.color : 'text-muted-foreground',
-                  )}
-                />
-
-                <span>{tab.label}</span>
-
-                <span className="rounded-md border border-white/[0.02] bg-white/[0.02] px-1.5 py-0.5 font-mono text-[9px] tabular-nums">
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex shrink-0 items-center justify-between gap-3 md:justify-end">
-        <SortDropdown activeSort={activeSort} label={sortLabel} onSortChange={onSortChange} />
-
-        <ViewModeToggle viewMode={viewMode} onViewModeChange={onViewModeChange} />
-      </div>
-    </div>
-  );
-}
+import { SORT_OPTIONS } from '../../model/anime-list/constants';
+import type { SortKey, ViewMode } from '../../model/anime-list/types';
 
 interface SortDropdownProps {
   activeSort: SortKey;
@@ -93,22 +20,26 @@ interface SortDropdownProps {
   onSortChange: (sort: SortKey) => void;
 }
 
-function SortDropdown({ activeSort, label, onSortChange }: SortDropdownProps) {
+export function SortDropdown({ activeSort, label, onSortChange }: SortDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button
             variant="outline"
-            className="h-9 rounded-xl border border-white/[0.04] glass px-3 text-xs font-semibold text-muted-foreground"
+            className="h-9.5 cursor-pointer rounded-xl border border-white/10 bg-zinc-950/70 px-3 text-xs font-semibold text-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"
           />
         }
       >
+        <ArrowUpDown className="size-3.5 shrink-0 opacity-60" />
         <span className="max-w-36 truncate">{label}</span>
-        <ChevronDown className="size-3.5 opacity-60" />
+        <ChevronDown className="size-3.5 shrink-0 opacity-60" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent sideOffset={6} className="min-w-44 rounded-xl p-1.5">
+      <DropdownMenuContent
+        sideOffset={6}
+        className="min-w-48 rounded-xl border border-white/10 bg-zinc-950/95 p-1.5 shadow-2xl backdrop-blur-xl"
+      >
         <DropdownMenuRadioGroup
           value={activeSort}
           onValueChange={(value) => onSortChange(value as SortKey)}
@@ -118,7 +49,7 @@ function SortDropdown({ activeSort, label, onSortChange }: SortDropdownProps) {
               key={option.key}
               value={option.key}
               closeOnClick
-              className="cursor-pointer rounded-lg px-3 py-2 text-xs"
+              className="cursor-pointer rounded-lg px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-white/10 hover:text-white"
             >
               {option.label}
             </DropdownMenuRadioItem>
@@ -134,14 +65,22 @@ interface ViewModeToggleProps {
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeToggleProps) {
+export function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeToggleProps) {
   return (
-    <div className="flex items-center gap-0.5 rounded-xl border border-white/[0.04] bg-zinc-950/35 p-1">
-      <ViewModeButton active={viewMode === 'grid'} onClick={() => onViewModeChange('grid')}>
+    <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-zinc-950/70 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
+      <ViewModeButton
+        active={viewMode === 'grid'}
+        onClick={() => onViewModeChange('grid')}
+        ariaLabel="Сетка"
+      >
         <LayoutGrid className="size-3.5" />
       </ViewModeButton>
 
-      <ViewModeButton active={viewMode === 'list'} onClick={() => onViewModeChange('list')}>
+      <ViewModeButton
+        active={viewMode === 'list'}
+        onClick={() => onViewModeChange('list')}
+        ariaLabel="Список"
+      >
         <List className="size-3.5" />
       </ViewModeButton>
     </div>
@@ -151,20 +90,24 @@ function ViewModeToggle({ viewMode, onViewModeChange }: ViewModeToggleProps) {
 function ViewModeButton({
   active,
   onClick,
+  ariaLabel,
   children,
 }: {
   active: boolean;
   onClick: () => void;
+  ariaLabel: string;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
+      aria-label={ariaLabel}
       onClick={onClick}
-      className={cn(
-        'flex size-7 items-center justify-center rounded-lg transition-colors',
-        active ? 'bg-white/12 text-white shadow-sm' : 'text-muted-foreground hover:text-foreground',
-      )}
+      className={
+        active
+          ? 'flex size-7.5 cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/15 text-white shadow-sm transition-all duration-200 active:scale-95'
+          : 'flex size-7.5 cursor-pointer items-center justify-center rounded-lg text-zinc-400 transition-all duration-200 hover:bg-white/5 hover:text-white active:scale-95'
+      }
     >
       {children}
     </button>
