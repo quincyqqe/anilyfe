@@ -4,7 +4,6 @@ import { Heart, Play } from 'lucide-react';
 import Link from 'next/link';
 
 import Image from '@/components/ui/image';
-import { STATUS_METADATA } from '@/features/profile/model/anime-list/constants';
 import {
   formatUpdated,
   getAnimeHref,
@@ -22,7 +21,6 @@ interface CardProps {
 }
 
 export function NetflixAnimeCard({ anime, isOwner = false }: CardProps) {
-  const meta = STATUS_METADATA[anime.status] ?? STATUS_METADATA.planned;
   const progress = getAnimeProgress(anime);
   const href = getAnimeHref(anime);
   const posterSrc = getAnimePosterSrc(anime, MEDIA_URL);
@@ -94,22 +92,6 @@ export function NetflixAnimeCard({ anime, isOwner = false }: CardProps) {
               'motion-reduce:transition-none',
             )}
           >
-            {/* Status */}
-            <div className="flex items-center justify-between gap-2">
-              <span
-                className={cn(
-                  'rounded px-2 py-1 text-[9px] font-bold uppercase tracking-wider',
-                  meta.pill,
-                )}
-              >
-                {meta.label}
-              </span>
-
-              {anime.is_favourite && (
-                <span className="text-[9px] font-medium text-white/60">Избранное</span>
-              )}
-            </div>
-
             {/* Owner progress */}
             {isOwner && (
               <div className="flex flex-col gap-1.5">
@@ -138,7 +120,9 @@ export function NetflixAnimeCard({ anime, isOwner = false }: CardProps) {
             )}
 
             {!isOwner && (
-              <span className="text-[10px] text-white/60">{formatUpdated(anime.updated_at)}</span>
+              <span className="text-[10px] font-medium text-white/70">
+                Обновлено {formatUpdated(anime.updated_at)}
+              </span>
             )}
           </div>
         </div>
@@ -155,33 +139,13 @@ export function NetflixAnimeCard({ anime, isOwner = false }: CardProps) {
             {title}
           </h3>
 
-          {isOwner ? (
-            <div className="mt-1 flex items-center justify-between gap-2 font-mono text-xs">
-              <span className="min-w-0 truncate font-bold text-zinc-300">
+          {isOwner && (
+            <div className="mt-1 font-mono text-xs">
+              <span className="font-bold text-zinc-300">
                 Серия <span className="text-primary">{progress.currentEpisode}</span>
                 {progress.totalEpisodes > 0 && (
                   <span className="font-normal text-zinc-500"> / {progress.totalEpisodes}</span>
                 )}
-              </span>
-
-              {progress.hasEpisodeProgress && (
-                <span className="shrink-0 text-[10px] text-zinc-500">
-                  {Math.round(progressPercent)}%
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-zinc-400">
-              <span className="truncate">{formatUpdated(anime.updated_at)}</span>
-
-              <span
-                className={cn(
-                  'shrink-0 rounded px-1.5 py-0.5',
-                  'text-[8px] font-bold uppercase leading-none',
-                  meta.pill,
-                )}
-              >
-                {meta.label}
               </span>
             </div>
           )}
