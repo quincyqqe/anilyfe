@@ -26,7 +26,7 @@ function TabsList({
       data-variant={variant}
       className={cn(
         variant === 'line'
-          ? 'scrollbar-none relative flex w-max items-center gap-6 overflow-x-auto'
+          ? 'scrollbar-none relative flex w-max max-w-full items-center gap-6 overflow-x-auto'
           : 'flex w-max items-center gap-1 rounded-2xl border border-white/[0.04] bg-zinc-950/35 p-1',
         className,
       )}

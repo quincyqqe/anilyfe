@@ -33,7 +33,7 @@ export function AnimeList({ animeList, isOwner = false }: AnimeListProps) {
   const visibleTabs = FILTER_TABS.filter((tab) => counts[tab.key] > 0 || tab.key === 'all');
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-4 sm:px-6">
       <Tabs value={activeFilter} onValueChange={(value) => setActiveFilter(value as FilterKey)}>
         <div className="mb-8 flex flex-col gap-2 border-b border-white/[0.06] md:flex-row md:items-end md:justify-between">
           <TabsList variant="line" aria-label="Список аниме">
@@ -61,7 +61,7 @@ export function AnimeList({ animeList, isOwner = false }: AnimeListProps) {
             <TabsIndicator />
           </TabsList>
 
-          <div className="flex items-center justify-between gap-3 pb-3 md:justify-end">
+          <div className="flex shrink-0 items-center justify-between gap-3 pb-3 md:justify-end">
             <SortDropdown activeSort={activeSort} label={sortLabel} onSortChange={setActiveSort} />
 
             <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode} />
@@ -106,7 +106,7 @@ function AnimeListPanel({ animeList, filter, sort, viewMode, isOwner }: AnimeLis
 
   if (viewMode === 'list') {
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col divide-y divide-white/[0.05]">
         {visibleAnime.map((anime) => (
           <AnimeListRow key={anime.id} anime={anime} isOwner={isOwner} />
         ))}
@@ -115,7 +115,7 @@ function AnimeListPanel({ animeList, filter, sort, viewMode, isOwner }: AnimeLis
   }
 
   return (
-    <div className="animate-fade-in grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-4.5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
+    <div className="animate-fade-in grid grid-cols-3 gap-3.5 sm:gap-4.5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
       {visibleAnime.map((anime) => (
         <NetflixAnimeCard key={anime.id} anime={anime} isOwner={isOwner} />
       ))}

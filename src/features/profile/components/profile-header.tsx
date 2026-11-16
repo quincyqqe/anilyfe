@@ -69,7 +69,7 @@ export function ProfileHeader({ profile, isOwner }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
       </div>
 
-      <div className="container mx-auto flex min-h-[24rem] flex-col justify-end pb-7 pt-28 md:min-h-[27rem]">
+      <div className="container mx-auto flex min-h-[24rem] flex-col justify-end px-4 pb-7 pt-28 sm:px-6 md:min-h-[27rem]">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-end">
             <div className="flex shrink-0 flex-col items-center gap-2 sm:items-start">

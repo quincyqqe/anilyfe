@@ -3,6 +3,8 @@ import { Play, CheckCircle2, Clock, PauseCircle, XCircle, LayoutGrid } from 'luc
 import type { WatchStatus } from '@/features/profile/types/profile';
 import type { FilterKey } from './types';
 
+// Labels and order mirror the anime page status options
+// (src/features/anime/components/anime-collection-button.tsx).
 export const FILTER_TABS = [
   {
     key: 'watching',
@@ -11,16 +13,16 @@ export const FILTER_TABS = [
     color: 'text-sky-400',
   },
   {
-    key: 'completed',
-    label: 'Завершено',
-    icon: CheckCircle2,
-    color: 'text-emerald-400',
-  },
-  {
     key: 'planned',
     label: 'В планах',
     icon: Clock,
     color: 'text-violet-400',
+  },
+  {
+    key: 'completed',
+    label: 'Просмотрено',
+    icon: CheckCircle2,
+    color: 'text-emerald-400',
   },
   {
     key: 'on_hold',
@@ -30,7 +32,7 @@ export const FILTER_TABS = [
   },
   {
     key: 'dropped',
-    label: 'Брошено',
+    label: 'Заброшено',
     icon: XCircle,
     color: 'text-rose-400',
   },
@@ -45,7 +47,6 @@ export const FILTER_TABS = [
 export const SORT_OPTIONS = [
   { key: 'updated', label: 'По дате обновления' },
   { key: 'name', label: 'По названию' },
-  { key: 'progress', label: 'По прогрессу' },
 ] as const;
 
 export interface StatusMeta {
@@ -105,22 +106,6 @@ export const STATUS_METADATA: Record<WatchStatus, StatusMeta> = {
     glowBg: 'from-rose-500/20',
   },
 };
-
-export const STATUS_LABEL = {
-  watching: 'Смотрю',
-  completed: 'Просмотрено',
-  on_hold: 'Отложено',
-  dropped: 'Заброшено',
-  planned: 'В планах',
-} as const;
-
-export const STATUS_PILL = {
-  watching: STATUS_METADATA.watching.pill,
-  completed: STATUS_METADATA.completed.pill,
-  on_hold: STATUS_METADATA.on_hold.pill,
-  dropped: STATUS_METADATA.dropped.pill,
-  planned: STATUS_METADATA.planned.pill,
-} as const;
 
 export const EMPTY_STATE_MESSAGES = {
   all: {

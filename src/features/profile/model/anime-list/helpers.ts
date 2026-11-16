@@ -103,18 +103,10 @@ function getAnimeComparator(sort: SortKey): (a: UserAnimeEntry, b: UserAnimeEntr
       return (a, b) => titleCollator.compare(a.anime_name, b.anime_name);
     case 'score':
       return (a, b) => (b.score ?? 0) - (a.score ?? 0);
-    case 'progress':
-      return (a, b) => getCompletionRatio(b) - getCompletionRatio(a);
     case 'updated':
     default:
       return (a, b) => getUpdatedTimestamp(b) - getUpdatedTimestamp(a);
   }
-}
-
-function getCompletionRatio(anime: UserAnimeEntry): number {
-  const { currentEpisode, totalEpisodes } = getAnimeProgress(anime);
-
-  return totalEpisodes > 0 ? currentEpisode / totalEpisodes : 0;
 }
 
 function getUpdatedTimestamp(anime: UserAnimeEntry): number {

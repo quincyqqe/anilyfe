@@ -70,7 +70,7 @@ const sections: DetailedLegalSection[] = [
           <li>
             <strong className="text-white">Данные профиля и активности:</strong> персональный
             никнейм в AniLyfe, списки тайтлов (&laquo;Смотрю&raquo;, &laquo;В планах&raquo;,
-            &laquo;Просмотрено&raquo;, &laquo;Брошено&raquo;), оценки релизов, добавление в
+            &laquo;Просмотрено&raquo;, &laquo;Заброшено&raquo;), оценки релизов, добавление в
             избранное.
           </li>
           <li>

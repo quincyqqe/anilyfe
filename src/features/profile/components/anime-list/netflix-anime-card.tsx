@@ -119,11 +119,9 @@ export function NetflixAnimeCard({ anime, isOwner = false }: CardProps) {
               </div>
             )}
 
-            {!isOwner && (
-              <span className="text-[10px] font-medium text-white/70">
-                Обновлено {formatUpdated(anime.updated_at)}
-              </span>
-            )}
+            <span className="text-[10px] font-medium text-white/70">
+              Обновлено {formatUpdated(anime.updated_at)}
+            </span>
           </div>
         </div>
 
