@@ -49,8 +49,8 @@ export function ProfileHeader({ profile, isOwner }: Props) {
       <div
         className="absolute inset-0 -z-10 overflow-hidden bg-background"
         style={{
-          maskImage: 'linear-gradient(to top, transparent 0%, black 60%)',
-          WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 60%)',
+          maskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
+          WebkitMaskImage: 'linear-gradient(to top, transparent 0%, black 55%)',
         }}
       >
         {background ? (
@@ -60,13 +60,13 @@ export function ProfileHeader({ profile, isOwner }: Props) {
             fill
             loading="eager"
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-cover object-center brightness-[0.85]"
           />
         ) : (
           <ShaderDemo_ATC />
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
 
       <div className="container mx-auto flex min-h-[24rem] flex-col justify-end px-4 pb-7 pt-28 sm:px-6 md:min-h-[27rem]">
@@ -83,22 +83,36 @@ export function ProfileHeader({ profile, isOwner }: Props) {
                 </div>
               )}
 
-              <div className="relative size-24 overflow-hidden rounded-[1.5rem] bg-muted shadow-xl shadow-white/10 ring-1 ring-white/15 sm:size-28 md:size-36 md:rounded-[1.75rem]">
-                {avatar ? (
+              <div className="relative size-24 sm:size-28 md:size-36">
+                {avatar && (
                   <Image
                     src={avatar}
-                    alt={profile.username}
+                    alt=""
+                    aria-hidden
                     fill
                     priority
                     sizes="(max-width: 639px) 96px, (max-width: 767px) 112px, 144px"
-                    className="object-cover"
-                    id="profile-avatar"
+                    className="hidden scale-110 object-cover opacity-65 blur-xl saturate-200 md:block"
                   />
-                ) : (
-                  <div className="flex size-full items-center justify-center bg-primary/15 text-2xl font-black text-primary md:text-3xl">
-                    {initials}
-                  </div>
                 )}
+
+                <div className="relative size-full overflow-hidden rounded-[1.5rem] bg-muted shadow-xl shadow-white/10 ring-1 ring-white/15 md:rounded-[1.75rem]">
+                  {avatar ? (
+                    <Image
+                      src={avatar}
+                      alt={profile.username}
+                      fill
+                      priority
+                      sizes="(max-width: 639px) 96px, (max-width: 767px) 112px, 144px"
+                      className="object-cover"
+                      id="profile-avatar"
+                    />
+                  ) : (
+                    <div className="flex size-full items-center justify-center bg-primary/15 text-2xl font-black text-primary md:text-3xl">
+                      {initials}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

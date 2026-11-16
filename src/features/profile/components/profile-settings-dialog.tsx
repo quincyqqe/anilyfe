@@ -31,6 +31,7 @@ export function ProfileSettingsDialog({ username, bio, avatarUrl, backgroundUrl,
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [backgroundWidth, setBackgroundWidth] = useState<number | null>(null);
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
@@ -108,7 +109,13 @@ export function ProfileSettingsDialog({ username, bio, avatarUrl, backgroundUrl,
               className="group relative block h-40 w-full overflow-hidden bg-muted sm:h-48"
             >
               {background ? (
-                <img src={background} alt="" className="size-full object-cover opacity-60" />
+                <img
+                  src={background}
+                  alt=""
+                  className="size-full object-cover opacity-60"
+                  onLoad={(event) => setBackgroundWidth(event.currentTarget.naturalWidth)}
+                  onError={() => setBackgroundWidth(null)}
+                />
               ) : (
                 <ShaderDemo_ATC />
               )}
@@ -220,6 +227,13 @@ export function ProfileSettingsDialog({ username, bio, avatarUrl, backgroundUrl,
                     />
                   </label>
                 </div>
+
+                {background && backgroundWidth !== null && backgroundWidth < 1600 && (
+                  <p className="text-xs text-amber-400/90">
+                    Ширина фона {backgroundWidth}px — он растягивается на весь экран. Рекомендуем
+                    картинки от 1920px, иначе на больших мониторах будет мылиться.
+                  </p>
+                )}
 
                 {/* Вывод ошибки */}
                 {error && <p className="text-sm font-medium text-destructive mt-2">{error}</p>}
