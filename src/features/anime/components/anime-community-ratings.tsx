@@ -1,4 +1,3 @@
-
 import { ExternalLink } from 'lucide-react';
 import { SiMyanimelist, SiShikimori } from 'react-icons/si';
 
@@ -74,12 +73,7 @@ function createSource(
   id: SourceId,
   rating: { rating: number; votes: number; url: string } | null | undefined,
 ): RatingSource | null {
-  if (
-    !rating ||
-    !Number.isFinite(rating.rating) ||
-    rating.rating <= 0 ||
-    !rating.url
-  ) {
+  if (!rating || !Number.isFinite(rating.rating) || rating.rating <= 0 || !rating.url) {
     return null;
   }
 
@@ -104,10 +98,7 @@ export function AnimeCommunityRatings({ mal, shikimori }: Props) {
   if (sources.length === 0) return null;
 
   return (
-    <section
-      className="flex flex-col gap-2.5"
-      aria-labelledby="community-ratings-heading"
-    >
+    <section className="flex flex-col gap-2.5" aria-labelledby="community-ratings-heading">
       <div className="flex items-center gap-2.5">
         <h2
           id="community-ratings-heading"
@@ -141,9 +132,7 @@ export function AnimeCommunityRatings({ mal, shikimori }: Props) {
             const formattedVotes = formatVotes(votes);
             const normalizedScore = Math.min(10, Math.max(0, score));
             const fullVotesLabel =
-              votes > 0
-                ? `${VOTE_FORMATTER.format(votes)} голосов`
-                : undefined;
+              votes > 0 ? `${VOTE_FORMATTER.format(votes)} голосов` : undefined;
 
             return (
               <a
@@ -151,8 +140,9 @@ export function AnimeCommunityRatings({ mal, shikimori }: Props) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={`${label}: ${score.toFixed(2)} из 10. ${votes > 0 ? `${fullVotesLabel}. ` : ''
-                  }Открыть внешний рейтинг`}
+                aria-label={`${label}: ${score.toFixed(2)} из 10. ${
+                  votes > 0 ? `${fullVotesLabel}. ` : ''
+                }Открыть внешний рейтинг`}
                 className={[
                   'group relative flex items-center justify-between gap-3',
                   'overflow-hidden rounded-xl border border-white/[0.08]',
@@ -204,9 +194,7 @@ export function AnimeCommunityRatings({ mal, shikimori }: Props) {
                       {score.toFixed(2)}
                     </span>
 
-                    <span className="text-[10px] font-medium text-zinc-500">
-                      /10
-                    </span>
+                    <span className="text-[10px] font-medium text-zinc-500">/10</span>
                   </div>
 
                   <div

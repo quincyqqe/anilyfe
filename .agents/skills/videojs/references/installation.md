@@ -12,10 +12,10 @@ will list the player package. In a monorepo, change into the app first; from
 the workspace root the command cannot see the app's framework, lockfile, or
 installed version.
 
-| Situation | Command |
-| --- | --- |
-| Any project, or none yet | `npx @videojs/cli agents init` |
-| The page loads the CDN | `npx @videojs/cli@<version> agents init --method cdn --project existing --template none`, with the version from its script URL |
+| Situation                | Command                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Any project, or none yet | `npx @videojs/cli agents init`                                                                                                 |
+| The page loads the CDN   | `npx @videojs/cli@<version> agents init --method cdn --project existing --template none`, with the version from its script URL |
 
 The bare command prints every option and its "Decide in this order" section.
 It prints instructions and changes nothing. Follow that order, confirm the

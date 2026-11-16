@@ -34,15 +34,15 @@ codes, doc page titles. Never put full error text, file paths, URLs, or project
 identifiers into a search. Comment on an existing thread instead of opening a
 duplicate.
 
-| Kind | Destination | Template or category |
-| --- | --- | --- |
-| Reproducible wrong behavior in a package | videojs/v10 issue | Bug Report |
-| A doc page contradicts the code, an example fails, an Import section is missing, a bundled `.md` link is broken | videojs/v10 issue | Docs Feedback |
-| Small enhancement | videojs/v10 issue | Feature Request |
-| Substantial feature or design proposal | videojs/v10 discussion | Ideas |
-| Friction log: where you had to guess, what took several tries, what a page should have said | videojs/v10 discussion | Ideas, or General |
-| A question with no clear answer in the docs | videojs/v10 discussion | Q&A |
-| This skill fired wrongly, routed to the wrong page, or stated something false | videojs/skills issue | none |
+| Kind                                                                                                            | Destination            | Template or category |
+| --------------------------------------------------------------------------------------------------------------- | ---------------------- | -------------------- |
+| Reproducible wrong behavior in a package                                                                        | videojs/v10 issue      | Bug Report           |
+| A doc page contradicts the code, an example fails, an Import section is missing, a bundled `.md` link is broken | videojs/v10 issue      | Docs Feedback        |
+| Small enhancement                                                                                               | videojs/v10 issue      | Feature Request      |
+| Substantial feature or design proposal                                                                          | videojs/v10 discussion | Ideas                |
+| Friction log: where you had to guess, what took several tries, what a page should have said                     | videojs/v10 discussion | Ideas, or General    |
+| A question with no clear answer in the docs                                                                     | videojs/v10 discussion | Q&A                  |
+| This skill fired wrongly, routed to the wrong page, or stated something false                                   | videojs/skills issue   | none                 |
 
 Confirm the current template names at
 https://github.com/videojs/v10/issues/new/choose and the discussion categories
@@ -97,25 +97,31 @@ Keep each report to one independently closable outcome. Fill what applies:
 
 ```markdown
 ## What happened
+
 <one paragraph: observed behavior, or the friction>
 
 ## Expected
+
 <what the docs or API led you to expect>
 
 ## Reproduction
+
 <smallest markup or component that shows it, using demo media>
 <steps, if any>
 
 ## Environment
+
 - Packages: @videojs/<name>@<version> (from package.json or node_modules)
 - Framework and install method: <React | HTML | Vue | Svelte>, <Packaged | Shadcn | CDN>
 - Browser and OS, if relevant
 - Docs consulted: <page titles, bundled or videojs.org>
 
 ## Workaround
+
 <what unblocked the task, or "none">
 
 ---
+
 Drafted with an AI coding agent using the Video.js skill and reviewed by the reporter.
 ```
 

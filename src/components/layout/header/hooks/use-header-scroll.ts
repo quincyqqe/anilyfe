@@ -3,8 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 const DELTA_THRESHOLD = 4;
 const HEADER_HEIGHT = 80;
 
-const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 interface HeaderScrollState {
   isScrolled: boolean;

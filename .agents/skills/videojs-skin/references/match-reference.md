@@ -37,16 +37,16 @@ exact values where the browser allows. Inspect each control's and popup's
 often drawn there and missing from the element's own styles. Save a crop of each state below in
 `design/reference/`, named after the state, such as `volume-expanded.png`:
 
-| Crop | Shows |
-| --- | --- |
-| `controls` | The control bar with controls shown, paused |
-| `idle` | Playing with controls hidden |
-| `volume-collapsed`, `volume-expanded` | Volume before and after it opens |
-| `menu`, `submenu` | The root settings menu, and one submenu |
-| `tooltip` | Tooltips on a control in the bar and one at its edge, if the player has them |
+| Crop                                                            | Shows                                                                                                                                    |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `controls`                                                      | The control bar with controls shown, paused                                                                                              |
+| `idle`                                                          | Playing with controls hidden                                                                                                             |
+| `volume-collapsed`, `volume-expanded`                           | Volume before and after it opens                                                                                                         |
+| `menu`, `submenu`                                               | The root settings menu, and one submenu                                                                                                  |
+| `tooltip`                                                       | Tooltips on a control in the bar and one at its edge, if the player has them                                                             |
 | `seek-preview-start`, `seek-preview-middle`, `seek-preview-end` | The time slider's preview and time label while hovering near the start, the middle, and the end, where labels usually clamp to the edges |
-| `focus` | Keyboard focus on a button, the slider, and a menu item |
-| `narrow` | The control bar at a narrow width |
+| `focus`                                                         | Keyboard focus on a button, the slider, and a menu item                                                                                  |
+| `narrow`                                                        | The control bar at a narrow width                                                                                                        |
 
 Capture the control icons too, in every state. From the user's own design
 file, export them as they are; from someone else's player, follow "Redraw a
@@ -72,13 +72,13 @@ the reference's font so they can switch to it if they have the rights.
 **Measurements**, as a table with the source of each value. The values
 below show the format only:
 
-| Item | Value | Source |
-| --- | --- | --- |
+| Item                           | Value        | Source   |
+| ------------------------------ | ------------ | -------- |
 | Player width, screenshot scale | 1280px at 2x | observed |
-| Button size | 48px | observed |
-| Control bar padding, radius | 8px, 12px | observed |
-| Icon size, stroke | 24px, 2px | observed |
-| … | | |
+| Button size                    | 48px         | observed |
+| Control bar padding, radius    | 8px, 12px    | observed |
+| Icon size, stroke              | 24px, 2px    | observed |
+| …                              |              |          |
 
 Include at least button size, surface padding and radii, icon size and
 stroke, font families, sizes, and weights, menu widths, tooltip offset, focus

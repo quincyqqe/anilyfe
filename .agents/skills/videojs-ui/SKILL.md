@@ -28,13 +28,13 @@ Read the docs bundled at `node_modules/@videojs/<react|html>/docs/llms.txt`,
 or `https://videojs.org/docs/framework/<react|html>/llms.txt` with `.md`
 appended to page URLs. By title:
 
-| Need | Read |
-| --- | --- |
-| How controls expose state, props, and render customization | UI components |
-| A control the library does not provide | Build your own UI component |
-| One component's parts, `data-*` state, CSS properties, and keys | Its reference page |
-| What the components already do for accessibility | Accessibility |
-| Shortcuts, gestures, and translated labels | Keyboard shortcuts, Internationalization |
+| Need                                                            | Read                                     |
+| --------------------------------------------------------------- | ---------------------------------------- |
+| How controls expose state, props, and render customization      | UI components                            |
+| A control the library does not provide                          | Build your own UI component              |
+| One component's parts, `data-*` state, CSS properties, and keys | Its reference page                       |
+| What the components already do for accessibility                | Accessibility                            |
+| Shortcuts, gestures, and translated labels                      | Keyboard shortcuts, Internationalization |
 
 ## Workflow
 

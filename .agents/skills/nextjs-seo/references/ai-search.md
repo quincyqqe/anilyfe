@@ -40,11 +40,11 @@ user-initiated fetching are different purposes; a vendor may use separate bots
 or a product-control token. Preserve the owner's policy instead of copying a
 blanket allow/block list.
 
-| Vendor | Training | Search | User-initiated retrieval |
-|--------|----------|--------|--------------------------|
-| OpenAI | GPTBot | OAI-SearchBot | ChatGPT-User |
-| Anthropic | ClaudeBot | Claude-SearchBot | Claude-User |
-| Perplexity | None (PerplexityBot is not used for training) | PerplexityBot | Perplexity-User |
+| Vendor     | Training                                      | Search           | User-initiated retrieval |
+| ---------- | --------------------------------------------- | ---------------- | ------------------------ |
+| OpenAI     | GPTBot                                        | OAI-SearchBot    | ChatGPT-User             |
+| Anthropic  | ClaudeBot                                     | Claude-SearchBot | Claude-User              |
+| Perplexity | None (PerplexityBot is not used for training) | PerplexityBot    | Perplexity-User          |
 
 Google Search and its AI features use Googlebot controls. `Google-Extended`
 has no separate HTTP user agent: it is a robots product token controlling both
@@ -113,6 +113,7 @@ If it is unavailable, check impression volume and the effective inclusion
 setting; insufficient impressions or exclusion are possible causes.
 
 Sources to re-check for changing policies:
+
 - [Google AI features](https://developers.google.com/search/docs/appearance/ai-features)
 - [Google AI optimization guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
 - [Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139)

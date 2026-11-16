@@ -67,13 +67,13 @@ this skill. Video.js docs ship with the installed package at
 `https://videojs.org/docs/framework/<react|html>/llms.txt` and append `.md` to
 page URLs. Start with these pages, by title:
 
-| Need | Read |
-| --- | --- |
-| Which file owns a change | Customize skins, "Style skin source" |
+| Need                                                       | Read                                                |
+| ---------------------------------------------------------- | --------------------------------------------------- |
+| Which file owns a change                                   | Customize skins, "Style skin source"                |
 | How controls expose state, props, and render customization | UI components, then each component's reference page |
-| Shortcuts and gestures | Keyboard shortcuts |
-| Labels, languages, right-to-left | Internationalization |
-| What the components already do for accessibility | Accessibility |
+| Shortcuts and gestures                                     | Keyboard shortcuts                                  |
+| Labels, languages, right-to-left                           | Internationalization                                |
+| What the components already do for accessibility           | Accessibility                                       |
 
 ## 3. Agree the design
 

@@ -82,12 +82,12 @@ instead of inventing a comparison.
 
 Every player has three parts plus optional extensions; names are examples.
 
-| Part | Job | HTML | React |
-| --- | --- | --- | --- |
-| Player | Owns state; renders nothing. One per player. | `<video-player>` | `<VideoPlayer>` |
-| Skin, or Container + UI | Packaged skin, skin source, or a `media-*` layout. | `<video-skin>`, `<media-container>`, `<media-play-button>` | `<VideoSkin>`, `<Container>`, `<PlayButton>` |
-| Media | Plays the source with no UI; native or engine/service-specific. | `<video>`, `<hls-video>`, `<mux-video>`, `<youtube-video>` | `<Video>`, `<HlsVideo>`, `<MuxVideo>`, `<YouTubeVideo>` |
-| Extension | Adds behavior without UI or playback. | `<mux-data>`, `<google-cast>` | `<MuxData>`, `<GoogleCast>` |
+| Part                    | Job                                                             | HTML                                                       | React                                                   |
+| ----------------------- | --------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------- |
+| Player                  | Owns state; renders nothing. One per player.                    | `<video-player>`                                           | `<VideoPlayer>`                                         |
+| Skin, or Container + UI | Packaged skin, skin source, or a `media-*` layout.              | `<video-skin>`, `<media-container>`, `<media-play-button>` | `<VideoSkin>`, `<Container>`, `<PlayButton>`            |
+| Media                   | Plays the source with no UI; native or engine/service-specific. | `<video>`, `<hls-video>`, `<mux-video>`, `<youtube-video>` | `<Video>`, `<HlsVideo>`, `<MuxVideo>`, `<YouTubeVideo>` |
+| Extension               | Adds behavior without UI or playback.                           | `<mux-data>`, `<google-cast>`                              | `<MuxData>`, `<GoogleCast>`                             |
 
 - **HTML imports register elements as a side effect**, for example
   `import '@videojs/html/video/player'`. Vue, Svelte, and Astro use them too.
@@ -108,19 +108,19 @@ Migrate from Video.js 8 guide. Video.js 8 docs live at `legacy.videojs.org`.
 
 Open these from `llms.txt` by title.
 
-| Task | Read first |
-| --- | --- |
-| New player, first install | `references/installation.md`, then Architecture |
-| Pick a media engine, source type, or host | Media sources, then that media component's reference page; `references/hosting.md` |
-| Streaming (HLS, DASH, live, DRM) | Media sources, Play live streams, then the media component's reference |
-| Change colors or sizing | Customize skins, "Style a packaged skin" |
-| Change controls, layout, or interactions | `references/installation.md` for the Shadcn method, then Customize skins, "Style skin source" |
-| Design a skin in its own project, or match another player's look | The `videojs-skin` skill |
-| Style, polish, or review player controls | The `videojs-ui` skill |
-| Custom control or state-driven UI | Build your own UI component, Features, then `PlayerController` or `usePlayer` |
-| Captions, thumbnails, quality, PiP, casting, hotkeys, autoplay, errors, analytics | The matching Playback guide, then the component references it links |
-| Build or type errors | Bundlers, TypeScript, Content Security Policy |
-| Coming from another player | The matching Migrate guide |
+| Task                                                                              | Read first                                                                                    |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| New player, first install                                                         | `references/installation.md`, then Architecture                                               |
+| Pick a media engine, source type, or host                                         | Media sources, then that media component's reference page; `references/hosting.md`            |
+| Streaming (HLS, DASH, live, DRM)                                                  | Media sources, Play live streams, then the media component's reference                        |
+| Change colors or sizing                                                           | Customize skins, "Style a packaged skin"                                                      |
+| Change controls, layout, or interactions                                          | `references/installation.md` for the Shadcn method, then Customize skins, "Style skin source" |
+| Design a skin in its own project, or match another player's look                  | The `videojs-skin` skill                                                                      |
+| Style, polish, or review player controls                                          | The `videojs-ui` skill                                                                        |
+| Custom control or state-driven UI                                                 | Build your own UI component, Features, then `PlayerController` or `usePlayer`                 |
+| Captions, thumbnails, quality, PiP, casting, hotkeys, autoplay, errors, analytics | The matching Playback guide, then the component references it links                           |
+| Build or type errors                                                              | Bundlers, TypeScript, Content Security Policy                                                 |
+| Coming from another player                                                        | The matching Migrate guide                                                                    |
 
 ## Verify before handing off
 

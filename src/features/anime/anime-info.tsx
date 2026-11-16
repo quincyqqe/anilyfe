@@ -65,7 +65,6 @@ export function AnimeInfo({ anime, franchise, animeEntry, aniList }: Props) {
 
             <AnimeCommunityRatings mal={anime.mal} shikimori={anime.shikimori} />
 
-
             <div className="glass p-4">
               <AnimeStats anime={anime} />
             </div>

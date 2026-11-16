@@ -21,27 +21,27 @@ per area. Install the ones the task needs:
 npx skills add jakubkrehel/skills --skill better-ui better-typography better-colors better-accessibility better-layout better-writing better-interface
 ```
 
-| Area | Skill | Use it for on a player |
-| --- | --- | --- |
-| Surfaces, icons, polish | `better-ui` | Control and menu radii, shadows over video, optical alignment of icons, icon state changes |
-| Type | `better-typography` | Time displays, chapter titles, menu items, truncated titles |
-| Color | `better-colors` | The accent and controls tokens, contrast checks, a palette for controls over video |
-| Accessibility | `better-accessibility` | Focus, accessible names, announcements, motion, zoom |
-| Layout | `better-layout` | Control-bar grouping, reading order, room for translated labels, mirroring |
-| Copy | `better-writing` | Custom control labels, error dialog text, unavailable states |
-| All of the above | `better-interface` | One combined review across those areas |
-| Change review | `interface-review` | Reviewing a branch or uncommitted change; the user invokes it, for example with `/interface-review` |
+| Area                    | Skill                  | Use it for on a player                                                                              |
+| ----------------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| Surfaces, icons, polish | `better-ui`            | Control and menu radii, shadows over video, optical alignment of icons, icon state changes          |
+| Type                    | `better-typography`    | Time displays, chapter titles, menu items, truncated titles                                         |
+| Color                   | `better-colors`        | The accent and controls tokens, contrast checks, a palette for controls over video                  |
+| Accessibility           | `better-accessibility` | Focus, accessible names, announcements, motion, zoom                                                |
+| Layout                  | `better-layout`        | Control-bar grouping, reading order, room for translated labels, mirroring                          |
+| Copy                    | `better-writing`       | Custom control labels, error dialog text, unavailable states                                        |
+| All of the above        | `better-interface`     | One combined review across those areas                                                              |
+| Change review           | `interface-review`     | Reviewing a branch or uncommitted change; the user invokes it, for example with `/interface-review` |
 
 Other authors cover motion, theming, and audits:
 
-| Area | Skill | Use it for on a player | Install |
-| --- | --- | --- | --- |
-| Design and polish | `emil-design-eng` from [Emil Kowalski's skills](https://github.com/emilkowalski/skills) | Control-bar hierarchy, press and hover feel, the details that make controls feel finished | `npx skills add emilkowalski/skills --skill emil-design-eng animate review-animations` |
-| Motion | `animate`, same repository | A new transition, such as controls hiding, a menu opening, or a seek indicator, deciding first whether it should animate | Installed with `emil-design-eng` |
-| Motion review | `review-animations`, same repository | A strict critique of the player's motion; the user invokes it, for example with `/review-animations` | Installed with `emil-design-eng` |
-| Theming | [shadcn/ui's skill](https://ui.shadcn.com/docs/skills) | OKLCH tokens, CSS variables, dark mode, Tailwind v4 theming, and registry commands in an app that uses shadcn | `npx skills add shadcn/ui --skill shadcn` |
-| UI audit | `web-design-guidelines` from [Vercel's agent skills](https://github.com/vercel-labs/agent-skills) | Reviewing UI files against the Web Interface Guidelines | `npx skills add vercel-labs/agent-skills --skill web-design-guidelines` |
-| Accessibility audit | `accessibility` from [Addy Osmani's web quality skills](https://github.com/addyosmani/web-quality-skills) | A WCAG 2.2 audit with evidence for each finding | `npx skills add addyosmani/web-quality-skills --skill accessibility` |
+| Area                | Skill                                                                                                     | Use it for on a player                                                                                                   | Install                                                                                |
+| ------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| Design and polish   | `emil-design-eng` from [Emil Kowalski's skills](https://github.com/emilkowalski/skills)                   | Control-bar hierarchy, press and hover feel, the details that make controls feel finished                                | `npx skills add emilkowalski/skills --skill emil-design-eng animate review-animations` |
+| Motion              | `animate`, same repository                                                                                | A new transition, such as controls hiding, a menu opening, or a seek indicator, deciding first whether it should animate | Installed with `emil-design-eng`                                                       |
+| Motion review       | `review-animations`, same repository                                                                      | A strict critique of the player's motion; the user invokes it, for example with `/review-animations`                     | Installed with `emil-design-eng`                                                       |
+| Theming             | [shadcn/ui's skill](https://ui.shadcn.com/docs/skills)                                                    | OKLCH tokens, CSS variables, dark mode, Tailwind v4 theming, and registry commands in an app that uses shadcn            | `npx skills add shadcn/ui --skill shadcn`                                              |
+| UI audit            | `web-design-guidelines` from [Vercel's agent skills](https://github.com/vercel-labs/agent-skills)         | Reviewing UI files against the Web Interface Guidelines                                                                  | `npx skills add vercel-labs/agent-skills --skill web-design-guidelines`                |
+| Accessibility audit | `accessibility` from [Addy Osmani's web quality skills](https://github.com/addyosmani/web-quality-skills) | A WCAG 2.2 audit with evidence for each finding                                                                          | `npx skills add addyosmani/web-quality-skills --skill accessibility`                   |
 
 The skills overlap. Pick one per job, preferring what the user already has:
 `better-ui` or `emil-design-eng` for polish, and one of `better-interface`,

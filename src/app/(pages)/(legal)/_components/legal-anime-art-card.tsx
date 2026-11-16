@@ -10,14 +10,7 @@ export function LegalAnimeArtCard({ art }: LegalAnimeArtCardProps) {
   return (
     <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
       <div className="pointer-events-none absolute -inset-3 -z-10 overflow-hidden rounded-[2.5rem] opacity-50 blur-3xl saturate-200 transform-gpu transition-all duration-700">
-        <Image
-          src={art.url}
-          alt=""
-          aria-hidden="true"
-          fill
-          unoptimized
-          className="object-cover"
-        />
+        <Image src={art.url} alt="" aria-hidden="true" fill unoptimized className="object-cover" />
       </div>
 
       <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-950/40 p-3 sm:p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition duration-500 hover:border-white/20">
