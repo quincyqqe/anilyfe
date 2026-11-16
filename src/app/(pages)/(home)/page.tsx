@@ -14,7 +14,8 @@ import {
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: siteConfig.footer.brand.name,
+  name: 'AniLyfe',
+  alternateName: 'AniLyfe Anime',
   url: siteConfig.url,
   inLanguage: 'ru',
   potentialAction: {
