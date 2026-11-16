@@ -296,7 +296,7 @@
 }
 
 .embla__viewport {
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -325,21 +325,6 @@
 /* ──────────────────────────────────────────────────────────────
    Hero
    ────────────────────────────────────────────────────────────── */
-
-@keyframes heroProgress {
-  from {
-    transform: scaleX(0);
-  }
-
-  to {
-    transform: scaleX(1);
-  }
-}
-
-.hero-progress-fill {
-  transform-origin: left center;
-  animation: heroProgress linear forwards;
-}
 
 .ad-hero__bg {
   position: absolute;
