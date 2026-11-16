@@ -25,7 +25,7 @@ type PreferencesPatch = Partial<Preferences>;
 
 type PlayerActions = {
   setVolume: (volume: number) => void;
-  toggleMuted: () => void;
+  setMuted: (muted: boolean) => boolean;
   setPlaybackRate: (rate: number) => void;
 };
 
@@ -134,8 +134,10 @@ export function PlayerPreferencesPersistence() {
 
     actions.setVolume(saved.volume);
 
+    actions.setVolume(saved.volume);
+
     if (saved.muted !== state.muted) {
-      actions.toggleMuted();
+      actions.setMuted(saved.muted);
     }
 
     actions.setPlaybackRate(saved.playbackRate);
