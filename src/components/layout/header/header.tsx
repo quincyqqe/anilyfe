@@ -38,12 +38,14 @@ export function Header({ user }: HeaderProps) {
     <>
       <header
         inert={headerHidden || undefined}
-        className={`pointer-events-none fixed inset-x-0 top-0 z-50 hidden px-4 select-none transition-transform duration-300 will-change-transform motion-reduce:transition-none md:block ${headerHidden ? '-translate-y-full' : 'translate-y-0'
-          }`}
+        className={`pointer-events-none fixed inset-x-0 top-0 z-50 hidden px-4 select-none transition-transform duration-300 will-change-transform motion-reduce:transition-none md:block ${
+          headerHidden ? '-translate-y-full' : 'translate-y-0'
+        }`}
       >
         <div
-          className={`pointer-events-auto mx-auto flex items-center justify-between rounded-xl border border-white/[0.06] bg-zinc-950/60 backdrop-blur-sm transition-[max-width,margin,padding] duration-300 motion-reduce:transition-none ${isScrolled ? 'mt-3 max-w-5xl px-4 py-2.5' : 'mt-5 max-w-6xl px-6 py-3.5'
-            }`}
+          className={`pointer-events-auto mx-auto flex items-center justify-between rounded-xl border border-white/[0.06] bg-zinc-950/60 backdrop-blur-sm transition-[max-width,margin,padding] duration-300 motion-reduce:transition-none ${
+            isScrolled ? 'mt-3 max-w-5xl px-4 py-2.5' : 'mt-5 max-w-6xl px-6 py-3.5'
+          }`}
         >
           <HeaderLogo />
 
@@ -75,11 +77,7 @@ export function Header({ user }: HeaderProps) {
                 className="relative block size-8 shrink-0 rounded-full bg-white/10 p-0.5 transition-colors duration-200 group-hover:bg-white/20"
               >
                 <span className="absolute inset-0.5 flex items-center justify-center overflow-hidden rounded-full bg-zinc-950 text-[10px] font-semibold text-zinc-300">
-                  {isAuthenticated ? (
-                    fallbackLetters
-                  ) : (
-                    <User className="size-3.5 text-zinc-400" />
-                  )}
+                  {isAuthenticated ? fallbackLetters : <User className="size-3.5 text-zinc-400" />}
                 </span>
 
                 {showAvatar && (
@@ -97,11 +95,7 @@ export function Header({ user }: HeaderProps) {
         </div>
       </header>
 
-      <MobileNav
-        user={user}
-        onOpenSearch={searchModal.open}
-        isSearchOpen={searchModal.isOpen}
-      />
+      <MobileNav user={user} onOpenSearch={searchModal.open} isSearchOpen={searchModal.isOpen} />
 
       {searchModal.isOpen && (
         <SearchModal isSearchModalOpen toggleSearchModal={searchModal.close} />
